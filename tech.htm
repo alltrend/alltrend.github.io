@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>全方位網路科技入口網</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background: #bcd4f6;
+    color: #1E3A8A;
+    position: relative;
+    overflow-x: hidden;
+  }
+  header {
+    position: relative;
+    z-index: 1; /* ✅ 降低層級 */
+    background: transparent; /* ✅ 移除背景色，讓粒子透出 */
+    color: #1E40AF;
+    padding: 40px;
+    text-align: center;
+    font-size: 48px;
+    font-weight: 900;
+    letter-spacing: 4px;
+    text-shadow: 2px 2px 8px rgba(59,130,246,0.5);
+  }
+  nav {
+    display: flex;
+    justify-content: center;
+    background-color: rgba(255,255,255,0.2);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    position: relative;
+    z-index: 3;
+  }
+  nav a {
+    color: #1E3A8A;
+    text-decoration: none;
+    padding: 16px 24px;
+    font-weight: 500;
+    transition: color 0.3s, border-bottom 0.3s;
+  }
+  nav a:hover {
+    color: #2563EB;
+    border-bottom: 2px solid #2563EB;
+  }
+  .banner {
+    text-align: center;
+    padding: 80px 20px;
+    background: linear-gradient(135deg, #dbeafe, #93c5fd);
+    background-image: url('https://www.transparenttextures.com/patterns/cubes.png');
+    color: #1E40AF;
+    position: relative;
+    z-index: 3;
+  }
+  .banner h1 {
+    font-size: 36px;
+    margin-bottom: 20px;
+    font-weight: 800;
+    background: linear-gradient(90deg, #1E40AF, #3B82F6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .banner p {
+    font-size: 20px;
+    margin-bottom: 30px;
+    color: #ffffff;
+    text-shadow: 1px 1px 6px rgba(0,0,0,0.3);
+  }
+
+  /* 背景粒子 */
+  .bg-particles {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .bg-particles span {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.75;
+    mix-blend-mode: screen;
+    animation: randomMove linear infinite alternate,
+               colorShift linear infinite;
+  }
+  .bg-particles span::before {
+    content: "";
+    position: absolute;
+    inset: -12px;
+    border-radius: 50%;
+    background: inherit;
+    filter: blur(14px);
+    opacity: 0.5;
+  }
+  @keyframes randomMove {
+    0%   { transform: translate(0,0) scale(1); }
+    25%  { transform: translate(60px,-40px) scale(1.08); }
+    50%  { transform: translate(-50px,60px) scale(0.95); }
+    75%  { transform: translate(40px,70px) scale(1.05); }
+    100% { transform: translate(-70px,-50px) scale(1); }
+  }
+  @keyframes colorShift {
+    0%   { background:#ff00ff; box-shadow:0 0 12px #ff00ff,0 0 24px #ff00ff; }
+    20%  { background:#00ffff; box-shadow:0 0 14px #00ffff,0 0 28px #00ffff; }
+    40%  { background:#00ff99; box-shadow:0 0 16px #00ff99,0 0 32px #00ff99; }
+    60%  { background:#ffd500; box-shadow:0 0 14px #ffd500,0 0 28px #ffd500; }
+    80%  { background:#ff6600; box-shadow:0 0 15px #ff6600,0 0 30px #ff6600; }
+    100% { background:#ff00ff; box-shadow:0 0 12px #ff00ff,0 0 24px #ff00ff; }
+  }
+
+  /* 中央呼吸能量球 */
+  .circle-wrapper {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 250px;
+    height: 250px;
+    animation: spin 20s linear infinite;
+    z-index: 1;
+    pointer-events: none;
+  }
+  
+  .breathing-circle {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: linear-gradient(270deg, #ff6ec7, #3b82f6, #00f5ff, #ff6ec7);
+    background-size: 600% 600%;
+    filter: blur(60px);
+    opacity: 0.6;
+    animation: breathe 6s infinite ease-in-out, gradientShift 12s ease infinite;
+  }
+  @keyframes breathe {
+    0%   { transform: scale(1); opacity: 0.5; }
+    50%  { transform: scale(3); opacity: 0.9; }
+    100% { transform: scale(1); opacity: 0.5; }
+  }
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+  @keyframes gradientShift {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* 卡片橫向捲動 */
+  .cards-wrapper {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  .cards {
+  display: flex;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  gap: 20px;
+  padding: 20px;
+  flex: 1;
+  max-width: 1450px;
+  margin: auto;
+  /* 隱藏捲動條 */
+  scrollbar-width: none; /* Firefox */
+}
+.cards::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
+  .card {
+    background: rgba(255,255,255,0.7);
+    backdrop-filter: blur(12px);
+    border: 1px solid #2563EB;
+    border-radius: 12px;
+    text-align: center;
+    padding: 25px;
+    transition: transform 0.3s, box-shadow 0.3s;
+    min-width: 200px;
+  }
+  .card:hover {
+    transform: translateY(-8px) scale(1.03);
+    box-shadow: 0 0 20px rgba(59,130,246,0.5);
+    border-color: #3B82F6;
+  }
+  .card a {
+    text-decoration: none;
+    color: #1E3A8A;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .scroll-btn {
+    background: #2563EB;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 20px;
+    border-radius: 6px;
+  }
+  h2 {
+    text-align: center;
+    font-size: 28px;
+    margin-top: 40px;
+    color: #1E40AF;
+    position: relative;
+    z-index: 3;
+  }
+  
+  
+  html, body, header, .title {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+
+/* Reset */
+html,body {
+height:100%;
+  overflow-x: hidden;   /* 禁止橫向滾動 */
+  overflow-y: auto;     /* ✅ 允許垂直滾動 */
+}
+
+
+/* 📱 小型手機（小於 480px） */
+@media (max-width: 479px) {
+  .toolbar {
+    flex-direction: column;
+    gap: 6px;
+  }
+  .toolbar select,
+  .toolbar input,
+  .toolbar button {
+    width: 100%;
+  }
+  table {
+    font-size: 13px;
+  }
+  #container {
+    grid-template-columns: 1fr;
+  }
+  #sidebar {
+    position: absolute;
+    top: 42px;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: #fff;
+    z-index: 1000;
+    border-right: none;
+    border-top: 1px solid #ddd;
+  }
+  #map {
+    height: calc(100vh - 42px);
+  }
+  header > * {
+    flex: 1 1 100%;
+  }
+}
+/* 📱 中型手機（480px 到 767px） */
+@media (min-width: 480px) and (max-width: 767px) {
+  .toolbar {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .toolbar select,
+  .toolbar input,
+  .toolbar button {
+    width: 100%;
+  }
+  table {
+    font-size: 14px;
+  }
+  #container {
+    grid-template-columns: 1fr;
+  }
+  #sidebar {
+    position: absolute;
+    top: 42px;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: #fff;
+    z-index: 1000;
+    border-right: none;
+    border-top: 1px solid #ddd;
+  }
+  #map {
+    height: calc(100vh - 42px);
+  }
+  header > * {
+    flex: 1 1 100%;
+  }
+}
+/* 📱 大型手機／小平板（768px 到 1023px） */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .toolbar {
+    flex-direction: row;
+    gap: 12px;
+  }
+  .toolbar select,
+  .toolbar input,
+  .toolbar button {
+    width: auto;
+  }
+  table {
+    font-size: 15px;
+  }
+  #container {
+    grid-template-columns: 1fr;
+  }
+  #sidebar {
+    position: absolute;
+    top: 42px;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: #fff;
+    z-index: 1000;
+    border-right: none;
+    border-top: 1px solid #ddd;
+  }
+  #map {
+    height: calc(100vh - 42px);
+  }
+  header > * {
+    flex: 1 1 100%;
+  }
+}
+</style>
+</head>
+<body>
+  <!-- 背景粒子 -->
+  <div class="bg-particles">
+  <span style="top:5%; left:10%; width:35px; height:35px; animation-duration:18s;"></span>
+  <span style="top:15%; left:70%; width:55px; height:55px; animation-duration:22s;"></span>
+  <span style="top:25%; left:40%; width:30px; height:30px; animation-duration:20s;"></span>
+  <span style="top:35%; left:85%; width:50px; height:50px; animation-duration:24s;"></span>
+  <span style="top:45%; left:20%; width:40px; height:40px; animation-duration:19s;"></span>
+  <span style="top:55%; left:60%; width:65px; height:65px; animation-duration:26s;"></span>
+  <span style="top:65%; left:5%; width:35px; height:35px; animation-duration:17s;"></span>
+  <span style="top:75%; left:80%; width:55px; height:55px; animation-duration:28s;"></span>
+  <span style="top:85%; left:35%; width:45px; height:45px; animation-duration:21s;"></span>
+  <span style="top:90%; left:65%; width:65px; height:65px; animation-duration:31s;"></span>
+  <span style="top:10%; left:50%; width:30px; height:30px; animation-duration:18s;"></span>
+  <span style="top:20%; left:25%; width:70px; height:70px; animation-duration:30s;"></span>
+  <span style="top:30%; left:65%; width:40px; height:40px; animation-duration:23s;"></span>
+  <span style="top:40%; left:90%; width:50px; height:50px; animation-duration:20s;"></span>
+  <span style="top:50%; left:45%; width:35px; height:35px; animation-duration:16s;"></span>
+  <span style="top:60%; left:15%; width:60px; height:60px; animation-duration:25s;"></span>
+  <span style="top:70%; left:55%; width:40px; height:40px; animation-duration:19s;"></span>
+  <span style="top:80%; left:95%; width:50px; height:50px; animation-duration:27s;"></span>
+  <span style="top:12%; left:85%; width:35px; height:35px; animation-duration:18s;"></span>
+  <span style="top:22%; left:5%; width:55px; height:55px; animation-duration:24s;"></span>
+  <span style="top:32%; left:30%; width:45px; height:45px; animation-duration:20s;"></span>
+  <span style="top:42%; left:75%; width:60px; height:60px; animation-duration:29s;"></span>
+  <span style="top:52%; left:95%; width:30px; height:30px; animation-duration:17s;"></span>
+  <span style="top:62%; left:40%; width:55px; height:55px; animation-duration:26s;"></span>
+  <span style="top:72%; left:25%; width:40px; height:40px; animation-duration:19s;"></span>
+  <span style="top:82%; left:55%; width:70px; height:70px; animation-duration:32s;"></span>
+  <span style="top:92%; left:15%; width:35px; height:35px; animation-duration:16s;"></span>
+  <span style="top:8%; left:95%; width:50px; height:50px; animation-duration:23s;"></span>
+  <span style="top:58%; left:78%; width:40px; height:40px; animation-duration:21s;"></span>
+  <span style="top:38%; left:12%; width:60px; height:60px; animation-duration:28s;"></span>
+  </div>
+
+  <!-- 中央呼吸能量球 -->
+  <div class="circle-wrapper">
+    <div class="breathing-circle"></div>
+  </div>
+
+  <header>全方位網路科技入口網</header>
+  <nav>
+    <a href="#search">搜尋引擎</a>
+    <a href="#knowledge">知識平台</a>
+    <a href="#video">影音平台</a>
+    <a href="#tools">工具服務</a>
+    <a href="#news">新聞入口</a>
+    <a href="#social">社群入口</a>
+  </nav>
+
+  <div class="banner">
+    <h1>科技．學習．娛樂</h1>
+    <p>歡迎光臨全方位網路科技入口網</p>
+  </div>
+
+
+<!-- 六列卡片 -->
+<h2>🔍 搜尋引擎</h2>
+<div class="cards-wrapper">
+  <button class="scroll-btn left">←</button>
+  <div class="cards" id="search">
+    <div class="card"><a href="https://www.google.com" target="_blank">Google</a></div>
+    <div class="card"><a href="https://www.bing.com" target="_blank">Bing</a></div>
+    <div class="card"><a href="https://search.yahoo.com" target="_blank">Yahoo</a></div>
+    <div class="card"><a href="https://www.baidu.com" target="_blank">Baidu</a></div>
+    <div class="card"><a href="https://duckduckgo.com" target="_blank">DuckDuckGo</a></div>
+    <div class="card"><a href="https://search.brave.com" target="_blank">Brave</a></div>
+    <div class="card"><a href="https://www.sogou.com" target="_blank">Sogou</a></div>
+    <div class="card"><a href="https://www.naver.com" target="_blank">Naver</a></div>
+    <div class="card"><a href="https://www.ecosia.org" target="_blank">Ecosia</a></div>
+    <div class="card"><a href="https://yandex.com" target="_blank">Yandex</a></div>
+    <div class="card"><a href="https://www.startpage.com" target="_blank">Startpage</a></div>
+    <div class="card"><a href="https://www.reddit.com" target="_blank">Reddit</a></div>
+    <div class="card"><a href="https://www.dcard.tw" target="_blank">Dcard</a></div>
+    <div class="card"><a href="https://pttweb.tw" target="_blank">PTTweb</a></div>
+    <div class="card"><a href="https://today.line.me/tw" target="_blank">LINE Today</a></div>
+  </div>
+  <button class="scroll-btn right">→</button>
+</div>
+
+<h2>📚 知識平台</h2>
+<div class="cards-wrapper">
+  <button class="scroll-btn left">←</button>
+  <div class="cards" id="knowledge">
+    <div class="card"><a href="https://www.wikipedia.org" target="_blank">Wikipedia</a></div>
+    <div class="card"><a href="https://www.books.com.tw" target="_blank">Books.com.tw</a></div>
+    <div class="card"><a href="https://findbook.tw" target="_blank">Findbook</a></div>
+    <div class="card"><a href="https://www.douban.com" target="_blank">Douban</a></div>
+    <div class="card"><a href="https://www.zhihu.com" target="_blank">Zhihu</a></div>
+    <div class="card"><a href="https://medium.com" target="_blank">Medium</a></div>
+    <div class="card"><a href="https://www.imdb.com" target="_blank">IMDB</a></div>
+    <div class="card"><a href="https://www.tripadvisor.com" target="_blank">TripAdvisor</a></div>
+    <div class="card"><a href="https://www.britannica.com" target="_blank">Britannica</a></div>
+    <div class="card"><a href="https://www.quora.com" target="_blank">Quora</a></div>
+    <div class="card"><a href="https://www.khanacademy.org" target="_blank">Khan Academy</a></div>
+    <div class="card"><a href="https://www.coursera.org" target="_blank">Coursera</a></div>
+    <div class="card"><a href="https://www.edx.org" target="_blank">edX</a></div>
+    <div class="card"><a href="https://scholar.google.com" target="_blank">Google Scholar</a></div>
+    <div class="card"><a href="https://www.wolframalpha.com" target="_blank">WolframAlpha</a></div>
+    <div class="card"><a href="https://archive.org" target="_blank">Internet Archive</a></div>
+    <div class="card"><a href="https://www.jstor.org" target="_blank">JSTOR</a></div>
+    <div class="card"><a href="https://plato.stanford.edu" target="_blank">Stanford Encyclopedia of Philosophy</a></div>
+    <div class="card"><a href="https://www.sciencedirect.com" target="_blank">ScienceDirect</a></div>
+    <div class="card"><a href="https://pubmed.ncbi.nlm.nih.gov" target="_blank">PubMed</a></div>
+  </div>
+  <button class="scroll-btn right">→</button>
+</div>
+
+<h2>🎬 影音平台</h2>
+<div class="cards-wrapper">
+  <button class="scroll-btn left">←</button>
+  <div class="cards" id="video">
+    <div class="card"><a href="https://www.youtube.com" target="_blank">YouTube</a></div>
+    <div class="card"><a href="https://music.youtube.com" target="_blank">YouTube Music</a></div>
+    <div class="card"><a href="https://www.youtube.com/shorts/" target="_blank">YouTube Shorts</a></div>
+    <div class="card"><a href="https://www.bilibili.com" target="_blank">Bilibili</a></div>
+    <div class="card"><a href="https://www.youku.com" target="_blank">Youku</a></div>
+    <div class="card"><a href="https://www.tudou.com" target="_blank">Tudou</a></div>
+    <div class="card"><a href="https://www.iq.com" target="_blank">iQIYI</a></div>
+    <div class="card"><a href="https://wetv.vip" target="_blank">WeTV</a></div>
+    <div class="card"><a href="https://www.douyin.com" target="_blank">Douyin / 抖音</a></div>
+    <div class="card"><a href="https://www.tiktok.com" target="_blank">TikTok</a></div>
+    <div class="card"><a href="https://www.kuaishou.com" target="_blank">快手</a></div>
+    <div class="card"><a href="https://weixin.qq.com" target="_blank">視頻號（微信）</a></div>
+    <div class="card"><a href="https://www.xiaohongshu.com" target="_blank">小紅書</a></div>
+    <div class="card"><a href="https://www.netflix.com" target="_blank">Netflix</a></div>
+    <div class="card"><a href="https://www.disneyplus.com" target="_blank">Disney+</a></div>
+    <div class="card"><a href="https://www.hbomax.com" target="_blank">HBO Max</a></div>
+    <div class="card"><a href="https://www.primevideo.com" target="_blank">Amazon Prime Video</a></div>
+    <div class="card"><a href="https://www.apple.com/apple-tv-plus/" target="_blank">Apple TV+</a></div>
+    <div class="card"><a href="https://open.spotify.com" target="_blank">Spotify</a></div>
+    <div class="card"><a href="https://soundcloud.com" target="_blank">SoundCloud</a></div>
+    <div class="card"><a href="https://y.qq.com" target="_blank">QQ 音樂</a></div>
+    <div class="card"><a href="https://music.163.com" target="_blank">網易雲音樂</a></div>
+    <div class="card"><a href="https://www.twitch.tv" target="_blank">Twitch</a></div>
+    <div class="card"><a href="https://www.podcasts.apple.com" target="_blank">Apple Podcasts</a></div>
+    <div class="card"><a href="https://podcasts.google.com" target="_blank">Google Podcasts</a></div>
+    <div class="card"><a href="https://www.soundon.fm" target="_blank">SoundOn</a></div>
+    <div class="card"><a href="https://www.audible.com" target="_blank">Audible</a></div>
+    <div class="card"><a href="https://www.ixigua.com" target="_blank">西瓜視頻</a></div>
+    <div class="card"><a href="https://haokan.baidu.com" target="_blank">好看視頻</a></div>
+    <div class="card"><a href="https://weishi.qq.com" target="_blank">微視</a></div>
+    <div class="card"><a href="https://www.huoshan.com" target="_blank">火山小視頻</a></div>
+    <div class="card"><a href="https://v.qq.com" target="_blank">騰訊視頻</a></div>
+    <div class="card"><a href="https://www.mgtv.com" target="_blank">芒果TV</a></div>
+    <div class="card"><a href="https://vimeo.com" target="_blank">Vimeo</a></div>
+    <div class="card"><a href="https://www.dailymotion.com" target="_blank">Dailymotion</a></div>
+    <div class="card"><a href="https://www.instagram.com/reels/" target="_blank">Instagram Reels</a></div>
+    <div class="card"><a href="https://www.facebook.com/reels/" target="_blank">Facebook Reels</a></div>
+  </div>
+  <button class="scroll-btn right">→</button>
+</div>
+
+<h2>📰 政治新聞入口</h2>
+<div class="cards-wrapper">
+  <button class="scroll-btn left">←</button>
+  <div class="cards" id="news">
+    <div class="card"><a href="https://news.ltn.com.tw/list/breakingnews/politics" target="_blank">自由時報 - 政治即時</a></div>
+    <div class="card"><a href="https://www.chinatimes.com/realtimenews/260407" target="_blank">中時新聞網 - 政治即時</a></div>
+    <div class="card"><a href="https://www.storm.mg/category/118" target="_blank">風傳媒 - 政治頻道</a></div>
+    <div class="card"><a href="https://www.ettoday.net/news/focus/%E6%94%BF%E6%B2%BB/" target="_blank">ETtoday - 政治新聞</a></div>
+    <div class="card"><a href="https://tw.news.yahoo.com/politics" target="_blank">Yahoo奇摩 - 政治</a></div>
+    <div class="card"><a href="https://news.tvbs.com.tw/realtime/politics" target="_blank">TVBS - 政治即時</a></div>
+    <div class="card"><a href="https://www.setn.com/Catalog.aspx?PageGroupID=6" target="_blank">三立新聞 - 政治</a></div>
+    <div class="card"><a href="https://news.ttv.com.tw/category/%E6%94%BF%E6%B2%BB" target="_blank">台視新聞 - 政治</a></div>
+    <div class="card"><a href="https://www.ftvnews.com.tw/tag/%E6%94%BF%E6%B2%BB" target="_blank">民視新聞 - 政治</a></div>
+    <div class="card"><a href="https://www.cna.com.tw/list/aipl.aspx" target="_blank">中央社 - 政治</a></div>
+    <div class="card"><a href="https://udn.com/news/cate/2/6638" target="_blank">聯合報 - 要聞政治</a></div>
+    <div class="card"><a href="https://www.bbc.com/zhongwen/trad/topics/crjrw8z7334t" target="_blank">BBC 中文 - 政治</a></div>
+    <div class="card"><a href="https://www.taiwannews.com.tw/ch/cate/19" target="_blank">台灣英文新聞 - 政治</a></div>
+    <div class="card"><a href="https://www.epochtimes.com/b5/ncid277.htm" target="_blank">大紀元 - 中國時事</a></div>
+    <div class="card"><a href="https://news.cts.com.tw/politics/index.html" target="_blank">華視新聞 - 政治</a></div>
+    <div class="card"><a href="https://news.pts.org.tw/category/1" target="_blank">公視新聞 - 政治</a></div>
+    <div class="card"><a href="https://zh.m.wikinews.org/zh-hant/Category:%E6%94%BF%E6%B2%BB" target="_blank">維基新聞 - 政治</a></div>
+    <div class="card"><a href="https://www.taiwanhot.net/news/focus/80/%E6%94%BF%E6%B2%BB%E9%A0%BB%E9%81%93" target="_blank">台灣好新聞 - 政治</a></div>
+    <div class="card"><a href="https://www.cw.com.tw/masterChannel.action?idMasterChannel=77" target="_blank">天下雜誌 - 政治社會</a></div>
+    <div class="card"><a href="https://www.appledaily.com.tw/realtime/politics" target="_blank">蘋果新聞網 - 政治即時</a></div>
+    <div class="card"><a href="https://www.worldjournal.com/wj/cate/taiwan" target="_blank">世界新聞網 - 台灣政治</a></div>
+    <div class="card"><a href="https://m.match.net.tw/pc/news/list/1/102" target="_blank">Match生活網 - 政治新聞</a></div>
+    <div class="card"><a href="https://www.fountmedia.io/news/political" target="_blank">放．新聞 - 政治</a></div>
+    <div class="card"><a href="https://inews.hket.com/sran011-1/%E7%92%B0%E7%90%83%E6%94%BF%E6%B2%BB" target="_blank">HKET - 國際政治</a></div>
+    <div class="card"><a href="https://news.pchome.com.tw/cat/politics/hot" target="_blank">PChome - 政治新聞</a></div>
+    <div class="card"><a href="https://today.line.me/tw/v2/tab/TOPIC-Election" target="_blank">LINE - 政治新聞</a></div>
+    <div class="card"><a href="https://www.thenewslens.com/category/politics" target="_blank">關鍵評論網 - 政治</a></div>
+    <div class="card"><a href="https://newtalk.tw/news/subcategory/2/%E6%94%BF%E6%B2%BB" target="_blank">Newtalk - 政治新聞</a></div>
+    <div class="card"><a href="https://www.hk01.com/channel/367/%E5%8F%B0%E7%81%A3%E6%96%B0%E8%81%9E" target="_blank">香港01 - 台灣新聞</a></div>
+    <div class="card"><a href="https://www.mnews.tw/category/pol" target="_blank">鏡新聞 - 政治</a></div>
+    <div class="card"><a href="https://www.rfi.fr/cn/%E6%B8%AF%E6%BE%B3%E5%8F%B0" target="_blank">RFI - 港澳台政治</a></div>
+    <div class="card"><a href="https://www.readgov.com" target="_blank">閱政治 Read Gov News</a></div>
+    <div class="card"><a href="https://fongnews.net/category/political" target="_blank">溏風報 - 政治新聞</a></div>
+  </div>
+  <button class="scroll-btn right">→</button>
+</div>
+
+<h2>📰 科技新聞入口</h2>
+<div class="cards-wrapper">
+  <button class="scroll-btn left">←</button>
+  <div class="cards" id="technews">
+    <div class="card"><a href="https://www.technice.com.tw" target="_blank">科技島</a></div>
+    <div class="card"><a href="https://technews.tw" target="_blank">科技新報</a></div>
+    <div class="card"><a href="https://tw.news.yahoo.com/technology" target="_blank">Yahoo奇摩科技新聞</a></div>
+    <div class="card"><a href="https://www.digitimes.com.tw" target="_blank">DIGITIMES</a></div>
+    <div class="card"><a href="https://www.bnext.com.tw" target="_blank">數位時代</a></div>
+    <div class="card"><a href="https://news.tvbs.com.tw/tech" target="_blank">TVBS 科技新聞</a></div>
+    <div class="card"><a href="https://udn.com/author/articles/2/875" target="_blank">聯合新聞網 - 科技</a></div>
+    <div class="card"><a href="https://3c.ltn.com.tw" target="_blank">自由時報 3C科技</a></div>
+    <div class="card"><a href="https://inews.hket.com/sran010/%E7%A7%91%E6%8A%80" target="_blank">HKET 經濟日報 - 科技</a></div>
+    <div class="card"><a href="https://www.kocpc.com.tw" target="_blank">電腦王阿達</a></div>
+    <div class="card"><a href="https://www.cna.com.tw/list/ait.aspx" target="_blank">中央社 - 科技</a></div>
+    <div class="card"><a href="https://chinese.engadget.com" target="_blank">Engadget 中文版</a></div>
+    <div class="card"><a href="https://www.epochtimes.com/b5/news419.htm" target="_blank">大紀元 - 科技新聞</a></div>
+    <div class="card"><a href="https://www.chinatimes.com/technologynews" target="_blank">中時新聞網 - 科技</a></div>
+    <div class="card"><a href="https://news.pchome.com.tw/cat/science" target="_blank">PChome 科技新聞</a></div>
+    <div class="card"><a href="https://www.ettoday.net/news/focus/3C%E5%AE%B6%E9%9B%BB/" target="_blank">ETtoday 3C焦點</a></div>
+    <div class="card"><a href="https://breezel.net/tech" target="_blank">Breezel 科技新聞</a></div>
+  </div>
+  <button class="scroll-btn right">→</button>
+</div>
+
+<h2>📰 財經新聞入口</h2>
+<div class="cards-wrapper">
+  <button class="scroll-btn left">←</button>
+  <div class="cards" id="finance">
+    <div class="card"><a href="https://tw.stock.yahoo.com/news" target="_blank">Yahoo奇摩股市</a></div>
+    <div class="card"><a href="https://ctee.com.tw/livenews/aj" target="_blank">工商時報 - 財經即時</a></div>
+    <div class="card"><a href="https://news.ltn.com.tw/list/breakingnews/business" target="_blank">自由時報 - 財經即時</a></div>
+    <div class="card"><a href="https://www.moneydj.com/kmdj/news/newshome.aspx" target="_blank">MoneyDJ 理財網</a></div>
+    <div class="card"><a href="https://news.cnyes.com/news/cat/headline" target="_blank">鉅亨網 - 財經即時</a></div>
+    <div class="card"><a href="https://www.stockq.org" target="_blank">Stockq.org</a></div>
+    <div class="card"><a href="https://www.chinatimes.com/realtimenews/260410" target="_blank">中時新聞網 - 財經即時</a></div>
+    <div class="card"><a href="https://www.cw.com.tw/masterChannel.action?idMasterChannel=8" target="_blank">天下雜誌 - 財經</a></div>
+    <div class="card"><a href="https://www.ettoday.net/news/focus/%E8%B2%A1%E7%B6%93/" target="_blank">ETtoday - 財經新聞</a></div>
+    <div class="card"><a href="https://hk.investing.com/news" target="_blank">Investing.com 香港</a></div>
+    <div class="card"><a href="https://www.storm.mg/macro-finance" target="_blank">風傳媒 - 財經總攬</a></div>
+    <div class="card"><a href="https://www.worldjournal.com/wj/cate/business" target="_blank">世界新聞網 - 財經</a></div>
+    <div class="card"><a href="https://www.hk01.com/zone/14/%E7%B6%93%E6%BF%9F" target="_blank">香港01 - 經濟</a></div>
+    <div class="card"><a href="https://cn.investing.com/news/most-popular-news" target="_blank">英為財情 - 今日財經</a></div>
+    <div class="card"><a href="https://news.ttv.com.tw/category/%E8%B2%A1%E7%B6%93" target="_blank">台視新聞 - 財經</a></div>
+    <div class="card"><a href="https://news.cts.com.tw/money/index.html" target="_blank">華視新聞 - 財經</a></div>
+    <div class="card"><a href="https://fnc.ebc.net.tw/fncnews" target="_blank">東森財經新聞</a></div>
+    <div class="card"><a href="https://www.setn.com/Catalog.aspx?PageGroupID=2" target="_blank">三立新聞 - 財經</a></div>
+    <div class="card"><a href="https://money.udn.com/money/index" target="_blank">聯合報 - 經濟日報</a></div>
+    <div class="card"><a href="https://www.ig.com/cn/news-and-trade-ideas" target="_blank">IG - 財經新聞與評論</a></div>
+    <div class="card"><a href="https://www.wantgoo.com/news/list/index" target="_blank">玩股網 - 財經新聞</a></div>
+    <div class="card"><a href="https://finance.now.com/news" target="_blank">Now 財經 - 市場新聞</a></div>
+    <div class="card"><a href="https://news.ustv.com.tw" target="_blank">非凡新聞台</a></div>
+    <div class="card"><a href="https://www.cna.com.tw/list/aie.aspx" target="_blank">中央社 - 產經</a></div>
+    <div class="card"><a href="https://www.dailyfxasia.com/cn/market-news" target="_blank">DailyFX 財經網</a></div>
+    <div class="card"><a href="https://pchome.megatime.com.tw/news/cat9" target="_blank">PChome 股市新聞</a></div>
+    <div class="card"><a href="https://today.line.me/tw/v2/tab/finance" target="_blank">LINE - 理財新聞</a></div>
+    <div class="card"><a href="https://www.ftvnews.com.tw/tag/%E8%B2%A1%E7%B6%93" target="_blank">民視新聞 - 財經</a></div>
+    <div class="card"><a href="https://www.businessweekly.com.tw/channel/business/0000000319" target="_blank">商業周刊 - 財經</a></div>
+    <div class="card"><a href="https://www.bbc.com/zhongwen/trad/topics/cq8nqywy37yt" target="_blank">BBC 中文 - 金融財經</a></div>
+    <div class="card"><a href="https://invest.hket.com/srai001/%E5%8D%B3%E6%99%82%E8%A1%8C%E6%83%85" target="_blank">HKET 經濟日報 - 即時行情</a></div>
+    <div class="card"><a href="https://www2.hkej.com/instantnews" target="_blank">信報 - 即時財經</a></div>
+    <div class="card"><a href="https://www.moneybar.com.tw/newsbar/internal" target="_blank">Moneybar 財經新聞</a></div>
+    <div class="card"><a href="https://www.cmoney.tw/forum/official/337111" target="_blank">理財寶 - 財經新聞</a></div>
+    <div class="card"><a href="https://cn.wsj.com" target="_blank">華爾街日報中文網</a></div>
+  </div>
+  <button class="scroll-btn right">→</button>
+</div>
+
+<h2>🛠️ 工具服務</h2>
+<div class="cards-wrapper">
+  <button class="scroll-btn left">←</button>
+  <div class="cards" id="tools">
+    <div class="card"><a href="https://translate.google.com" target="_blank">Google Translate</a></div>
+    <div class="card"><a href="https://maps.google.com" target="_blank">Google Maps</a></div>
+    <div class="card"><a href="https://github.com" target="_blank">GitHub</a></div>
+    <div class="card"><a href="https://stackoverflow.com" target="_blank">Stack Overflow</a></div>
+    <div class="card"><a href="https://www.dropbox.com" target="_blank">Dropbox</a></div>
+    <div class="card"><a href="https://evernote.com" target="_blank">Evernote</a></div>
+    <div class="card"><a href="https://www.canva.com" target="_blank">Canva</a></div>
+    <div class="card"><a href="https://www.notion.so" target="_blank">Notion</a></div>
+    <div class="card"><a href="https://dict.cn" target="_blank">Dict.cn</a></div>
+    <div class="card"><a href="https://www.iciba.com" target="_blank">Iciba</a></div>
+    <div class="card"><a href="https://www.youdao.com" target="_blank">Youdao</a></div>
+    <div class="card"><a href="https://www.dictionary.com" target="_blank">Dictionary.com</a></div>
+    <div class="card"><a href="https://myhealthbank.nhi.gov.tw" target="_blank">MyHealthBank</a></div>
+    <div class="card"><a href="https://www.nhi.gov.tw" target="_blank">NHI App</a></div>
+  </div>
+  <button class="scroll-btn right">→</button>
+</div>
+
+<h2>🌐 社群入口</h2>
+<div class="cards-wrapper">
+  <button class="scroll-btn left">←</button>
+  <div class="cards" id="social">
+    <div class="card"><a href="https://www.facebook.com" target="_blank">Facebook</a></div>
+    <div class="card"><a href="https://www.instagram.com" target="_blank">Instagram</a></div>
+    <div class="card"><a href="https://twitter.com" target="_blank">Twitter / X</a></div>
+    <div class="card"><a href="https://line.me" target="_blank">LINE</a></div>
+    <div class="card"><a href="https://discord.com" target="_blank">Discord</a></div>
+    <div class="card"><a href="https://www.linkedin.com" target="_blank">LinkedIn</a></div>
+    <div class="card"><a href="https://www.wechat.com" target="_blank">WeChat</a></div>
+    <div class="card"><a href="https://telegram.org" target="_blank">Telegram</a></div>
+    <div class="card"><a href="https://www.reddit.com" target="_blank">Reddit</a></div>
+    <div class="card"><a href="https://www.dcard.tw" target="_blank">Dcard</a></div>
+    <div class="card"><a href="https://pttweb.tw" target="_blank">PTTweb</a></div>
+    <div class="card"><a href="https://www.xiaohongshu.com" target="_blank">小紅書</a></div>
+    <div class="card"><a href="https://www.pinterest.com" target="_blank">Pinterest</a></div>
+    <div class="card"><a href="https://www.snapchat.com" target="_blank">Snapchat</a></div>
+    <div class="card"><a href="https://www.tumblr.com" target="_blank">Tumblr</a></div>
+    <div class="card"><a href="https://www.quora.com" target="_blank">Quora 問答</a></div>
+    <div class="card"><a href="https://medium.com" target="_blank">Medium</a></div>
+    <div class="card"><a href="https://www.deviantart.com" target="_blank">DeviantArt</a></div>
+    <div class="card"><a href="https://www.flickr.com" target="_blank">Flickr</a></div>
+    <div class="card"><a href="https://www.twitch.tv" target="_blank">Twitch</a></div>
+    <div class="card"><a href="https://www.youtube.com/community" target="_blank">YouTube Community</a></div>
+    <!-- 新興社群 -->
+    <div class="card"><a href="https://www.threads.net" target="_blank">Threads</a></div>
+    <div class="card"><a href="https://mastodon.social" target="_blank">Mastodon</a></div>
+    <div class="card"><a href="https://bsky.app" target="_blank">Bluesky</a></div>
+    <div class="card"><a href="https://clubhouse.com" target="_blank">Clubhouse</a></div>
+    <!-- 全球化補充 -->
+    <div class="card"><a href="https://bereal.com" target="_blank">BeReal</a></div>
+    <div class="card"><a href="https://www.kakaocorp.com/service/KakaoTalk" target="_blank">KakaoTalk</a></div>
+    <div class="card"><a href="https://story.kakao.com" target="_blank">KakaoStory</a></div>
+    <div class="card"><a href="https://vk.com" target="_blank">VK</a></div>
+    <div class="card"><a href="https://mixi.jp" target="_blank">Mixi</a></div>
+    <div class="card"><a href="https://nextdoor.com" target="_blank">Nextdoor</a></div>
+  </div>
+  <button class="scroll-btn right">→</button>
+</div>
+
+<h2>🛒 購物 / 旅遊</h2>
+<div class="cards-wrapper">
+  <button class="scroll-btn left">←</button>
+  <div class="cards" id="shopping">
+    <div class="card"><a href="https://www.ruten.com.tw" target="_blank">Ruten</a></div>
+    <div class="card"><a href="https://24h.pchome.com.tw" target="_blank">Pchome 24h</a></div>
+    <div class="card"><a href="https://shopee.tw" target="_blank">Shopee</a></div>
+    <div class="card"><a href="https://www.amazon.com" target="_blank">Amazon</a></div>
+    <div class="card"><a href="https://s.taobao.com" target="_blank">Taobao</a></div>
+    <div class="card"><a href="https://search.jd.com" target="_blank">JD.com</a></div>
+    <div class="card"><a href="https://www.etsy.com" target="_blank">Etsy</a></div>
+    <div class="card"><a href="https://www.booking.com" target="_blank">Booking</a></div>
+    <div class="card"><a href="https://www.agoda.com" target="_blank">Agoda</a></div>
+    <div class="card"><a href="https://www.airbnb.com" target="_blank">Airbnb</a></div>
+    <div class="card"><a href="https://www.trip.com" target="_blank">Trip.com</a></div>
+    <div class="card"><a href="https://www.hotels.com" target="_blank">Hotels.com</a></div>
+    <div class="card"><a href="https://www.expedia.com" target="_blank">Expedia</a></div>
+    <div class="card"><a href="https://www.asiayo.com" target="_blank">AsiaYo</a></div>
+    <div class="card"><a href="https://www.kkday.com" target="_blank">KKday</a></div>
+    <div class="card"><a href="https://www.klook.com" target="_blank">Klook</a></div>
+    <div class="card"><a href="https://www.funnow.com" target="_blank">FunNow</a></div>
+    <div class="card"><a href="https://taiwanstay.net.tw" target="_blank">TaiwanStay</a></div>
+    <div class="card"><a href="https://www.funtime.com.tw" target="_blank">FunTime</a></div>
+    <div class="card"><a href="https://www.eztravel.com.tw" target="_blank">EzTravel</a></div>
+    <div class="card"><a href="https://www.liontravel.com" target="_blank">Lion Travel</a></div>
+  </div>
+  <button class="scroll-btn right">→</button>
+</div>
+
+
+  <!-- JS 控制 -->
+  <script>
+  document.querySelectorAll('.cards-wrapper').forEach(wrapper => {
+    const cards = wrapper.querySelector('.cards');
+    const leftBtn = wrapper.querySelector('.scroll-btn.left');
+    const rightBtn = wrapper.querySelector('.scroll-btn.right');
+
+    leftBtn.addEventListener('click', () => {
+      cards.scrollBy({ left: -300, behavior: 'smooth' });
+    });
+    rightBtn.addEventListener('click', () => {
+      cards.scrollBy({ left: 300, behavior: 'smooth' });
+    });
+  });
+  </script>
+</body>
+</html>

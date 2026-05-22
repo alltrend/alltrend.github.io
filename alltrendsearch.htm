@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>🔎全方位網路智慧搜尋🔎</title>
+<style>
+    body { font-family: Arial, sans-serif; background:#0D47A1; color:#eee; text-align:center; }
+    input { width: 14%; padding:10px; font-size:16px; margin-top:10px; }
+    select { width: 10%; padding:10px; font-size:16px; margin-top:10px; }
+    button { padding:10px 20px; margin-top:10px; font-size:16px; }
+    #result { margin-top:20px; font-size:18px; color:#0ff; }
+    h1 {
+      font-size: 45px;        /* 放大字體 */
+      font-weight: bold;      /* 粗體 */
+      color: skyblue;         /* 天空藍 (也可用 #87CEEB) */
+      text-align: center;     /* 置中顯示 */
+      text-shadow: 4px 4px 7px #1e90ff; /* 加上陰影 (深藍) */
+    }
+    
+    
+  #particles {
+  position: fixed;   /* 固定在背景 */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;       /* 放到最底層 */
+}
+
+
+html, body, header, .title {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+
+/* Reset */
+html,body {
+height:100%;
+  overflow-x: hidden;   /* 禁止橫向滾動 */
+  overflow-y: auto;     /* ✅ 允許垂直滾動 */
+}
+
+
+/* 📱 小型手機（小於 480px） */
+@media (max-width: 479px) {
+  .toolbar {
+    flex-direction: column;
+    gap: 6px;
+  }
+  .toolbar select,
+  .toolbar input,
+  .toolbar button {
+    width: 100%;
+  }
+  table {
+    font-size: 13px;
+  }
+  #container {
+    grid-template-columns: 1fr;
+  }
+  #sidebar {
+    position: absolute;
+    top: 42px;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: #fff;
+    z-index: 1000;
+    border-right: none;
+    border-top: 1px solid #ddd;
+  }
+  #map {
+    height: calc(100vh - 42px);
+  }
+  header > * {
+    flex: 1 1 100%;
+  }
+}
+/* 📱 中型手機（480px 到 767px） */
+@media (min-width: 480px) and (max-width: 767px) {
+  .toolbar {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .toolbar select,
+  .toolbar input,
+  .toolbar button {
+    width: 100%;
+  }
+  table {
+    font-size: 14px;
+  }
+  #container {
+    grid-template-columns: 1fr;
+  }
+  #sidebar {
+    position: absolute;
+    top: 42px;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: #fff;
+    z-index: 1000;
+    border-right: none;
+    border-top: 1px solid #ddd;
+  }
+  #map {
+    height: calc(100vh - 42px);
+  }
+  header > * {
+    flex: 1 1 100%;
+  }
+}
+/* 📱 大型手機／小平板（768px 到 1023px） */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .toolbar {
+    flex-direction: row;
+    gap: 12px;
+  }
+  .toolbar select,
+  .toolbar input,
+  .toolbar button {
+    width: auto;
+  }
+  table {
+    font-size: 15px;
+  }
+  #container {
+    grid-template-columns: 1fr;
+  }
+  #sidebar {
+    position: absolute;
+    top: 42px;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: #fff;
+    z-index: 1000;
+    border-right: none;
+    border-top: 1px solid #ddd;
+  }
+  #map {
+    height: calc(100vh - 42px);
+  }
+  header > * {
+    flex: 1 1 100%;
+  }
+}
+</style>
+</head>
+<body>
+<canvas id="particles"></canvas>
+  <h1>🔎全方位網路智慧搜尋🔎</h1>
+  <input type="text" id="input" placeholder="輸入你的需求...">
+  
+  <!-- 手動選單 -->
+<select id="engineSelect">
+<option value="">🤖 自動判斷</option>
+<option value="google">🔎 Google</option>
+<option value="bing">🟦 Bing</option>
+<option value="yahoo">🟪 Yahoo</option>
+<option value="baidu">🐼 Baidu</option>
+<option value="duckduckgo">🦆 DuckDuckGo</option>
+<option value="brave">🦁 Brave</option>
+<option value="sogou">🐶 Sogou</option>
+<option value="naver">🅽 Naver</option>
+<option value="ecosia">🌱 Ecosia</option>
+<option value="yandex">🔴 Yandex</option>
+<option value="startpage">🔐 Startpage</option>
+<option value="youtube">▶️ YouTube</option>
+<option value="shopee">🛒 Shopee</option>
+<option value="ubereats">🍔 UberEats</option>
+<option value="booking">🏨 Booking</option>
+<option value="stackoverflow">💻 StackOverflow</option>
+<option value="wikipedia">📖 Wikipedia</option>
+<option value="yahoodic">📘 Yahoo字典</option>
+<option value="ruten">🛍️ Ruten</option>
+<option value="pixnet">📰 Pixnet</option>
+<option value="reddit">👽 Reddit</option>
+<option value="tieba">💬 Baidu Tieba</option>
+<option value="pchome">🛒 PChome</option>
+<option value="amazon">📦 Amazon</option>
+<option value="douban">🎬 Douban</option>
+<option value="zhihu">❓ Zhihu</option>
+<option value="books">📚 Books.com.tw</option>
+<option value="dictcn">📕 Dict.cn</option>
+<option value="iciba">📗 iCIBA</option>
+<option value="youdao">📙 Youdao</option>
+<option value="translate">🌐 Google Translate</option>
+<option value="define">📖 Dictionary.com</option>
+<option value="weather">☁️ Weather</option>
+<option value="time">⏰ Time</option>
+<option value="stock">💹 Stock</option>
+<option value="taiwanstay">🏡 TaiwanStay</option>
+<option value="funtime">🎉 FunTime</option>
+<option value="eztravel">✈️ ezTravel</option>
+<option value="liontravel">🦁 LionTravel</option>
+<option value="dominos">🍕 Domino’s</option>
+<option value="foodpanda">🐼 Foodpanda</option>
+<option value="myhealth">🏥 MyHealthBank</option>
+<option value="nhiapp">🏥 NHI App</option>
+<option value="thsr">🚄 高鐵</option>
+<option value="tra">🚆 台鐵</option>
+<option value="bus">🚌 公車</option>
+<option value="ebill">💳 eBill</option>
+<option value="etax">🧾 eTax</option>
+<option value="douyin">🎵 Douyin</option>
+<option value="bilibili">🎥 Bilibili</option>
+<option value="youku">📺 Youku</option>
+<option value="wetv">📺 WeTV</option>
+<option value="tudou">🎬 Tudou</option>
+<option value="iqiyi">🎬 iQIYI</option>
+<option value="netflix">🎬 Netflix</option>
+<option value="spotify">🎵 Spotify</option>
+<option value="instagram">📸 Instagram</option>
+<option value="facebook">📘 Facebook</option>
+<option value="twitter">🐦 Twitter</option>
+<option value="threads">🧵 Threads</option>
+<option value="medium">✍️ Medium</option>
+<option value="github">🐙 GitHub</option>
+<option value="imdb">🎬 IMDb</option>
+<option value="tripadvisor">🌍 TripAdvisor</option>
+<option value="googlemaps">🗺️ Google Maps</option>
+<option value="etsy">🎁 Etsy</option>
+<option value="taobao">🛍️ Taobao</option>
+<option value="jd">🛒 JD.com</option>
+<option value="tiktok">🎵 TikTok</option>
+<option value="linetoday">📱 LINE Today</option>
+<option value="dcard">💬 Dcard</option>
+<option value="pttweb">💬 PTT Web</option>
+<option value="kkbox">🎵 KKBOX</option>
+<option value="flickr">📷 Flickr</option>
+<option value="deviantart">🎨 DeviantArt</option>
+<option value="findbook">📚 FindBook</option>
+<option value="mobile01">💻 Mobile01</option>
+<option value="soundcloud">🎵 SoundCloud</option>
+<option value="twitch">🎮 Twitch</option>
+<option value="agoda">🏨 Agoda</option>
+<option value="airbnb">🏡 Airbnb</option>
+<option value="trip">✈️ Trip.com</option>
+<option value="hotels">🏨 Hotels.com</option>
+<option value="expedia">✈️ Expedia</option>
+<option value="asiayo">🏡 AsiaYo</option>
+<option value="kkday">🎉 KKday</option>
+<option value="klook">🎉 Klook</option>
+<option value="funnow">🎉 FunNow</option>
+</select>
+  
+<button onclick="smartSearch()">搜尋</button>
+<div id="result"></div>
+
+<script>
+function smartSearch(){
+  const text = document.getElementById("input").value.trim();
+  const manualChoice = document.getElementById("engineSelect").value;
+  if(!text) return;
+  const query = encodeURIComponent(text);
+
+  const engines = {
+  google: "https://www.google.com/search?q=",
+  bing: "https://www.bing.com/search?q=",
+  yahoo: "https://search.yahoo.com/search?p=",
+  baidu: "https://www.baidu.com/s?wd=",
+  youtube: "https://www.youtube.com/results?search_query=",
+  shopee: "https://shopee.tw/search?keyword=",
+  ubereats: "https://www.ubereats.com/tw/search?q=",
+  booking: "https://www.booking.com/searchresults.html?ss=",
+  stackoverflow: "https://stackoverflow.com/search?q=",
+  wikipedia: "https://zh.wikipedia.org/wiki/",
+  duckduckgo: "https://duckduckgo.com/?q=",
+  brave: "https://search.brave.com/search?q=",
+  startpage: "https://www.startpage.com/do/search?q=",
+  sogou: "https://www.sogou.com/web?query=",
+  naver: "https://search.naver.com/search.naver?query=",
+  ecosia: "https://www.ecosia.org/search?q=",
+  yandex: "https://yandex.com/search/?text=",
+  yahoodic: "https://tw.dictionary.search.yahoo.com/search?p=",
+  ruten: "https://www.ruten.com.tw/find/?q=",
+  pixnet: "https://www.pixnet.net/searcharticle?q=",
+  reddit: "https://www.reddit.com/search/?q=",
+  tieba: "https://tieba.baidu.com/f?kw=",
+  pchome: "https://shopping.pchome.com.tw/?q=",
+  shopee: "https://shopee.tw/search?keyword=",
+  amazon: "https://www.amazon.com/s?k=",
+  douban: "https://www.douban.com/search?q=",
+  zhihu: "https://www.zhihu.com/search?q=",
+  wikipedia: "https://zh.wikipedia.org/wiki/",
+  books: "https://search.books.com.tw/search/query/key/",
+  dictcn: "https://dict.cn/",
+  iciba: "https://www.iciba.com/word?w=",
+  youdao: "https://www.youdao.com/result?word=",
+  translate: "https://translate.google.com/?sl=auto&tl=zh-TW&text=",
+  define: "https://www.dictionary.com/browse/",
+  weather: "https://www.google.com/search?q=weather+",
+  time: "https://www.google.com/search?q=time+",
+  stock: "https://www.google.com/search?q=",
+  booking: "https://www.booking.com/searchresults.html?ss=",
+  taiwanstay: "https://taiwanstay.net.tw/search?query=",
+  funtime: "https://www.funtime.com.tw/search/?q=",
+  eztravel: "https://www.eztravel.com.tw/search?q=",
+  liontravel: "https://www.liontravel.com/search?q=",
+  ubereats: "https://www.ubereats.com/tw/search?q=",
+  dominos: "https://order.dominos.com.tw/search?q=",
+  foodpanda: "https://www.foodpanda.com.tw/search?q=",
+  myhealth: "https://myhealthbank.nhi.gov.tw/IHKE3000/IHKE3115S03",
+  nhiapp: "https://www.nhi.gov.tw/ch/cp-3166-56af4-2457-1.html",
+  thsr: "https://www.thsrc.com.tw/",
+  tra: "https://www.railway.gov.tw/tra-tip-web/tip",
+  bus: "https://www.taiwanbus.tw/eBUSPage/Query/Query.aspx",
+  ebill: "https://ebill.ba.org.tw/CPP/Desktopdefault.aspx",
+  etax: "https://www.etax.nat.gov.tw/etwmain/",
+  douyin: "https://www.douyin.com/search/",
+  bilibili: "https://search.bilibili.com/all?keyword=",
+  youku: "https://so.youku.com/search_video/q_",
+  wetv: "https://wetv.vip/search?q=",
+  tudou: "https://www.tudou.com/search/?q=",
+  iqiyi: "https://www.iq.com/search?key=",
+  netflix: "https://www.netflix.com/search?q=",
+  spotify: "https://open.spotify.com/search/",
+  instagram: "https://www.instagram.com/explore/tags/",
+  facebook: "https://www.facebook.com/search/top?q=",
+  twitter: "https://twitter.com/search?q=",
+  threads: "https://www.threads.net/search?q=",
+  medium: "https://medium.com/search?q=",
+  stackoverflow: "https://stackoverflow.com/search?q=",
+  github: "https://github.com/search?q=",
+  imdb: "https://www.imdb.com/find?q=",
+  tripadvisor: "https://www.tripadvisor.com/Search?q=",
+  googlemaps: "https://www.google.com/maps/search/",
+  etsy: "https://www.etsy.com/search?q=",
+  taobao: "https://s.taobao.com/search?q=",
+  jd: "https://search.jd.com/Search?keyword=",
+  tiktok: "https://www.tiktok.com/search?q=",
+  linetoday: "https://today.line.me/tw/search?q=",
+  dcard: "https://www.dcard.tw/search?q=",
+  pttweb: "https://pttweb.tw/search?q=",
+  kkbox: "https://www.kkbox.com/tw/tc/search.php?word=",
+  flickr: "https://www.flickr.com/search/?text=",
+  deviantart: "https://www.deviantart.com/search?q=",
+  findbook: "https://findbook.tw/search?q=",
+  mobile01: "https://www.mobile01.com/topicsearch.php?query=",
+  ecosia: "https://www.ecosia.org/search?q=",
+  soundcloud: "https://soundcloud.com/search?q=",
+  twitch: "https://www.twitch.tv/search?term=",
+  agoda: "https://www.agoda.com/zh-tw/search?city=",
+  airbnb: "https://www.airbnb.com/s/",
+  trip: "https://www.trip.com/hotels/search?keyword=",
+  hotels: "https://www.hotels.com/search.do?q=",
+  expedia: "https://www.expedia.com/Hotel-Search?destination=",
+  asiayo: "https://www.asiayo.com/zh-tw/search/?q=",
+  kkday: "https://www.kkday.com/zh-tw/product/search?keyword=",
+  klook: "https://www.klook.com/zh-TW/search/?q=",
+  funnow: "https://www.funnow.com/zh-TW/search?keyword="
+  };
+
+  let chosen = "google"; // 預設 Google
+
+  if(manualChoice){ 
+    // 手動選擇優先
+    chosen = manualChoice;
+  } else {
+    // 自動判斷
+    if(/中國|大陸|北京|上海/.test(text)) chosen = "baidu";
+    else if(/影片|教學|MV|vlog/.test(text)) chosen = "youtube";
+    else if(/飯店|旅遊|住宿|機票/.test(text)) chosen = "booking";
+    else if(/程式|代碼|bug|技術/.test(text)) chosen = "stackoverflow";
+    else if(/是什麼|定義|知識|百科/.test(text)) chosen = "wikipedia";
+    else if(/外送|吃|餐廳|美食/.test(text)) chosen = "ubereats";
+    else if(/買|商品|價格|便宜/.test(text)) chosen = "shopee";
+    else if(/新聞|時事/.test(text)) chosen = "yahoo";
+    else if(/圖片|AI|技術/.test(text)) chosen = "bing";
+
+    // 機率探索：20% 機率隨機挑其它引擎
+    if(Math.random() < 0.2){
+      const extras = ["duckduckgo","brave","startpage","sogou","naver","ecosia","yandex"];
+      chosen = extras[Math.floor(Math.random()*extras.length)];
+    }
+  }
+
+  const url = engines[chosen] + query;
+  window.open(url, "_blank");
+
+  document.getElementById("result").innerHTML =
+    `🤖 使用【${chosen}】，搜尋『${text}』`;
+    // 搜完後清空並自動聚焦
+  document.getElementById("input").value = "";
+  document.getElementById("input").focus();
+}
+
+
+document.getElementById("input").addEventListener("keypress", function(event) {
+  if (event.key === "Enter") {
+    smartSearch(); 
+    document.getElementById("input").value = ""; // 搜完後清空輸入框
+  }
+});
+
+
+// 粒子背景效果
+const canvas = document.getElementById("particles");
+const ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let particles = [];
+
+function createParticles(){
+  particles = []; // 清空舊的粒子
+  for(let i=0; i<90; i++){
+    particles.push({
+      x: Math.random()*canvas.width,
+      y: Math.random()*canvas.height,
+      size: Math.random()*23+13,
+      color: `hsla(${Math.random()*360}, 70%, 60%, ${0.2 + Math.random()*0.3})`,
+      speedX: (Math.random()-0.5)*0.5,
+      speedY: (Math.random()-0.5)*0.5
+    });
+  }
+}
+
+function drawParticles(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particles.forEach(p=>{
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
+    ctx.fillStyle = p.color;
+    ctx.shadowBlur = 40;
+    ctx.shadowColor = p.color;
+    ctx.fill();
+
+    p.x += p.speedX;
+    p.y += p.speedY;
+
+    if(p.x < 0 || p.x > canvas.width) p.speedX *= -1;
+    if(p.y < 0 || p.y > canvas.height) p.speedY *= -1;
+  });
+}
+
+function animate(){
+  drawParticles();
+  requestAnimationFrame(animate);
+}
+
+createParticles();
+animate();
+
+// ⭐ 視窗改變 → 重設畫布 + 粒子重分佈
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  createParticles(); // 重新分佈粒子
+}
+
+window.addEventListener("resize", resizeCanvas);
+</script>
+</body>
+</html>

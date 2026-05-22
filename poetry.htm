@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>🌟 全方位網路星語詩集 📖</title>
+  <style>
+    body {
+      font-family: "Noto Sans TC", sans-serif;
+      background: #0D47A1; /* 半透明深藍背景，讓粒子透出 */
+      color: #fdfcf7;
+      padding: 20px;
+      min-height: 100vh;
+      overflow: auto;
+      position: relative;
+    }
+    h1 {
+      text-align:center;
+      margin-bottom:20px;
+      font-size: 2.5em;
+      background: linear-gradient(to right, #81d4fa, #0288d1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .poem {
+      border:1px solid #90caf9;
+      background: rgba(255,255,255,0.1);
+      padding:15px;
+      margin:10px auto;
+      border-radius:10px;
+      width:70%;
+      position: relative;
+    }
+    .poem button {
+      display: none;
+      margin:5px;
+      padding:5px 10px;
+      border:none;
+      border-radius:6px;
+      background:#64b5f6;
+      color:#fff;
+      cursor:pointer;
+      transition:0.3s;
+    }
+    .poem:hover button { display:inline-block; }
+    button:hover { background:#42a5f5; }
+    .input-area { text-align:center; margin:20px 0; }
+    input, textarea {
+      width:60%;
+      margin:10px auto;
+      display:block;
+      padding:10px;
+      border-radius:6px;
+      border:1px solid #90caf9;
+      background: rgba(255,255,255,0.2);
+      color:#fff;
+    }
+    input::placeholder, textarea::placeholder { color:#e3f2fd; }
+    .pagination { text-align:center; margin:15px 0; }
+    canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;   /* 改成 -1，確保在背景層 */
+  display: block;
+}
+
+
+html, body, header, .title {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+
+/* Reset */
+html,body {
+height:100%;
+  overflow-x: hidden;   /* 禁止橫向滾動 */
+  overflow-y: auto;     /* ✅ 允許垂直滾動 */
+}
+
+
+/* 📱 小型手機（小於 480px） */
+@media (max-width: 479px) {
+  .toolbar {
+    flex-direction: column;
+    gap: 6px;
+  }
+  .toolbar select,
+  .toolbar input,
+  .toolbar button {
+    width: 100%;
+  }
+  table {
+    font-size: 13px;
+  }
+  #container {
+    grid-template-columns: 1fr;
+  }
+  #sidebar {
+    position: absolute;
+    top: 42px;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: #fff;
+    z-index: 1000;
+    border-right: none;
+    border-top: 1px solid #ddd;
+  }
+  #map {
+    height: calc(100vh - 42px);
+  }
+  header > * {
+    flex: 1 1 100%;
+  }
+}
+/* 📱 中型手機（480px 到 767px） */
+@media (min-width: 480px) and (max-width: 767px) {
+  .toolbar {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .toolbar select,
+  .toolbar input,
+  .toolbar button {
+    width: 100%;
+  }
+  table {
+    font-size: 14px;
+  }
+  #container {
+    grid-template-columns: 1fr;
+  }
+  #sidebar {
+    position: absolute;
+    top: 42px;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: #fff;
+    z-index: 1000;
+    border-right: none;
+    border-top: 1px solid #ddd;
+  }
+  #map {
+    height: calc(100vh - 42px);
+  }
+  header > * {
+    flex: 1 1 100%;
+  }
+}
+/* 📱 大型手機／小平板（768px 到 1023px） */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .toolbar {
+    flex-direction: row;
+    gap: 12px;
+  }
+  .toolbar select,
+  .toolbar input,
+  .toolbar button {
+    width: auto;
+  }
+  table {
+    font-size: 15px;
+  }
+  #container {
+    grid-template-columns: 1fr;
+  }
+  #sidebar {
+    position: absolute;
+    top: 42px;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: #fff;
+    z-index: 1000;
+    border-right: none;
+    border-top: 1px solid #ddd;
+  }
+  #map {
+    height: calc(100vh - 42px);
+  }
+  header > * {
+    flex: 1 1 100%;
+  }
+}
+</style>
+</head>
+<body>
+  <canvas id="particles"></canvas>
+  <h1>🌟 全方位網路星語詩集 📖</h1>
+  <div class="input-area">
+    <input id="title" placeholder="詩標題">
+    <textarea id="content" placeholder="詩內容"></textarea>
+    <button onclick="addPoem()">新增詩</button>
+    <button onclick="clearAll()">清除全部</button>
+    <button onclick="randomPoem()">🎲 遇見一首詩</button>
+    <button onclick="window.open('alltrendsearch.htm', '_blank')">搜詩的靈感</button>
+  </div>
+
+  <!-- 遇見詩顯示框移到詩集上方 -->
+  <div id="randomResult" style="text-align:center; margin:20px 0;"></div>
+
+  <h2 style="text-align:center;">詩集內容：</h2>
+
+  <div class="pagination">
+    <button onclick="prevPage()">上一頁</button>
+    <span id="pageInfoTop"></span>
+    <button onclick="nextPage()">下一頁</button>
+  </div>
+
+  <div id="poemList"></div>
+
+  <div class="pagination">
+    <button onclick="prevPage()">上一頁</button>
+    <span id="pageInfoBottom"></span>
+    <button onclick="nextPage()">下一頁</button>
+  </div>
+<script>
+const defaultPoems = [
+{title:"晨光提示", content:"早晨不是開始，而是另一種延續。"},
+{title:"夜晚型當下", content:"黑暗裡的靜，才顯出光的重量。"},
+{title:"雨滴層", content:"每一滴雨都是時間的碎片。"},
+{title:"風聲層", content:"風不是移動，而是提醒。"},
+{title:"孤獨型當下", content:"孤獨不是缺少人，而是多了自己。"},
+{title:"笑聲層", content:"笑聲是空氣裡的火花。"},
+{title:"沉默型當下", content:"沉默不是空白，而是另一種語言。"},
+{title:"漂流層", content:"漂流不是迷失，而是暫時的自由。"},
+{title:"星空提示", content:"星星不是遠方，而是時間的倒影。"},
+{title:"影子層", content:"影子是光的另一種記錄。"},
+{title:"回聲型當下", content:"回聲不是重複，而是延伸。"},
+{title:"旅途層", content:"旅途不是移動，而是心的展開。"},
+{title:"等待型當下", content:"等待不是停滯，而是另一種流動。"},
+{title:"流浪層", content:"流浪不是沒有家，而是世界太大。"},
+{title:"夢境提示", content:"夢不是虛幻，而是另一種真實。"},
+{title:"時間層", content:"時間不是直線，而是多重折疊。"},
+{title:"呼吸型當下", content:"呼吸不是生存，而是存在的節奏。"},
+{title:"光影層", content:"光影是時間的語法。"},
+{title:"漂泊型當下", content:"漂泊不是失去，而是另一種獲得。"},
+{title:"安靜層", content:"安靜不是缺少聲音，而是聲音的完成。"},
+{title:"瞬間提示", content:"瞬間不是短暫，而是永恆的入口。"},
+{title:"步伐層", content:"步伐不是移動，而是心的節拍。"},
+{title:"微笑型當下", content:"微笑不是表情，而是靈魂的呼吸。"},
+{title:"空間層", content:"空間不是距離，而是可能性。"},
+{title:"記憶提示", content:"記憶不是過去，而是另一種現在。"},
+{title:"流星層", content:"流星不是消失，而是時間的閃光。"},
+{title:"孤單型當下", content:"孤單不是缺少陪伴，而是多了思考。"},
+{title:"靜夜層", content:"夜晚不是黑，而是另一種光。"},
+{title:"心跳提示", content:"心跳不是聲音，而是生命的節奏。"},
+{title:"漂浮層", content:"漂浮不是失重，而是自由的形狀。"},
+{title:"遺忘型當下", content:"遺忘不是消失，而是另一種保存。"},
+{title:"旅人層", content:"旅人不是路上的人，而是時間的行者。"},
+{title:"呼喊提示", content:"呼喊不是聲音，而是存在的證明。"},
+{title:"流動層", content:"流動不是移動，而是時間的呼吸。"},
+{title:"孤影型當下", content:"孤影不是孤單，而是光的陪伴。"},
+{title:"晨曦層", content:"晨曦不是開始，而是夜的延續。"},
+{title:"夢想提示", content:"夢想不是未來，而是現在的力量。"},
+{title:"漂泊層", content:"漂泊不是失落，而是另一種探索。"},
+{title:"靜默型當下", content:"靜默不是空白，而是心的語言。"},
+{title:"星辰層", content:"星辰不是遠方，而是心的倒影。"},
+{title:"呼吸提示", content:"呼吸不是生存，而是存在的節奏。"},
+{title:"流浪層", content:"流浪不是沒有方向，而是世界太大。"},
+{title:"孤寂型當下", content:"孤寂不是缺少人，而是多了自己。"},
+{title:"光層", content:"光不是照亮，而是提醒。"},
+{title:"影層", content:"影不是黑暗，而是光的另一面。"},
+{title:"時間提示", content:"時間不是直線，而是三種光同時在流動。"},
+{title:"吃飯型當下", content:"世界縮小成味道，重要的只有好不好吃。"},
+{title:"發呆型當下", content:"停下來的地方，才開始有空間。"},
+{title:"亂笑型當下", content:"笑不是目的，是溢出。"},
+{title:"延遲型當下", content:"延遲不是拖延，是暫停呼吸。"},
+{title:"晨起型當下", content:"清晨不是開始，而是夜的餘韻。"},
+{title:"夜深提示", content:"夜深不是黑暗，而是心的鏡子。"},
+{title:"雨聲層", content:"雨聲是天空的低語。"},
+{title:"風型當下", content:"風不是移動，而是提醒存在。"},
+{title:"孤單層", content:"孤單不是缺少人，而是多了自己。"},
+{title:"笑型提示", content:"笑不是目的，而是心的溢出。"},
+{title:"沉默層", content:"沉默是另一種語言。"},
+{title:"漂泊型當下", content:"漂泊不是失落，而是探索。"},
+{title:"星光層", content:"星光是時間的碎片。"},
+{title:"影子提示", content:"影子是光的另一種記錄。"},
+{title:"回聲層", content:"回聲不是重複，而是延伸。"},
+{title:"旅途型當下", content:"旅途不是移動，而是心的展開。"},
+{title:"等待層", content:"等待不是停滯，而是另一種流動。"},
+{title:"流浪型提示", content:"流浪不是沒有家，而是世界太大。"},
+{title:"夢境層", content:"夢境不是虛幻，而是另一種真實。"},
+{title:"時間型當下", content:"時間不是直線，而是折疊。"},
+{title:"呼吸層", content:"呼吸是存在的節奏。"},
+{title:"光影型提示", content:"光影是時間的語法。"},
+{title:"漂浮層", content:"漂浮不是失重，而是自由。"},
+{title:"安靜型當下", content:"安靜不是缺少聲音，而是聲音的完成。"},
+{title:"瞬間層", content:"瞬間不是短暫，而是永恆的入口。"},
+{title:"步伐型提示", content:"步伐是心的節拍。"},
+{title:"微笑層", content:"微笑是靈魂的呼吸。"},
+{title:"空間型當下", content:"空間不是距離，而是可能性。"},
+{title:"記憶層", content:"記憶不是過去，而是另一種現在。"},
+{title:"流星型提示", content:"流星是時間的閃光。"},
+{title:"孤影層", content:"孤影是光的陪伴。"},
+{title:"靜夜型當下", content:"夜晚不是黑，而是另一種光。"},
+{title:"心跳層", content:"心跳是生命的節奏。"},
+{title:"漂泊型提示", content:"漂泊不是失落，而是探索。"},
+{title:"遺忘層", content:"遺忘不是消失，而是保存。"},
+{title:"旅人型當下", content:"旅人是時間的行者。"},
+{title:"呼喊層", content:"呼喊是存在的證明。"},
+{title:"流動型提示", content:"流動是時間的呼吸。"},
+{title:"孤寂層", content:"孤寂不是缺少人，而是多了自己。"},
+{title:"晨曦型當下", content:"晨曦是夜的延續。"},
+{title:"夢想層", content:"夢想是現在的力量。"},
+{title:"靜默型提示", content:"靜默是心的語言。"},
+{title:"星辰層", content:"星辰是心的倒影。"},
+{title:"呼吸型提示", content:"呼吸是存在的節奏。"},
+{title:"流浪層", content:"流浪不是沒有方向，而是世界太大。"},
+{title:"孤獨型提示", content:"孤獨不是缺少人，而是多了自己。"},
+{title:"光層", content:"光是提醒。"},
+{title:"影層", content:"影是光的另一面。"},
+{title:"入口層", content:"不是你在讀詩，是詩在讀你。"},
+{title:"出口層", content:"詩在讀誰，是詩在讀你嗎。"},
+{title:"靜止層", content:"空白不是空，而是另一種存在。"},
+{title:"城市型提示", content:"城市沒有改變，改變的是你走的速度。"},
+{title:"速度型當下", content:"方向比風景更快出現。"},
+{title:"延遲層", content:"延遲不是拖延，而是暫停呼吸。"},
+{title:"晨霧層", content:"霧不是遮掩，而是世界的呼吸。"},
+{title:"夜空型當下", content:"夜空不是黑，而是星的舞台。"},
+{title:"雨後提示", content:"雨後不是結束，而是另一種開始。"},
+{title:"風景層", content:"風景不是外在，而是心的投影。"},
+{title:"孤舟型當下", content:"孤舟不是漂泊，而是自由的象徵。"},
+{title:"笑語層", content:"笑語是心的火花。"},
+{title:"靜水提示", content:"水面不是平靜，而是深度的隱藏。"},
+{title:"漂泊層", content:"漂泊是靈魂的流浪。"},
+{title:"星河型當下", content:"星河不是遠方，而是時間的流動。"},
+{title:"影舞層", content:"影子不是黑暗，而是光的舞蹈。"},
+{title:"回憶提示", content:"回憶不是過去，而是另一種現在。"},
+{title:"旅程層", content:"旅程不是距離，而是心的展開。"},
+{title:"等待層", content:"等待是時間的另一種形狀。"},
+{title:"流雲型當下", content:"雲不是漂泊，而是天空的思考。"},
+{title:"夢語層", content:"夢語是心的另一種語言。"},
+{title:"時間提示卡", content:"時間不是直線，而是多重折疊。"},
+{title:"呼吸型提示", content:"呼吸是存在的節奏。"},
+{title:"光影層", content:"光影是時間的語法。"},
+{title:"漂浮型當下", content:"漂浮是自由的形狀。"},
+{title:"安靜層", content:"安靜是聲音的完成。"},
+{title:"瞬間層", content:"瞬間是永恆的入口。"},
+{title:"步伐提示", content:"步伐是心的節拍。"},
+{title:"微笑層", content:"微笑是靈魂的呼吸。"},
+{title:"空間型提示", content:"空間是可能性的展開。"},
+{title:"記憶層", content:"記憶是另一種現在。"},
+{title:"流星層", content:"流星是時間的閃光。"},
+{title:"孤影型提示", content:"孤影是光的陪伴。"},
+{title:"靜夜層", content:"夜是另一種光。"},
+{title:"心跳型當下", content:"心跳是生命的節奏。"},
+{title:"漂泊層", content:"漂泊是探索的開始。"},
+{title:"遺忘提示", content:"遺忘是保存的另一種方式。"},
+{title:"旅人層", content:"旅人是時間的行者。"},
+{title:"呼喊型當下", content:"呼喊是存在的證明。"},
+{title:"流動層", content:"流動是時間的呼吸。"},
+{title:"孤寂型提示", content:"孤寂是心的另一種聲音。"},
+{title:"晨曦層", content:"晨曦是夜的延續。"},
+{title:"夢想型當下", content:"夢想是現在的力量。"},
+{title:"靜默層", content:"靜默是心的語言。"},
+{title:"星辰型提示", content:"星辰是心的倒影。"},
+{title:"呼吸層", content:"呼吸是存在的節奏。"},
+{title:"流浪型當下", content:"流浪是世界的呼吸。"},
+{title:"孤獨層", content:"孤獨是心的陪伴。"},
+{title:"光型提示", content:"光是提醒。"},
+{title:"影型提示", content:"影是光的另一面。"},
+{title:"入口型當下", content:"不是你在讀詩，是詩在讀你。"},
+{title:"出口型提示", content:"詩在讀誰，是詩在讀你嗎。"},
+{title:"靜止型當下", content:"空白是另一種存在。"},
+{title:"城市層", content:"城市沒有改變，改變的是你走的速度。"},
+{title:"速度層", content:"方向比風景更快出現。"},
+{title:"延遲型提示", content:"延遲是暫停呼吸。"},
+{title:"晨星層", content:"晨星不是光點，而是時間的信號。"},
+{title:"夜語型當下", content:"夜語不是低語，而是心的流動。"},
+{title:"雨幕提示", content:"雨幕不是遮掩，而是世界的呼吸。"},
+{title:"風舞層", content:"風舞不是移動，而是天空的舞蹈。"},
+{title:"孤心型當下", content:"孤心不是孤單，而是心的獨立。"},
+{title:"笑影層", content:"笑影是靈魂的閃光。"},
+{title:"靜夜提示", content:"靜夜不是黑暗，而是另一種光。"},
+{title:"漂泊型提示", content:"漂泊是探索的開始。"},
+{title:"星語層", content:"星語是時間的低語。"},
+{title:"影痕型當下", content:"影痕是光的記錄。"},
+{title:"回憶層", content:"回憶是另一種現在。"},
+{title:"旅途型提示", content:"旅途是心的展開。"},
+{title:"等待型提示", content:"等待是時間的另一種形狀。"},
+{title:"流雲層", content:"流雲是天空的思考。"},
+{title:"夢境型提示", content:"夢境是另一種真實。"},
+{title:"時間層", content:"時間是多重折疊。"},
+{title:"呼吸型當下", content:"呼吸是存在的節奏。"},
+{title:"光影型當下", content:"光影是時間的語法。"},
+{title:"漂浮層", content:"漂浮是自由的形狀。"},
+{title:"安靜型提示", content:"安靜是聲音的完成。"},
+{title:"瞬間型提示", content:"瞬間是永恆的入口。"},
+{title:"步伐層", content:"步伐是心的節拍。"},
+{title:"微笑型提示", content:"微笑是靈魂的呼吸。"},
+{title:"空間層", content:"空間是可能性的展開。"},
+{title:"記憶型提示", content:"記憶是另一種現在。"},
+{title:"流星型提示", content:"流星是時間的閃光。"},
+{title:"孤影層", content:"孤影是光的陪伴。"},
+{title:"靜夜型提示", content:"夜是另一種光。"},
+{title:"心跳層", content:"心跳是生命的節奏。"},
+{title:"漂泊型當下", content:"漂泊是探索的開始。"},
+{title:"遺忘層", content:"遺忘是保存的另一種方式。"},
+{title:"旅人型提示", content:"旅人是時間的行者。"},
+{title:"呼喊層", content:"呼喊是存在的證明。"},
+{title:"流動型提示", content:"流動是時間的呼吸。"},
+{title:"孤寂層", content:"孤寂是心的另一種聲音。"},
+{title:"晨曦型提示", content:"晨曦是夜的延續。"},
+{title:"夢想層", content:"夢想是現在的力量。"},
+{title:"靜默型當下", content:"靜默是心的語言。"},
+{title:"星辰層", content:"星辰是心的倒影。"},
+{title:"呼吸型提示", content:"呼吸是存在的節奏。"},
+{title:"流浪層", content:"流浪是世界的呼吸。"},
+{title:"孤獨型當下", content:"孤獨是心的陪伴。"},
+{title:"光型當下", content:"光是提醒。"},
+{title:"影型當下", content:"影是光的另一面。"},
+{title:"入口層", content:"不是你在讀詩，是詩在讀你。"},
+{title:"出口層", content:"詩在讀誰，是詩在讀你嗎。"},
+{title:"靜止層", content:"空白是另一種存在。"},
+{title:"城市型當下", content:"城市沒有改變，改變的是你走的速度。"},
+{title:"速度型提示", content:"方向比風景更快出現。"},
+{title:"延遲層", content:"延遲是暫停呼吸。"},
+{title:"晨光層", content:"晨光是夜的回聲。"},
+{title:"夜幕型提示", content:"夜幕是心的遮掩。"},
+{title:"雨聲型當下", content:"雨聲是天空的低語。"},
+{title:"風影層", content:"風影是時間的痕跡。"},
+{title:"孤旅型提示", content:"孤旅是心的獨行。"},
+{title:"笑語型當下", content:"笑語是靈魂的火花。"},
+{title:"靜水層", content:"靜水是深度的隱藏。"},
+{title:"漂泊型層", content:"漂泊是自由的流動。"},
+{title:"星光型提示", content:"星光是時間的碎片。"},
+{title:"影舞型提示", content:"影舞是光的舞蹈。"},
+{title:"回憶型當下", content:"回憶是另一種現在。"},
+{title:"旅程型提示", content:"旅程是心的展開。"},
+{title:"等待型當下", content:"等待是時間的另一種形狀。"},
+{title:"流雲型提示", content:"流雲是天空的思考。"},
+{title:"夢語型當下", content:"夢語是心的另一種語言。"},
+{title:"時間型提示", content:"時間是折疊的流動。"},
+{title:"呼吸型層", content:"呼吸是存在的節奏。"},
+{title:"光影型提示", content:"光影是時間的語法。"},
+{title:"漂浮型提示", content:"漂浮是自由的形狀。"},
+{title:"安靜型層", content:"安靜是聲音的完成。"},
+{title:"瞬間型層", content:"瞬間是永恆的入口。"},
+{title:"步伐型當下", content:"步伐是心的節拍。"},
+{title:"微笑型層", content:"微笑是靈魂的呼吸。"},
+{title:"空間型層", content:"空間是可能性的展開。"},
+{title:"記憶型層", content:"記憶是另一種現在。"},
+{title:"流星型層", content:"流星是時間的閃光。"},
+{title:"孤影型層", content:"孤影是光的陪伴。"},
+{title:"靜夜型層", content:"夜是另一種光。"},
+{title:"心跳型提示", content:"心跳是生命的節奏。"},
+{title:"漂泊型提示卡", content:"漂泊是探索的開始。"},
+{title:"遺忘型層", content:"遺忘是保存的另一種方式。"},
+{title:"旅人型層", content:"旅人是時間的行者。"},
+{title:"呼喊型提示", content:"呼喊是存在的證明。"},
+{title:"流動型層", content:"流動是時間的呼吸。"},
+{title:"孤寂型層", content:"孤寂是心的另一種聲音。"},
+{title:"晨曦型層", content:"晨曦是夜的延續。"},
+{title:"夢想型提示", content:"夢想是現在的力量。"},
+{title:"靜默型層", content:"靜默是心的語言。"},
+{title:"星辰型層", content:"星辰是心的倒影。"},
+{title:"呼吸型提示卡", content:"呼吸是存在的節奏。"},
+{title:"流浪型層", content:"流浪是世界的呼吸。"},
+{title:"孤獨型層", content:"孤獨是心的陪伴。"},
+{title:"光型層", content:"光是提醒。"},
+{title:"影型層", content:"影是光的另一面。"},
+{title:"入口型提示", content:"不是你在讀詩，是詩在讀你。"},
+{title:"出口型提示卡", content:"詩在讀誰，是詩在讀你嗎。"},
+{title:"靜止型提示", content:"空白是另一種存在。"},
+{title:"城市型層", content:"城市沒有改變，改變的是你走的速度。"},
+{title:"速度型層", content:"方向比風景更快出現。"},
+{title:"延遲型層", content:"延遲是暫停呼吸。"},
+{title:"晨曦型提示卡", content:"晨曦不是開始，而是夜的餘韻。"},
+{title:"夜光層", content:"夜光是黑暗裡的呼吸。"},
+{title:"雨後型當下", content:"雨後不是結束，而是另一種開始。"},
+{title:"風聲型提示", content:"風聲是天空的低語。"},
+{title:"孤旅層", content:"孤旅是心的獨行。"},
+{title:"笑聲型提示", content:"笑聲是靈魂的火花。"},
+{title:"靜水型提示", content:"靜水是深度的隱藏。"},
+{title:"漂泊型提示", content:"漂泊是自由的流動。"},
+{title:"星河層", content:"星河是時間的流動。"},
+{title:"影子型提示", content:"影子是光的另一種記錄。"},
+{title:"回聲型提示", content:"回聲是心的延伸。"},
+{title:"旅途層", content:"旅途是心的展開。"},
+{title:"等待型提示卡", content:"等待是時間的另一種形狀。"},
+{title:"流雲層", content:"流雲是天空的思考。"},
+{title:"夢境層", content:"夢境是另一種真實。"},
+{title:"時間型提示卡", content:"時間是折疊的流動。"},
+{title:"呼吸型提示卡", content:"呼吸是存在的節奏。"},
+{title:"光影型提示卡", content:"光影是時間的語法。"},
+{title:"漂浮型提示卡", content:"漂浮是自由的形狀。"},
+{title:"安靜型提示卡", content:"安靜是聲音的完成。"},
+{title:"瞬間型提示卡", content:"瞬間是永恆的入口。"},
+{title:"步伐型提示卡", content:"步伐是心的節拍。"},
+{title:"微笑型提示卡", content:"微笑是靈魂的呼吸。"},
+{title:"空間型提示卡", content:"空間是可能性的展開。"},
+{title:"記憶型提示卡", content:"記憶是另一種現在。"},
+{title:"流星型提示卡", content:"流星是時間的閃光。"},
+{title:"孤影型提示卡", content:"孤影是光的陪伴。"},
+{title:"靜夜型提示卡", content:"夜是另一種光。"},
+{title:"心跳型提示卡", content:"心跳是生命的節奏。"},
+{title:"漂泊型提示卡", content:"漂泊是探索的開始。"},
+{title:"遺忘型提示卡", content:"遺忘是保存的另一種方式。"},
+{title:"旅人型提示卡", content:"旅人是時間的行者。"},
+{title:"呼喊型提示卡", content:"呼喊是存在的證明。"},
+{title:"流動型提示卡", content:"流動是時間的呼吸。"},
+{title:"孤寂型提示卡", content:"孤寂是心的另一種聲音。"},
+{title:"晨曦型提示", content:"晨曦是夜的延續。"},
+{title:"夢想型提示卡", content:"夢想是現在的力量。"},
+{title:"靜默型提示卡", content:"靜默是心的語言。"},
+{title:"星辰型提示卡", content:"星辰是心的倒影。"},
+{title:"呼吸型提示", content:"呼吸是存在的節奏。"},
+{title:"流浪型提示卡", content:"流浪是世界的呼吸。"},
+{title:"孤獨型提示卡", content:"孤獨是心的陪伴。"},
+{title:"光型提示卡", content:"光是提醒。"},
+{title:"影型提示卡", content:"影是光的另一面。"},
+{title:"入口型提示卡", content:"不是你在讀詩，是詩在讀你。"},
+{title:"出口型提示卡", content:"詩在讀誰，是詩在讀你嗎。"},
+{title:"靜止型提示卡", content:"空白是另一種存在。"},
+{title:"城市型提示卡", content:"城市沒有改變，改變的是你走的速度。"},
+{title:"速度型提示卡", content:"方向比風景更快出現。"},
+{title:"延遲型提示卡", content:"延遲是暫停呼吸。"}
+];
+
+  let poems = JSON.parse(localStorage.getItem("poems"));
+  if(!poems || poems.length === 0){
+    poems = defaultPoems;
+    localStorage.setItem("poems", JSON.stringify(poems));
+  }
+
+  let currentPage = 1;
+  const poemsPerPage = 10;
+
+  function renderPoems() {
+    const list = document.getElementById("poemList");
+    list.innerHTML = "";
+    const start = (currentPage - 1) * poemsPerPage;
+    const end = start + poemsPerPage;
+    const pagePoems = poems.slice(start, end);
+
+    pagePoems.forEach((poem, index) => {
+      list.innerHTML += `
+        <div class="poem">
+          <h3>${poem.title}</h3>
+          <p>${poem.content}</p>
+          <button onclick="editPoem(${start+index})">編輯</button>
+          <button onclick="deletePoem(${start+index})">刪除</button>
+        </div>
+      `;
+    });
+
+    const pageInfo = `第 ${currentPage} 頁 / 共 ${Math.ceil(poems.length / poemsPerPage)} 頁`;
+    document.getElementById("pageInfoTop").innerText = pageInfo;
+    document.getElementById("pageInfoBottom").innerText = pageInfo;
+
+    localStorage.setItem("poems", JSON.stringify(poems));
+  }
+
+  function addPoem() {
+    const title = document.getElementById("title").value;
+    const content = document.getElementById("content").value;
+    if(title && content){
+      poems.unshift({title, content});
+      renderPoems();
+      document.getElementById("title").value="";
+      document.getElementById("content").value="";
+    }
+  }
+
+  function editPoem(index) {
+    const newTitle = prompt("修改標題：", poems[index].title);
+    const newContent = prompt("修改內容：", poems[index].content);
+    if(newTitle && newContent){
+      poems[index] = {title:newTitle, content:newContent};
+      renderPoems();
+    }
+  }
+
+  function deletePoem(index) {
+    poems.splice(index,1);
+    if(currentPage > Math.ceil(poems.length / poemsPerPage)) currentPage--;
+    renderPoems();
+  }
+
+  function clearAll() {
+    if(confirm("確定要清除全部詩嗎？")){
+      poems = [];
+      currentPage = 1;
+      renderPoems();
+    }
+  }
+
+  function randomPoem(){
+    if(poems.length === 0){
+      document.getElementById("randomResult").innerHTML = "還沒有詩，世界還很安靜。";
+      return;
+    }
+    const i = Math.floor(Math.random() * poems.length);
+    const poem = poems[i];
+    document.getElementById("randomResult").innerHTML = `
+      <div class="poem">
+        <h3>🌌 ${poem.title}</h3>
+        <p>${poem.content}</p>
+        <small>你在此刻遇見了它</small>
+      </div>
+    `;
+  }
+
+  function nextPage(){
+    if(currentPage < Math.ceil(poems.length / poemsPerPage)){
+      currentPage++;
+      renderPoems();
+    }
+  }
+
+  function prevPage(){
+    if(currentPage > 1){
+      currentPage--;
+      renderPoems();
+    }
+  }
+
+  renderPoems();
+
+
+  // 粒子背景效果
+const canvas = document.getElementById("particles");
+const ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let particles = [];
+
+function createParticles(){
+  particles = []; // 清空舊的粒子
+  for(let i=0; i<90; i++){
+    particles.push({
+      x: Math.random()*canvas.width,
+      y: Math.random()*canvas.height,
+      size: Math.random()*23+13,
+      color: `hsla(${Math.random()*360}, 70%, 60%, ${0.2 + Math.random()*0.3})`,
+      speedX: (Math.random()-0.5)*0.5,
+      speedY: (Math.random()-0.5)*0.5
+    });
+  }
+}
+
+function drawParticles(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particles.forEach(p=>{
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
+    ctx.fillStyle = p.color;
+    ctx.shadowBlur = 40;
+    ctx.shadowColor = p.color;
+    ctx.fill();
+
+    p.x += p.speedX;
+    p.y += p.speedY;
+
+    if(p.x < 0 || p.x > canvas.width) p.speedX *= -1;
+    if(p.y < 0 || p.y > canvas.height) p.speedY *= -1;
+  });
+}
+
+function animate(){
+  drawParticles();
+  requestAnimationFrame(animate);
+}
+
+createParticles();
+animate();
+
+// ⭐ 視窗改變 → 重設畫布 + 粒子重分佈
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  createParticles(); // 重新分佈粒子
+}
+
+window.addEventListener("resize", resizeCanvas);
+</script>
+</body>
+</html>

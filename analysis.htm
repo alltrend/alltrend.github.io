@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>全方位熱門分析儀表板</title>
+<style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: linear-gradient(to bottom, #0a1f44, #1e3a70);
+      color: #f0f0f0;
+    }
+    h1 {
+      text-align: center;
+      font-size: 2.2em;
+      color: #ffdd57;
+      margin-bottom: 20px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
+    }
+    #buttons {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    #buttons button {
+      background-color: #2a4d8f;
+      color: #fff;
+      border: none;
+      padding: 12px 24px;
+      margin: 8px;
+      font-size: 1em;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.2s;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+    }
+    #buttons button:hover {
+      background-color: #3f6bb5;
+      transform: translateY(-2px);
+    }
+    #results, #article {
+      background-color: #ffffff;
+      color: #333;
+      padding: 20px;
+      border-radius: 10px;
+      margin: 15px auto;
+      max-width: 900px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+    #results a {
+      display: block;
+      margin: 8px 0;
+      color: #2a4d8f;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    #results a:hover {
+      text-decoration: underline;
+    }
+    #status {
+      text-align: center;
+      margin: 10px;
+      font-size: 0.9em;
+      color: #ffdd57;
+    }
+    
+    
+  html, body, header, .title {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+
+/* Reset */
+html,body {
+  min-height: 100%;
+  overflow-x: hidden;   /* 禁止橫向滾動 */
+  overflow-y: auto;     /* ✅ 允許垂直滾動 */
+}
+
+
+/* 📱 小型手機（小於 480px） */
+@media (max-width: 479px) {
+  .toolbar {
+    flex-direction: column;
+    gap: 6px;
+  }
+  .toolbar select,
+  .toolbar input,
+  .toolbar button {
+    width: 100%;
+  }
+  table {
+    font-size: 13px;
+  }
+  #container {
+    grid-template-columns: 1fr;
+  }
+  #sidebar {
+    position: absolute;
+    top: 42px;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: #fff;
+    z-index: 1000;
+    border-right: none;
+    border-top: 1px solid #ddd;
+  }
+  #map {
+    height: calc(100vh - 42px);
+  }
+  header > * {
+    flex: 1 1 100%;
+  }
+}
+/* 📱 中型手機（480px 到 767px） */
+@media (min-width: 480px) and (max-width: 767px) {
+  .toolbar {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .toolbar select,
+  .toolbar input,
+  .toolbar button {
+    width: 100%;
+  }
+  table {
+    font-size: 14px;
+  }
+  #container {
+    grid-template-columns: 1fr;
+  }
+  #sidebar {
+    position: absolute;
+    top: 42px;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: #fff;
+    z-index: 1000;
+    border-right: none;
+    border-top: 1px solid #ddd;
+  }
+  #map {
+    height: calc(100vh - 42px);
+  }
+  header > * {
+    flex: 1 1 100%;
+  }
+}
+/* 📱 大型手機／小平板（768px 到 1023px） */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .toolbar {
+    flex-direction: row;
+    gap: 12px;
+  }
+  .toolbar select,
+  .toolbar input,
+  .toolbar button {
+    width: auto;
+  }
+  table {
+    font-size: 15px;
+  }
+  #container {
+    grid-template-columns: 1fr;
+  }
+  #sidebar {
+    position: absolute;
+    top: 42px;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: #fff;
+    z-index: 1000;
+    border-right: none;
+    border-top: 1px solid #ddd;
+  }
+  #map {
+    height: calc(100vh - 42px);
+  }
+  header > * {
+    flex: 1 1 100%;
+  }
+  }
+</style>
+</head>
+<body>
+  <h1>全方位熱門分析儀表板</h1>
+  <div id="buttons">
+    <button onclick="switchType('news')">熱門新聞</button>
+    <button onclick="switchType('funny')">有趣搞笑</button>
+    <button onclick="switchType('tech')">新奇科技</button>
+    <button onclick="manualRefresh()">立即刷新</button>
+    <button onclick="toggleTranslation()">翻譯開關</button>
+  </div>
+
+  <div id="status">翻譯功能：開啟中</div>
+  <div id="results">請選擇分類</div>
+  <div id="article">文章摘要將顯示在這裡</div>
+
+  <script>
+    let translationEnabled = true;
+
+    function toggleTranslation() {
+      translationEnabled = !translationEnabled;
+      document.getElementById("status").innerText = "翻譯功能：" + (translationEnabled ? "開啟中" : "已關閉");
+    }
+
+    async function fetchAllNews() {
+      const rssList = [
+        "https://news.google.com/rss?hl=zh-TW&gl=TW&ceid=TW:zh-Hant",
+        "https://tw.news.yahoo.com/rss/",
+        "https://www.cna.com.tw/rss/All.aspx",
+        "https://news.ltn.com.tw/rss/all.xml",
+        "https://udn.com/rssfeed/news/2",
+        "https://www.ettoday.net/rss/rss_news.xml"
+      ];
+      let allItems = [];
+      for (const rss of rssList) {
+        try {
+          const res = await fetch("https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent(rss));
+          const data = await res.json();
+          allItems.push(...(data.items || []));
+        } catch(e) {
+          console.error("新聞來源抓取失敗:", e);
+        }
+      }
+      return allItems;
+    }
+
+    const rssSources = {
+      funny: "https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent("https://www.reddit.com/r/funny/.rss"),
+      tech: "https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent("https://hnrss.org/frontpage")
+    };
+
+    let currentType = null;
+
+    async function translateText(text) {
+      if (!translationEnabled) return text;
+      try {
+        const res = await fetch("https://api.mymemory.translated.net/get?q=" + encodeURIComponent(text) + "&langpair=en|zh-TW");
+        const data = await res.json();
+        if (data.responseData.translatedText.includes("MYMEMORY WARNING")) {
+          translationEnabled = false;
+          document.getElementById("status").innerText = "翻譯功能：已關閉 (額度用完)";
+          return text;
+        }
+        return data.responseData.translatedText;
+      } catch(e) {
+        return text;
+      }
+    }
+
+    async function showFeeds(type) {
+      const container = document.getElementById("results");
+      container.innerHTML = "載入中...";
+      try {
+        let items = [];
+        if (type === "news") {
+          items = await fetchAllNews();
+        } else {
+          const res = await fetch(rssSources[type]);
+          const data = await res.json();
+          items = data.items || [];
+        }
+        container.innerHTML = "";
+        for (const item of items.slice(0,10)) {
+          const translatedTitle = await translateText(item.title);
+          const link = document.createElement("a");
+          link.textContent = translatedTitle;
+          link.onclick = async () => {
+            const translatedDesc = await translateText(item.description || "無摘要");
+            document.getElementById("article").innerHTML = `
+              <p>${translatedDesc}</p>
+              <p><a href="${item.link}" target="_blank">查看原文 (開啟後可用瀏覽器翻譯全文)</a></p>
+            `;
+          };
+          container.appendChild(link);
+        }
+      } catch(e) {
+        container.innerHTML = "抓取失敗：" + e;
+      }
+    }
+
+    function switchType(type) {
+      currentType = type;
+      showFeeds(type);
+    }
+
+    function manualRefresh() {
+      if (currentType) {
+        showFeeds(currentType);
+      }
+    }
+
+    setInterval(() => {
+      if (currentType) {
+        showFeeds(currentType);
+      }
+    }, 300000);
+  </script>
+</body>
+</html>

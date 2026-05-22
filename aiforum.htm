@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>全方位AI生活討論網</title>
+<style>
+  body { font-family: Arial, sans-serif; color:#fff; padding:20px; transition: background 2s; }
+  h1 { text-align:center; font-size: 46px; color: #66B3FF;}
+  .comment { border-radius:8px; padding:10px; margin:8px 0; transition: background 0.5s; }
+  .reply-box { margin-top:5px; }
+  .reply-box textarea { width:80%; height:40px; border-radius:5px; margin-right:5px; }
+  .reply-box button { padding:5px 10px; border-radius:5px; cursor:pointer; }
+  .vote { margin-left:10px; cursor:pointer; color:#ffd700; }
+  button.sort-btn, button.clear-btn { padding:5px 10px; margin-right:5px; border-radius:5px; cursor:pointer; }
+  textarea {
+    width: 500px;    /* 放大寬度 */
+    height: 100px;   /* 放大高度 */
+    display: block;
+    margin-bottom: 5px;
+    padding: 5px;
+    font-size: 14px;
+    resize: vertical; /* 允許垂直調整大小 */
+ }
+button { background:#444; color:#fff; border:none; }
+
+
+#commentsContainer {
+  width: 99%;
+  margin: 0 auto;
+  border: 1px solid #ccc;
+  padding: 10px;
+  transition: max-height 0.5s ease;
+  overflow: auto;
+  max-height: 600px;   /* 初始摺疊高度 */
+}
+
+#toggle:checked ~ #commentsContainer {
+  max-height: 2000px;  /* 展開後高度 */
+}
+
+
+html, body, header, .title {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+
+/* Reset */
+html,body {
+height:100%;
+  overflow-x: hidden;   /* 禁止橫向滾動 */
+  overflow-y: auto;     /* ✅ 允許垂直滾動 */
+}
+
+
+/* 📱 小型手機（小於 480px） */
+@media (max-width: 479px) {
+  .toolbar {
+    flex-direction: column;
+    gap: 6px;
+  }
+  .toolbar select,
+  .toolbar input,
+  .toolbar button {
+    width: 100%;
+  }
+  table {
+    font-size: 13px;
+  }
+  #container {
+    grid-template-columns: 1fr;
+  }
+  #sidebar {
+    position: absolute;
+    top: 42px;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: #fff;
+    z-index: 1000;
+    border-right: none;
+    border-top: 1px solid #ddd;
+  }
+  #map {
+    height: calc(100vh - 42px);
+  }
+  header > * {
+    flex: 1 1 100%;
+  }
+}
+/* 📱 中型手機（480px 到 767px） */
+@media (min-width: 480px) and (max-width: 767px) {
+  .toolbar {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .toolbar select,
+  .toolbar input,
+  .toolbar button {
+    width: 100%;
+  }
+  table {
+    font-size: 14px;
+  }
+  #container {
+    grid-template-columns: 1fr;
+  }
+  #sidebar {
+    position: absolute;
+    top: 42px;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: #fff;
+    z-index: 1000;
+    border-right: none;
+    border-top: 1px solid #ddd;
+  }
+  #map {
+    height: calc(100vh - 42px);
+  }
+  header > * {
+    flex: 1 1 100%;
+  }
+}
+/* 📱 大型手機／小平板（768px 到 1023px） */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .toolbar {
+    flex-direction: row;
+    gap: 12px;
+  }
+  .toolbar select,
+  .toolbar input,
+  .toolbar button {
+    width: auto;
+  }
+  table {
+    font-size: 15px;
+  }
+  #container {
+    grid-template-columns: 1fr;
+  }
+  #sidebar {
+    position: absolute;
+    top: 42px;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: #fff;
+    z-index: 1000;
+    border-right: none;
+    border-top: 1px solid #ddd;
+  }
+  #map {
+    height: calc(100vh - 42px);
+  }
+  header > * {
+    flex: 1 1 100%;
+  }
+}
+</style>
+</head>
+<body>
+<!-- <script src="messages.js"></script> -->
+<h1>全方位AI生活討論網</h1>
+
+<!-- 控制按鈕區 -->
+<div style="margin-bottom:10px;">
+  <button class="sort-btn" onclick="setSortMode('latest')">查看最新留言</button>
+  <button class="sort-btn" onclick="setSortMode('hot')">查看最熱門留言</button>
+  <button class="clear-btn" onclick="clearComments()">一鍵清除留言</button>
+</div>
+
+<!-- 新增留言區 -->
+<div style="margin-bottom:10px;">
+  <textarea id="newCommentText" placeholder="新增留言..."></textarea>
+  <button onclick="addNewComment()">送出留言</button>
+</div>
+
+<!-- 留言容器 -->
+<div id="commentsContainer"></div>
+
+<script>
+let sortMode = 'latest';
+const colors = ["#1abc9c","#3498db","#9b59b6","#e67e22","#e74c3c","#f1c40f","#2ecc71","#95a5a6"];
+const bgColors = ["#ff6b6b","#6bffb8","#6bcaff","#ff6bff","#ffe36b","#b86bff","#6bffeb","#ff9c6b"];
+const aiCommentsPool = [
+"今天晚餐想吃點不一樣的",
+"附近有沒有值得試試的餐廳？",
+"這周末想找個地方放鬆一下",
+"最近有沒有好看的電影推薦？",
+"天氣很好適合出去走走",
+"午餐時間又到了好難選",
+"有人最近吃到驚艷的料理嗎？",
+"假日想出門但還沒計畫",
+"最近壓力有點大想放空",
+"早餐吃什麼比較有精神？",
+
+"晚上想來點宵夜但怕胖",
+"有沒有隱藏版美食推薦？",
+"最近很想喝一杯好咖啡",
+"有沒有推薦的甜點店？",
+"今天很適合喝熱飲",
+"最近有什麼活動可以參加？",
+"想找個安靜的地方休息",
+"有沒有輕鬆一點的電影？",
+"最近露營好像很熱門",
+"晚餐想吃點重口味",
+
+"最近大家都去哪裡玩？",
+"有沒有適合一個人去的地方？",
+"天氣太熱只想待室內",
+"今天想吃點冰的東西",
+"有沒有推薦的夜景地點？",
+"最近想培養新興趣",
+"想找個地方安靜看書",
+"有沒有好喝的咖啡？",
+"今天想吃健康一點",
+"最近有點想旅行",
+
+"假日去哪比較不會人擠人？",
+"最近想試試新料理",
+"今天想吃清淡一點",
+"有沒有推薦的早餐店？",
+"最近想開始運動",
+"今天想早點休息",
+"最近天氣變化很大",
+"有沒有推薦的甜點？",
+"今天突然想吃火鍋",
+"最近想去海邊走走",
+
+"晚上散步感覺很舒服",
+"今天想吃甜食療癒一下",
+"最近想探索新咖啡店",
+"午餐不知道吃什麼",
+"最近想喝點茶",
+"今天心情還不錯",
+"想找地方發呆一下",
+"最近想嘗試新餐廳",
+"今天想吃重鹹一點",
+"最近想看場電影",
+
+"有沒有推薦的下午茶？",
+"最近想找地方聊天",
+"今天適合出門晃晃",
+"想吃熱騰騰的食物",
+"最近想試試甜點",
+"今天想隨便吃點",
+"最近想找景點拍照",
+"今天想喝點熱飲",
+"最近想去公園走走",
+"今天想吃好一點",
+
+"最近有新開的店嗎？",
+"今天想宅在家休息",
+"最近想看看風景",
+"今天想輕鬆過一天",
+"最近想找朋友聚餐",
+"今天想省一點吃",
+"最近想試新口味",
+"今天想喝果汁",
+"最近想找咖啡廳",
+"今天想吃飽一點",
+
+"最近想去逛夜市",
+"今天想放鬆一下",
+"最近想看夜景",
+"今天想吃辣一點",
+"最近想找新景點",
+"今天想悠閒過",
+"最近想去山上走走",
+"今天想簡單過一天",
+"最近想試新東西",
+"今天想休息一下",
+
+"今天想吃義大利麵",
+"最近想喝奶茶",
+"今天想吃燒烤",
+"最近想吃拉麵",
+"今天想吃壽司",
+"最近想吃炸物",
+"今天想吃便當",
+"最近想吃甜點",
+"今天想喝咖啡",
+"最近想吃早午餐",
+
+"今天想吃漢堡",
+"最近想吃披薩",
+"今天想吃湯麵",
+"最近想吃白飯配菜",
+"今天想吃健康餐",
+"最近想吃鍋物",
+"今天想吃牛排",
+"最近想吃雞排",
+"今天想吃滷味",
+"最近想吃沙拉",
+
+"今天想換個口味",
+"最近想簡單吃點",
+"今天想吃熱的",
+"最近想吃冰的",
+"今天想找點新鮮感",
+"最近想試不同餐廳",
+"今天想吃甜點",
+"最近想喝飲料",
+"今天想吃輕食",
+"最近想出去走走",
+
+"今天想放空一整天",
+"最近想早點睡覺",
+"今天想聽音樂放鬆",
+"最近想整理房間",
+"今天想看劇放鬆",
+"最近想減少外食",
+"今天想自己煮飯",
+"最近想學做菜",
+"今天想試健康生活",
+"最近想早起運動",
+
+"今天想慢慢過一天",
+"最近想遠離人群",
+"今天想散步放鬆",
+"最近想簡單生活",
+"今天想靜靜發呆",
+"最近想遠離手機",
+"今天想看書沉澱",
+"最近想做點改變",
+"今天想重新開始",
+"最近想調整作息",
+
+"今天想嘗試新東西",
+"最近想提升自己",
+"今天想多喝水",
+"最近想吃清爽一點",
+"今天想去超市逛逛",
+"最近想換個環境",
+"今天想坐著放空",
+"最近想慢下來",
+"今天想早點回家",
+"最近想好好休息",
+
+"今天想輕鬆一下",
+"最近想讓生活慢一點",
+"今天想多曬太陽",
+"最近想親近自然",
+"今天想去河邊走走",
+"最近想聽聽風聲",
+"今天想看夕陽",
+"最近想看星星",
+"今天想找安靜角落",
+"最近想遠離喧囂",
+
+"今天想過簡單生活",
+"最近想減少壓力",
+"今天想放下煩惱",
+"最近想重新整理自己",
+"今天想找點靈感",
+"最近想寫點東西",
+"今天想記錄生活",
+"最近想拍照紀錄",
+"今天想分享心情",
+"最近想和朋友聊天",
+
+"今天想慢慢吃飯",
+"最近想享受當下",
+"今天想給自己一點時間",
+"最近想調整心情",
+"今天想讓自己放鬆",
+"最近想學會放下",
+"今天想過得自在",
+"最近想簡單快樂",
+"今天想保持平靜",
+"最近想活得輕鬆"
+];
+
+let comments = JSON.parse(localStorage.getItem("aiComments")) || [
+{id:1,text:"大家好！歡迎來討論生活話題 😏",votes:3,replies:[]},
+{id:2,text:"今天晚餐想吃點不一樣的",votes:5,replies:[]},
+{id:3,text:"附近有沒有推薦的餐廳？",votes:2,replies:[]},
+{id:4,text:"這周末想出去走走",votes:4,replies:[]},
+{id:5,text:"最近有什麼好看的電影嗎？",votes:1,replies:[]},
+{id:6,text:"天氣很好適合散步",votes:6,replies:[]},
+{id:7,text:"午餐時間好難選",votes:3,replies:[]},
+{id:8,text:"有人推薦咖啡店嗎？",votes:7,replies:[]},
+{id:9,text:"假日想放鬆一下",votes:2,replies:[]},
+{id:10,text:"最近壓力有點大",votes:5,replies:[]},
+
+{id:11,text:"早餐吃什麼好？",votes:3,replies:[]},
+{id:12,text:"晚上想吃宵夜",votes:6,replies:[]},
+{id:13,text:"有沒有隱藏版美食？",votes:4,replies:[]},
+{id:14,text:"最近想喝咖啡",votes:2,replies:[]},
+{id:15,text:"推薦甜點店吧",votes:5,replies:[]},
+{id:16,text:"今天適合喝熱飲",votes:1,replies:[]},
+{id:17,text:"最近有活動嗎？",votes:3,replies:[]},
+{id:18,text:"想找安靜地方",votes:4,replies:[]},
+{id:19,text:"有沒有輕鬆電影？",votes:2,replies:[]},
+{id:20,text:"最近露營很熱門",votes:5,replies:[]},
+
+{id:21,text:"晚餐想吃重口味",votes:6,replies:[]},
+{id:22,text:"最近大家去哪玩？",votes:3,replies:[]},
+{id:23,text:"適合一個人去的地方？",votes:4,replies:[]},
+{id:24,text:"天氣太熱了",votes:2,replies:[]},
+{id:25,text:"今天想吃冰的",votes:5,replies:[]},
+{id:26,text:"推薦夜景地點",votes:1,replies:[]},
+{id:27,text:"最近想培養興趣",votes:3,replies:[]},
+{id:28,text:"想找地方看書",votes:4,replies:[]},
+{id:29,text:"咖啡推薦一下",votes:2,replies:[]},
+{id:30,text:"今天想吃健康點",votes:5,replies:[]},
+
+{id:31,text:"最近想去旅行",votes:6,replies:[]},
+{id:32,text:"假日想耍廢",votes:3,replies:[]},
+{id:33,text:"最近想運動一下",votes:4,replies:[]},
+{id:34,text:"今天想早點睡",votes:2,replies:[]},
+{id:35,text:"最近有點疲倦",votes:5,replies:[]},
+{id:36,text:"今天想輕鬆過",votes:1,replies:[]},
+{id:37,text:"最近想整理房間",votes:3,replies:[]},
+{id:38,text:"今天想聽音樂",votes:4,replies:[]},
+{id:39,text:"最近想放空",votes:2,replies:[]},
+{id:40,text:"今天想吃甜食",votes:5,replies:[]},
+
+{id:41,text:"最近想喝飲料",votes:6,replies:[]},
+{id:42,text:"今天想試新餐廳",votes:3,replies:[]},
+{id:43,text:"最近想吃拉麵",votes:4,replies:[]},
+{id:44,text:"今天想吃火鍋",votes:2,replies:[]},
+{id:45,text:"最近想吃燒烤",votes:5,replies:[]},
+{id:46,text:"今天想吃壽司",votes:1,replies:[]},
+{id:47,text:"最近想吃牛排",votes:3,replies:[]},
+{id:48,text:"今天想吃雞排",votes:4,replies:[]},
+{id:49,text:"最近想吃滷味",votes:2,replies:[]},
+{id:50,text:"今天想吃便當",votes:5,replies:[]},
+
+{id:51,text:"最近想喝奶茶",votes:3,replies:[]},
+{id:52,text:"今天想喝咖啡",votes:4,replies:[]},
+{id:53,text:"最近想喝果汁",votes:2,replies:[]},
+{id:54,text:"今天想喝茶",votes:5,replies:[]},
+{id:55,text:"最近想喝氣泡飲",votes:1,replies:[]},
+{id:56,text:"今天想喝冰飲",votes:3,replies:[]},
+{id:57,text:"最近想喝熱飲",votes:4,replies:[]},
+{id:58,text:"今天想試新品",votes:2,replies:[]},
+{id:59,text:"最近想換口味",votes:5,replies:[]},
+{id:60,text:"今天想簡單吃",votes:6,replies:[]},
+
+{id:61,text:"最近想早起",votes:3,replies:[]},
+{id:62,text:"今天想慢生活",votes:4,replies:[]},
+{id:63,text:"最近想散步",votes:2,replies:[]},
+{id:64,text:"今天想放鬆",votes:5,replies:[]},
+{id:65,text:"最近想靜一靜",votes:1,replies:[]},
+{id:66,text:"今天想出去走走",votes:3,replies:[]},
+{id:67,text:"最近想拍照",votes:4,replies:[]},
+{id:68,text:"今天想看風景",votes:2,replies:[]},
+{id:69,text:"最近想去海邊",votes:5,replies:[]},
+{id:70,text:"今天想去山上",votes:6,replies:[]},
+
+{id:71,text:"今天想找個地方坐坐",votes:3,replies:[]},
+{id:72,text:"最近想安靜一下",votes:4,replies:[]},
+{id:73,text:"今天想放慢步調",votes:2,replies:[]},
+{id:74,text:"最近想去看看海",votes:5,replies:[]},
+{id:75,text:"今天想簡單過生活",votes:1,replies:[]},
+{id:76,text:"最近想找點樂子",votes:3,replies:[]},
+{id:77,text:"今天想發呆一下",votes:4,replies:[]},
+{id:78,text:"最近想去散心",votes:2,replies:[]},
+{id:79,text:"今天想找朋友聊天",votes:5,replies:[]},
+{id:80,text:"最近想出門走走",votes:6,replies:[]},
+
+{id:81,text:"今天想吃點特別的",votes:3,replies:[]},
+{id:82,text:"最近想喝點熱飲",votes:4,replies:[]},
+{id:83,text:"今天想看場電影",votes:2,replies:[]},
+{id:84,text:"最近想吃點甜食",votes:5,replies:[]},
+{id:85,text:"今天想找咖啡店坐坐",votes:1,replies:[]},
+{id:86,text:"最近想去夜市逛逛",votes:3,replies:[]},
+{id:87,text:"今天想試試新菜單",votes:4,replies:[]},
+{id:88,text:"最近想喝點奶茶",votes:2,replies:[]},
+{id:89,text:"今天想吃火鍋暖暖",votes:5,replies:[]},
+{id:90,text:"最近想吃燒烤",votes:6,replies:[]},
+
+{id:91,text:"今天想吃拉麵",votes:3,replies:[]},
+{id:92,text:"最近想吃壽司",votes:4,replies:[]},
+{id:93,text:"今天想吃牛排",votes:2,replies:[]},
+{id:94,text:"最近想吃雞排",votes:5,replies:[]},
+{id:95,text:"今天想吃滷味",votes:1,replies:[]},
+{id:96,text:"最近想吃便當",votes:3,replies:[]},
+{id:97,text:"今天想吃披薩",votes:4,replies:[]},
+{id:98,text:"最近想吃漢堡",votes:2,replies:[]},
+{id:99,text:"今天想吃義大利麵",votes:5,replies:[]},
+{id:100,text:"最近想吃沙拉",votes:6,replies:[]},
+
+{id:101,text:"今天想喝咖啡提神",votes:3,replies:[]},
+{id:102,text:"最近想喝果汁",votes:4,replies:[]},
+{id:103,text:"今天想喝氣泡飲",votes:2,replies:[]},
+{id:104,text:"最近想喝茶",votes:5,replies:[]},
+{id:105,text:"今天想喝冰飲",votes:1,replies:[]},
+{id:106,text:"最近想喝熱可可",votes:3,replies:[]},
+{id:107,text:"今天想喝豆漿",votes:4,replies:[]},
+{id:108,text:"最近想喝鮮奶茶",votes:2,replies:[]},
+{id:109,text:"今天想喝黑咖啡",votes:5,replies:[]},
+{id:110,text:"最近想喝拿鐵",votes:6,replies:[]},
+
+{id:111,text:"今天想去公園走走",votes:3,replies:[]},
+{id:112,text:"最近想去山上放鬆",votes:4,replies:[]},
+{id:113,text:"今天想去海邊吹風",votes:2,replies:[]},
+{id:114,text:"最近想去河邊散步",votes:5,replies:[]},
+{id:115,text:"今天想去書店看看",votes:1,replies:[]},
+{id:116,text:"最近想去咖啡廳坐坐",votes:3,replies:[]},
+{id:117,text:"今天想去商場逛逛",votes:4,replies:[]},
+{id:118,text:"最近想去夜市吃東西",votes:2,replies:[]},
+{id:119,text:"今天想去看展覽",votes:5,replies:[]},
+{id:120,text:"最近想去看電影",votes:6,replies:[]},
+
+{id:121,text:"今天想早點休息",votes:3,replies:[]},
+{id:122,text:"最近想改善作息",votes:4,replies:[]},
+{id:123,text:"今天想多運動",votes:2,replies:[]},
+{id:124,text:"最近想健康生活",votes:5,replies:[]},
+{id:125,text:"今天想早起看看",votes:1,replies:[]},
+{id:126,text:"最近想少滑手機",votes:3,replies:[]},
+{id:127,text:"今天想讀點書",votes:4,replies:[]},
+{id:128,text:"最近想學新技能",votes:2,replies:[]},
+{id:129,text:"今天想整理環境",votes:5,replies:[]},
+{id:130,text:"最近想做點改變",votes:6,replies:[]},
+
+{id:131,text:"今天想放下煩惱",votes:3,replies:[]},
+{id:132,text:"最近想讓心情平靜",votes:4,replies:[]},
+{id:133,text:"今天想過得自在",votes:2,replies:[]},
+{id:134,text:"最近想讓自己放鬆",votes:5,replies:[]},
+{id:135,text:"今天想過簡單生活",votes:1,replies:[]},
+{id:136,text:"最近想減少壓力",votes:3,replies:[]},
+{id:137,text:"今天想慢慢來",votes:4,replies:[]},
+{id:138,text:"最近想享受當下",votes:2,replies:[]},
+{id:139,text:"今天想過平靜一天",votes:5,replies:[]},
+{id:140,text:"最近想好好休息",votes:6,replies:[]},
+
+{id:141,text:"今天想換個環境走走",votes:3,replies:[]},
+{id:142,text:"最近想找點新靈感",votes:4,replies:[]},
+{id:143,text:"今天想讓自己輕鬆一點",votes:2,replies:[]},
+{id:144,text:"最近想試試不同生活方式",votes:5,replies:[]},
+{id:145,text:"今天想遠離人群一下",votes:1,replies:[]},
+{id:146,text:"最近想讓步調慢下來",votes:3,replies:[]},
+{id:147,text:"今天想安靜思考一下",votes:4,replies:[]},
+{id:148,text:"最近想重新整理心情",votes:2,replies:[]},
+{id:149,text:"今天想過簡單日子",votes:5,replies:[]},
+{id:150,text:"最近想給自己一點空間",votes:6,replies:[]},
+
+{id:151,text:"今天想出去透透氣",votes:3,replies:[]},
+{id:152,text:"最近想接觸大自然",votes:4,replies:[]},
+{id:153,text:"今天想去看風景",votes:2,replies:[]},
+{id:154,text:"最近想去戶外活動",votes:5,replies:[]},
+{id:155,text:"今天想曬曬太陽",votes:1,replies:[]},
+{id:156,text:"最近想遠離城市喧囂",votes:3,replies:[]},
+{id:157,text:"今天想感受微風",votes:4,replies:[]},
+{id:158,text:"最近想去森林走走",votes:2,replies:[]},
+{id:159,text:"今天想去湖邊看看",votes:5,replies:[]},
+{id:160,text:"最近想去野外放鬆",votes:6,replies:[]},
+
+{id:161,text:"今天想換個口味試試",votes:3,replies:[]},
+{id:162,text:"最近想嘗試新餐點",votes:4,replies:[]},
+{id:163,text:"今天想吃點創意料理",votes:2,replies:[]},
+{id:164,text:"最近想發掘新美食",votes:5,replies:[]},
+{id:165,text:"今天想找特色小吃",votes:1,replies:[]},
+{id:166,text:"最近想挑戰不同料理",votes:3,replies:[]},
+{id:167,text:"今天想試試異國風味",votes:4,replies:[]},
+{id:168,text:"最近想品嚐美食",votes:2,replies:[]},
+{id:169,text:"今天想吃點精緻料理",votes:5,replies:[]},
+{id:170,text:"最近想探索新菜單",votes:6,replies:[]},
+
+{id:171,text:"今天想安排個小旅行",votes:3,replies:[]},
+{id:172,text:"最近想規劃行程",votes:4,replies:[]},
+{id:173,text:"今天想找旅遊景點",votes:2,replies:[]},
+{id:174,text:"最近想出遠門走走",votes:5,replies:[]},
+{id:175,text:"今天想短暫離開日常",votes:1,replies:[]},
+{id:176,text:"最近想去不同城市",votes:3,replies:[]},
+{id:177,text:"今天想看看不同風景",votes:4,replies:[]},
+{id:178,text:"最近想放個小假",votes:2,replies:[]},
+{id:179,text:"今天想去旅行放鬆",votes:5,replies:[]},
+{id:180,text:"最近想探索新地方",votes:6,replies:[]},
+
+{id:181,text:"今天想提升生活品質",votes:3,replies:[]},
+{id:182,text:"最近想讓生活更有趣",votes:4,replies:[]},
+{id:183,text:"今天想嘗試新習慣",votes:2,replies:[]},
+{id:184,text:"最近想改變生活節奏",votes:5,replies:[]},
+{id:185,text:"今天想讓自己更自在",votes:1,replies:[]},
+{id:186,text:"最近想讓生活更平衡",votes:3,replies:[]},
+{id:187,text:"今天想減少壓力來源",votes:4,replies:[]},
+{id:188,text:"最近想讓自己放慢",votes:2,replies:[]},
+{id:189,text:"今天想簡化日常",votes:5,replies:[]},
+{id:190,text:"最近想過更舒服的生活",votes:6,replies:[]},
+
+{id:191,text:"今天想聽點音樂放鬆",votes:3,replies:[]},
+{id:192,text:"最近想看場表演",votes:4,replies:[]},
+{id:193,text:"今天想追劇一下",votes:2,replies:[]},
+{id:194,text:"最近想看電影放鬆",votes:5,replies:[]},
+{id:195,text:"今天想找點娛樂",votes:1,replies:[]},
+{id:196,text:"最近想玩點遊戲",votes:3,replies:[]},
+{id:197,text:"今天想看看影片",votes:4,replies:[]},
+{id:198,text:"最近想放鬆一下心情",votes:2,replies:[]},
+{id:199,text:"今天想做點開心的事",votes:5,replies:[]},
+{id:200,text:"最近想找點樂趣",votes:6,replies:[]},
+
+{id:201,text:"今天想重新整理自己",votes:3,replies:[]},
+{id:202,text:"最近想調整生活步調",votes:4,replies:[]},
+{id:203,text:"今天想開始新計畫",votes:2,replies:[]},
+{id:204,text:"最近想提升自己",votes:5,replies:[]},
+{id:205,text:"今天想做些改變",votes:1,replies:[]},
+{id:206,text:"最近想設定新目標",votes:3,replies:[]},
+{id:207,text:"今天想重新開始",votes:4,replies:[]},
+{id:208,text:"最近想培養好習慣",votes:2,replies:[]},
+{id:209,text:"今天想讓生活更有方向",votes:5,replies:[]},
+{id:210,text:"最近想突破自己",votes:6,replies:[]},
+
+{id:211,text:"今天想簡單吃點東西",votes:3,replies:[]},
+{id:212,text:"最近想吃點清爽的",votes:4,replies:[]},
+{id:213,text:"今天想吃點熱的料理",votes:2,replies:[]},
+{id:214,text:"最近想吃點冰涼的",votes:5,replies:[]},
+{id:215,text:"今天想吃點輕食",votes:1,replies:[]},
+{id:216,text:"最近想吃健康餐",votes:3,replies:[]},
+{id:217,text:"今天想吃點低熱量的",votes:4,replies:[]},
+{id:218,text:"最近想吃營養一點",votes:2,replies:[]},
+{id:219,text:"今天想吃點清淡的",votes:5,replies:[]},
+{id:220,text:"最近想吃點均衡的",votes:6,replies:[]},
+
+{id:221,text:"今天想安排一下時間",votes:3,replies:[]},
+{id:222,text:"最近想規劃日程",votes:4,replies:[]},
+{id:223,text:"今天想有效率一點",votes:2,replies:[]},
+{id:224,text:"最近想提升效率",votes:5,replies:[]},
+{id:225,text:"今天想把事情做好",votes:1,replies:[]},
+{id:226,text:"最近想管理時間",votes:3,replies:[]},
+{id:227,text:"今天想專注完成任務",votes:4,replies:[]},
+{id:228,text:"最近想提升專注力",votes:2,replies:[]},
+{id:229,text:"今天想減少拖延",votes:5,replies:[]},
+{id:230,text:"最近想更有規劃",votes:6,replies:[]},
+
+{id:231,text:"今天想試試新興趣",votes:3,replies:[]},
+{id:232,text:"最近想學點新東西",votes:4,replies:[]},
+{id:233,text:"今天想探索不同領域",votes:2,replies:[]},
+{id:234,text:"最近想增加知識",votes:5,replies:[]},
+{id:235,text:"今天想讓自己進步",votes:1,replies:[]},
+{id:236,text:"最近想嘗試新技能",votes:3,replies:[]},
+{id:237,text:"今天想培養興趣",votes:4,replies:[]},
+{id:238,text:"最近想拓展視野",votes:2,replies:[]},
+{id:239,text:"今天想多學一點",votes:5,replies:[]},
+{id:240,text:"最近想成長自己",votes:6,replies:[]},
+
+{id:241,text:"今天想整理思緒",votes:3,replies:[]},
+{id:242,text:"最近想讓心情平穩",votes:4,replies:[]},
+{id:243,text:"今天想釋放壓力",votes:2,replies:[]},
+{id:244,text:"最近想放鬆內心",votes:5,replies:[]},
+{id:245,text:"今天想安靜一下自己",votes:1,replies:[]},
+{id:246,text:"最近想找到平衡點",votes:3,replies:[]},
+{id:247,text:"今天想讓情緒穩定",votes:4,replies:[]},
+{id:248,text:"最近想照顧自己",votes:2,replies:[]},
+{id:249,text:"今天想好好休息",votes:5,replies:[]},
+{id:250,text:"最近想讓自己放空",votes:6,replies:[]},
+
+{id:251,text:"今天想找個舒適角落",votes:3,replies:[]},
+{id:252,text:"最近想讓生活更輕鬆",votes:4,replies:[]},
+{id:253,text:"今天想慢慢享受時間",votes:2,replies:[]},
+{id:254,text:"最近想遠離忙碌",votes:5,replies:[]},
+{id:255,text:"今天想過悠閒日子",votes:1,replies:[]},
+{id:256,text:"最近想找回節奏",votes:3,replies:[]},
+{id:257,text:"今天想讓自己放鬆",votes:4,replies:[]},
+{id:258,text:"最近想過平靜生活",votes:2,replies:[]},
+{id:259,text:"今天想簡單快樂",votes:5,replies:[]},
+{id:260,text:"最近想讓心情變好",votes:6,replies:[]},
+
+{id:261,text:"今天想隨意走走",votes:3,replies:[]},
+{id:262,text:"最近想找點小確幸",votes:4,replies:[]},
+{id:263,text:"今天想過得自在一點",votes:2,replies:[]},
+{id:264,text:"最近想放鬆身心",votes:5,replies:[]},
+{id:265,text:"今天想感受生活",votes:1,replies:[]},
+{id:266,text:"最近想享受當下",votes:3,replies:[]},
+{id:267,text:"今天想讓步調變慢",votes:4,replies:[]},
+{id:268,text:"最近想過得舒服一點",votes:2,replies:[]},
+{id:269,text:"今天想做點簡單的事",votes:5,replies:[]},
+{id:270,text:"最近想讓生活變輕鬆",votes:6,replies:[]},
+
+{id:271,text:"今天想放下煩惱",votes:3,replies:[]},
+{id:272,text:"最近想讓心情放鬆",votes:4,replies:[]},
+{id:273,text:"今天想簡單過一天",votes:2,replies:[]},
+{id:274,text:"最近想讓生活更自在",votes:5,replies:[]},
+{id:275,text:"今天想過輕鬆日子",votes:1,replies:[]},
+{id:276,text:"最近想讓自己開心",votes:3,replies:[]},
+{id:277,text:"今天想找點樂趣",votes:4,replies:[]},
+{id:278,text:"最近想過舒服生活",votes:2,replies:[]},
+{id:279,text:"今天想讓自己放鬆一下",votes:5,replies:[]},
+{id:280,text:"最近想讓日子更平衡",votes:6,replies:[]},
+
+{id:281,text:"今天想簡單吃點",votes:3,replies:[]},
+{id:282,text:"最近想輕鬆過日子",votes:4,replies:[]},
+{id:283,text:"今天想少點壓力",votes:2,replies:[]},
+{id:284,text:"最近想過慢生活",votes:5,replies:[]},
+{id:285,text:"今天想安靜一下",votes:1,replies:[]},
+{id:286,text:"最近想過簡單生活",votes:3,replies:[]},
+{id:287,text:"今天想放鬆一下",votes:4,replies:[]},
+{id:288,text:"最近想找回節奏",votes:2,replies:[]},
+{id:289,text:"今天想過舒服一點",votes:5,replies:[]},
+{id:290,text:"最近想讓生活平衡",votes:6,replies:[]},
+
+{id:291,text:"今天想放鬆一下",votes:3,replies:[]},
+{id:292,text:"最近想慢生活",votes:4,replies:[]},
+{id:293,text:"今天想去走走",votes:2,replies:[]},
+{id:294,text:"最近想簡單過",votes:5,replies:[]},
+{id:295,text:"今天想吃點好的",votes:6,replies:[]},
+{id:296,text:"最近想喝點飲料",votes:3,replies:[]},
+{id:297,text:"今天想看風景",votes:4,replies:[]},
+{id:298,text:"最近想找地方坐坐",votes:2,replies:[]},
+{id:299,text:"今天想輕鬆一下",votes:5,replies:[]},
+{id:300,text:"最近想讓生活慢一點",votes:6,replies:[]}
+];
+
+// 網路 JSON URL (可改成你 Netlify 的 JSON endpoint)
+const jsonURL = "https://你的網路站/messages.json";
+
+// 保存本機
+function saveLocal(){
+  localStorage.setItem("aiComments", JSON.stringify(comments));
+}
+
+// 嘗試抓取網路 JSON
+async function fetchNetworkComments(){
+  try {
+    const res = await fetch(jsonURL);
+    if(res.ok){
+      const data = await res.json();
+      // 合併網路與本機資料
+      mergeComments(data);
+      saveLocal();
+      displayComments();
+    }
+  } catch(e){ console.log("網路 JSON 無法抓取，本機資料使用中"); }
+}
+
+// 合併資料，避免重複 id
+function mergeComments(networkComments){
+  const existingIds = new Set(comments.map(c=>c.id));
+  networkComments.forEach(c=>{
+    if(!existingIds.has(c.id)) comments.push(c);
+  });
+}
+
+// 更新網路 JSON
+async function updateNetworkComments(){
+  try {
+    await fetch(jsonURL, {
+      method: "POST", // 或 PUT，取決於後端設定
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify(comments)
+    });
+  } catch(e){ console.log("網路 JSON 無法更新"); }
+}
+
+// 排序模式
+function setSortMode(mode){
+  sortMode = mode;
+  displayComments();
+}
+
+// 投票
+function voteComment(id){
+  function findComment(cList){
+    for(let c of cList){
+      if(c.id===id){ c.votes++; return true; }
+      if(c.replies.length && findComment(c.replies)) return true;
+    }
+    return false;
+  }
+  findComment(comments);
+  saveLocal();
+  updateNetworkComments();
+  displayComments();
+}
+
+// 新增留言
+function addNewComment(){
+  const txt = document.getElementById("newCommentText").value.trim();
+  if(txt==="") return;
+  const newComment = {id: Date.now(), text: txt, votes:0, replies:[]};
+  comments.push(newComment);
+  document.getElementById("newCommentText").value="";
+  saveLocal();
+  updateNetworkComments();
+  displayComments();
+}
+
+// 清除留言
+function clearComments(){
+  if(confirm("確定要清除所有留言嗎？")) {
+    comments = [];
+    localStorage.removeItem("aiComments");
+    updateNetworkComments();
+    displayComments();
+  }
+}
+
+// 渲染留言
+function renderComments(parentDiv, commentList){
+  let sortedComments = [...commentList];
+  if(sortMode==="hot"){
+    sortedComments.sort((a,b)=>b.votes - a.votes);
+  } else {
+    sortedComments.sort((a,b)=>b.id - a.id);
+  }
+
+  sortedComments.forEach(c=>{
+    const div = document.createElement("div");
+    div.className="comment";
+    div.style.background = colors[Math.floor(Math.random()*colors.length)];
+    div.innerHTML = `💬 ${c.text} <span>👍 ${c.votes}</span> <span class="vote" onclick="voteComment(${c.id})">投票</span>`;
+
+    const replyBox = document.createElement("div");
+    replyBox.className="reply-box";
+    const textarea = document.createElement("textarea");
+    textarea.placeholder = "回覆這則留言...";
+    const btn = document.createElement("button");
+    btn.textContent = "送出回覆";
+    btn.onclick = ()=>{
+      const val = textarea.value.trim();
+      if(val==="") return;
+      const newReply = {id: Date.now(), text: val, votes:0, replies:[]};
+      c.replies.push(newReply);
+      if(Math.random()<0.5){
+        c.replies.push({id: Date.now()+1, text:"🤖 AI小建議："+aiCommentsPool[Math.floor(Math.random()*aiCommentsPool.length)], votes:0, replies:[]});
+      }
+      saveLocal();
+      updateNetworkComments();
+      displayComments();
+    };
+    replyBox.appendChild(textarea);
+    replyBox.appendChild(btn);
+    div.appendChild(replyBox);
+
+    parentDiv.appendChild(div);
+
+    if(c.replies.length>0){
+      renderComments(parentDiv, c.replies);
+    }
+  });
+}
+
+// 顯示留言
+function displayComments(){
+  const container = document.getElementById("commentsContainer");
+  container.innerHTML="";
+  renderComments(container, comments);
+}
+
+// 留言隨機變色
+setInterval(()=>{
+  document.querySelectorAll(".comment").forEach(div=>{
+    div.style.background = colors[Math.floor(Math.random()*colors.length)];
+  });
+}, 10000);
+
+// 整個背景隨機變色
+setInterval(()=>{
+  document.body.style.background = bgColors[Math.floor(Math.random()*bgColors.length)];
+}, 10000);
+
+// 初始載入
+fetchNetworkComments();
+displayComments();
+</script>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<title>AI Chat</title>
+<style>
+    body {
+      margin: 0;
+      background-color: #005FAF; /* 深藍背景 */
+      font-family: Arial, sans-serif;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      padding-top: 30px;
+    }
+    .btn {
+      background: linear-gradient(
+        270deg,
+        #001f4d, #003366, #004b97, #0066cc, #3399ff,
+        #6633cc, #9900cc, #cc00ff, #00cccc, #00ff99,
+        #004b97, #001f4d
+      );
+      background-size: 2000% 2000%; /* 放大漸層，方便流動 */
+      color: #fff;
+      border: none;
+      padding: 15px 30px;
+      margin: 10px;
+      border-radius: 30px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+      transition: box-shadow 0.3s;
+      display: block;
+      width: 250px;
+      text-align: center;
+      animation: rainbow 15s linear infinite; /* 多彩漸層自動流動 */
+    }
+    /* 滑鼠移過去：光暈 + 彈跳 */
+    .btn:hover {
+      box-shadow: 0 8px 20px rgba(0,0,0,0.6), 0 0 15px rgba(255,255,255,0.5);
+      animation: rainbow 15s linear infinite, bounce 0.4s ease;
+    }
+    /* 按下去：縮小 */
+    .btn:active {
+      transform: scale(0.95);
+    }
+    /* 多彩漸層流動動畫 */
+    @keyframes rainbow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    /* 彈跳動畫 */
+    @keyframes bounce {
+      0%   { transform: scale(1); }
+      30%  { transform: scale(1.1); }
+      50%  { transform: scale(0.95); }
+      70%  { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+</style>
+</head>
+<body>
+<button class="btn" onclick="location.href='https://copilot.microsoft.com'">Copilot AI</button>
+<button class="btn" onclick="location.href='https://chatgpt.com'">ChatGPT AI</button>
+<button class="btn" onclick="location.href='https://gemini.google.com'">Gemini AI</button>
+<button class="btn" onclick="location.href='https://claude.ai'">Claude AI</button>
+<button class="btn" onclick="location.href='https://www.perplexity.ai'">Perplexity AI</button>
+<button class="btn" onclick="location.href='https://chat.mistral.ai'">Mistral AI 聊天室</button>
+<button class="btn" onclick="location.href='https://chat.deepseek.com'">DeepSeek AI 聊天室</button>
+<button class="btn" onclick="location.href='https://kimi.com'">Kimi AI 聊天室</button>
+<button class="btn" onclick="location.href='https://yiyan.baidu.com'">文心一言 AI 聊天室</button>
+<button class="btn" onclick="location.href='https://qianwen.com'">千問 AI 聊天室</button>
+<button class="btn" onclick="location.href='https://chat.sensetime.com'">商量 AI 聊天室</button>
+<button class="btn" onclick="location.href='https://pi.ai'">Pi AI 聊天室</button>
+<button class="btn" onclick="location.href='https://grok.com'">Grok AI 聊天室</button>
+<button class="btn" onclick="location.href='https://manus.im'">Manus AI 聊天室</button>
+<button class="btn" onclick="location.href='https://flowith.io'">Flowith AI 聊天室</button>
+<button class="btn" onclick="location.href='https://character.ai'">Character.AI</button>
+<button class="btn" onclick="location.href='https://forefront.ai'">Forefront AI</button>
+<button class="btn" onclick="location.href='https://huggingface.co/chat'">HuggingChat</button>
+<button class="btn" onclick="location.href='https://www.jasper.ai'">Jasper AI</button>
+<button class="btn" onclick="location.href='https://poe.com'">Poe (Quora)</button>
+<button class="btn" onclick="location.href='https://replika.ai'">Replika</button>
+<button class="btn" onclick="location.href='https://writesonic.com'">Writesonic / Chatsonic</button>
+<button class="btn" onclick="location.href='https://robylon.ai'">Robylon</button>
+<button class="btn" onclick="location.href='https://yourgpt.ai'">YourGPT</button>
+<button class="btn" onclick="location.href='https://twitch.com'">Twitch</button>
+</body>
+</html>

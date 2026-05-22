@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>📻 全方位網路資訊網 🎬</title>
+<style>
+body{
+  margin:0;
+  font-family:"Microsoft JhengHei";
+  background:linear-gradient(135deg,#004B97,#005AB5);
+  color:#fff;
+}
+
+header{
+  text-align:center;
+  padding:12px;
+  font-weight:bold;
+}
+
+.container{
+  display:flex;
+  gap:10px;
+  padding:10px;
+}
+
+.column{
+  flex:1;
+  min-height:600px;
+  background:rgba(255,255,255,0.08);
+  border-radius:10px;
+  padding:10px;
+}
+
+.card{
+  background:#fff;
+  color:#000;
+  padding:10px;
+  border-radius:10px;
+  margin-bottom:10px;
+}
+
+input{width:100%;}
+button{margin-top:5px;}
+small{color:#666;}
+table{width:100%;border-collapse:collapse;}
+td,th{border:1px solid #ccc;font-size:12px;}
+td{height:55px;vertical-align:top;}
+
+
+html, body, header, .title {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+
+/* Reset */
+html,body {
+  min-height: 100%;
+  overflow-x: hidden;   /* 禁止橫向滾動 */
+  overflow-y: auto;     /* ✅ 允許垂直滾動 */
+}
+
+
+/* 📱 小型手機（小於 480px） */
+@media (max-width: 479px) {
+  .toolbar {
+    flex-direction: column;
+    gap: 6px;
+  }
+  .toolbar select,
+  .toolbar input,
+  .toolbar button {
+    width: 100%;
+  }
+  table {
+    font-size: 13px;
+  }
+  #container {
+    grid-template-columns: 1fr;
+  }
+  #sidebar {
+    position: absolute;
+    top: 42px;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: #fff;
+    z-index: 1000;
+    border-right: none;
+    border-top: 1px solid #ddd;
+  }
+  #map {
+    height: calc(100vh - 42px);
+  }
+  header > * {
+    flex: 1 1 100%;
+  }
+}
+/* 📱 中型手機（480px 到 767px） */
+@media (min-width: 480px) and (max-width: 767px) {
+  .toolbar {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .toolbar select,
+  .toolbar input,
+  .toolbar button {
+    width: 100%;
+  }
+  table {
+    font-size: 14px;
+  }
+  #container {
+    grid-template-columns: 1fr;
+  }
+  #sidebar {
+    position: absolute;
+    top: 42px;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: #fff;
+    z-index: 1000;
+    border-right: none;
+    border-top: 1px solid #ddd;
+  }
+  #map {
+    height: calc(100vh - 42px);
+  }
+  header > * {
+    flex: 1 1 100%;
+  }
+}
+/* 📱 大型手機／小平板（768px 到 1023px） */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .toolbar {
+    flex-direction: row;
+    gap: 12px;
+  }
+  .toolbar select,
+  .toolbar input,
+  .toolbar button {
+    width: auto;
+  }
+  table {
+    font-size: 15px;
+  }
+  #container {
+    grid-template-columns: 1fr;
+  }
+  #sidebar {
+    position: absolute;
+    top: 42px;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: #fff;
+    z-index: 1000;
+    border-right: none;
+    border-top: 1px solid #ddd;
+  }
+  #map {
+    height: calc(100vh - 42px);
+  }
+  header > * {
+    flex: 1 1 100%;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header style="font-size:35px; color:#ACD6FF; font-weight:bold;">
+📻 全方位網路資訊網 🎬 <button onclick="resetAll()">🔄 清除重置</button>
+</header>
+
+<div class="container">
+  <div class="column" id="col1"></div>
+  <div class="column" id="col2"></div>
+  <div class="column" id="col3"></div>
+</div>
+
+<script>
+
+/////////////////////////////////////////////////////
+// LAYOUT
+/////////////////////////////////////////////////////
+
+const columns = {
+  col1: document.getElementById("col1"),
+  col2: document.getElementById("col2"),
+  col3: document.getElementById("col3")
+};
+
+/////////////////////////////////////////////////////
+// STATE
+/////////////////////////////////////////////////////
+
+let widgets = JSON.parse(localStorage.getItem("widgets")) || [
+  {
+    id:"news1",
+    type:"news",
+    col:"col2",
+    config:{
+      rss:"https://news.google.com/rss?hl=zh-TW&gl=TW&ceid=TW:zh-Hant"
+    },
+    state:{ page:0 }
+  },
+  {
+    id:"player1",
+    type:"player",
+    col:"col1",
+    config:{
+    list:[
+    "http://youtu.be/0FBiyFpV__g",
+    "http://youtube.com/@TwBaiBai/streams",
+    "http://is.gd/g9kBOr",
+    "http://www.youtube.com/@TheRealSamuiWebcam/streams",
+    "http://youtube.com/@Cooperstownhouseliverpool/streams"
+  ]
+  }
+  },
+  {
+    id:"note1",
+    type:"note",
+    col:"col3",
+    state:{ list:["歡迎使用記事本"] }
+  },
+  {
+    id:"cal1",
+    type:"calendar",
+    col:"col3",
+    state:{ "2026-04-12":["開會","運動"] }
+  },
+  {
+    id:"weather1",
+    type:"weather",
+    col:"col1",
+    state:{}
+  }
+];
+
+/////////////////////////////////////////////////////
+// PLAYER 相容
+/////////////////////////////////////////////////////
+
+widgets.forEach(w=>{
+  if(w.type==="player" && !w.config.list){
+    w.config.list = w.config.url ? [w.config.url] : [];
+  }
+});
+
+/////////////////////////////////////////////////////
+// 🔥 NEWS（多來源 + 熱門 + 去重）
+/////////////////////////////////////////////////////
+
+async function fetchAllNews(){
+
+  const rssList = [
+    "https://news.google.com/rss?hl=zh-TW&gl=TW&ceid=TW:zh-Hant",
+    "https://tw.news.yahoo.com/rss/",
+    "https://www.cna.com.tw/rss/All.aspx",
+    "https://news.ltn.com.tw/rss/all.xml",
+    "https://udn.com/rssfeed/news/2",
+    "https://www.ettoday.net/rss/rss_news.xml"
+  ];
+
+  let all = [];
+
+  for(const rss of rssList){
+    try{
+      const res = await fetch(
+        "https://api.rss2json.com/v1/api.json?rss_url=" +
+        encodeURIComponent(rss)
+      );
+      const data = await res.json();
+      all.push(...(data.items || []));
+    }catch(e){}
+  }
+
+  let merged = [];
+
+  const similar = (a,b)=>a.slice(0,10)===b.slice(0,10);
+
+  for(const n of all){
+
+    let exist = merged.find(x=>similar(x.title,n.title));
+
+    if(exist){
+      exist.count = (exist.count||1)+1;
+    }else{
+      merged.push({...n,count:1});
+    }
+  }
+
+  merged.sort((a,b)=>(b.count||1)-(a.count||1));
+
+  return merged;
+}
+
+/////////////////////////////////////////////////////
+// WEATHER ICON
+/////////////////////////////////////////////////////
+
+function getIcon(text){
+  text = text.toLowerCase();
+  if(text.includes("rain")) return "🌧️";
+  if(text.includes("cloud")) return "☁️";
+  if(text.includes("sun")) return "☀️";
+  return "🌤️";
+}
+
+/////////////////////////////////////////////////////
+// WIDGETS
+/////////////////////////////////////////////////////
+
+const Widget = {
+
+/////////////////////////////////////////////////////
+// NEWS
+/////////////////////////////////////////////////////
+
+news: async (w)=>{
+
+  if(!w.state) w.state={page:0};
+
+  const items = await fetchAllNews();
+
+  const pageSize = 10;
+  const start = w.state.page * pageSize;
+  const page = items.slice(start,start+pageSize);
+
+  return `
+  <div class="card">
+    <b>📰 台灣新聞（熱門）</b>
+
+    ${page.map(n=>`
+      <div>
+        <a target="_blank" href="${n.link}">${n.title}</a>
+        <small>🔥${n.count||1}</small>
+      </div>
+    `).join("")}
+
+    <div style="display:flex;justify-content:space-between;">
+      <button onclick="prevNews('${w.id}')">⬅</button>
+      <span>${w.state.page+1}</span>
+      <button onclick="nextNews('${w.id}',${items.length})">➡</button>
+    </div>
+  </div>`;
+},
+
+/////////////////////////////////////////////////////
+// PLAYER
+/////////////////////////////////////////////////////
+
+player:(w)=>`
+<div class="card">
+<b>🎧 全方位網路播放器</b>
+
+<input id="playerInput_${w.id}">
+<button onclick="addPlayer('${w.id}')">新增</button>
+
+${(w.config.list||[]).map((u,i)=>`
+  <div>
+    <a target="_blank" href="${u}">▶ 播放 ${i+1}</a>
+    <button onclick="delPlayer('${w.id}',${i})">x</button>
+  </div>
+`).join("")}
+
+</div>`,
+
+
+/////////////////////////////////////////////////////
+// NOTE
+/////////////////////////////////////////////////////
+
+note:(w)=>`
+<div class="card">
+<b>📝 記事本</b>
+
+<input id="noteInput_${w.id}">
+<button onclick="addNote('${w.id}')">新增</button>
+
+${(w.state.list||[]).map((t,i)=>`
+  <div>${t}<button onclick="delNote('${w.id}',${i})">x</button></div>
+`).join("")}
+
+</div>`,
+
+/////////////////////////////////////////////////////
+// CALENDAR
+/////////////////////////////////////////////////////
+
+calendar:(w)=>{
+
+  const ev = w.state || {};
+  let d=1;
+
+  let html=`
+  <div class="card">
+  <b>📆 行事曆</b>
+
+  <input id="calDate_${w.id}">
+  <input id="calText_${w.id}">
+  <button onclick="addCal('${w.id}')">新增</button>
+
+  <table><tr>
+  <th>日</th><th>一</th><th>二</th>
+  <th>三</th><th>四</th><th>五</th><th>六</th>
+  </tr>`;
+
+  for(let r=0;r<5;r++){
+    html+="<tr>";
+
+    for(let c=0;c<7;c++){
+      if(d>31){ html+="<td></td>"; continue; }
+
+      const key=`2026-04-${String(d).padStart(2,"0")}`;
+      const list=ev[key]||[];
+
+      html+=`
+      <td>
+      <b>${d}</b><br>
+      ${list.map(x=>`• ${x}`).join("<br>")}
+      </td>`;
+
+      d++;
+    }
+
+    html+="</tr>";
+  }
+
+  html+="</table></div>";
+  return html;
+},
+
+/////////////////////////////////////////////////////
+// WEATHER（16縣市）
+/////////////////////////////////////////////////////
+
+weather: async ()=>{
+
+  const cityNameMap = {
+    "Taipei":"台北市",
+    "New Taipei":"新北市",
+    "Taoyuan":"桃園市",
+    "Taichung":"台中市",
+    "Tainan":"台南市",
+    "Kaohsiung":"高雄市",
+    "Keelung":"基隆市",
+    "Hsinchu":"新竹市",
+    "Miaoli":"苗栗縣",
+    "Changhua":"彰化縣",
+    "Nantou":"南投縣",
+    "Yunlin":"雲林縣",
+    "Chiayi":"嘉義縣/市",
+    "Pingtung":"屏東縣",
+    "Yilan":"宜蘭縣",
+    "Hualien":"花蓮縣",
+    "Taitung":"台東縣"
+  };
+
+  const cities = Object.keys(cityNameMap);
+
+  let out=[];
+
+  for(const city of cities){
+    try{
+      const res = await fetch(`https://wttr.in/${city}?format=j1`);
+      const d=await res.json();
+      const c=d.current_condition[0];
+
+      out.push({
+        city,
+        temp:c.temp_C,
+        desc:c.weatherDesc[0].value
+      });
+    }catch(e){}
+  }
+
+  return `
+  <div class="card">
+    <b>🌤️ 台灣天氣</b>
+
+    ${out.map(r=>`
+      <div>
+        ${cityNameMap[r.city]} 🌡️ ${r.temp}°C
+      </div>
+    `).join("")}
+
+  </div>`;
+}
+};
+
+/////////////////////////////////////////////////////
+// ACTIONS
+/////////////////////////////////////////////////////
+
+function addPlayer(id){
+  const w=widgets.find(x=>x.id===id);
+  const v=document.getElementById("playerInput_"+id).value;
+  if(!v.trim()) return;
+  w.config.list.push(v);
+  render();
+}
+
+function delPlayer(id,i){
+  widgets.find(x=>x.id===id).config.list.splice(i,1);
+  render();
+}
+
+function addNote(id){
+  const w=widgets.find(x=>x.id===id);
+  const v=document.getElementById("noteInput_"+id).value;
+  if(!v.trim()) return;
+  w.state.list.push(v);
+  render();
+}
+
+function delNote(id,i){
+  widgets.find(x=>x.id===id).state.list.splice(i,1);
+  render();
+}
+
+function addCal(id){
+  const w=widgets.find(x=>x.id===id);
+  const d=document.getElementById("calDate_"+id).value;
+  const t=document.getElementById("calText_"+id).value;
+  if(!d||!t) return;
+  if(!w.state[d]) w.state[d]=[];
+  w.state[d].push(t);
+  render();
+}
+
+function nextNews(id,total){
+  const w=widgets.find(x=>x.id===id);
+  const max=Math.floor(total/5);
+  if(w.state.page<max) w.state.page++;
+  render();
+}
+
+function prevNews(id){
+  const w=widgets.find(x=>x.id===id);
+  if(w.state.page>0) w.state.page--;
+  render();
+}
+
+
+/////////////////////////////////////////////////////
+// RENDER
+/////////////////////////////////////////////////////
+
+async function render(){
+
+  for(const c in columns){
+    columns[c].innerHTML="";
+  }
+
+  for(const w of widgets){
+
+    const fn=Widget[w.type];
+    if(!fn) continue;
+
+    let html=fn(w);
+    if(html instanceof Promise) html=await html;
+
+    const el=document.createElement("div");
+    el.innerHTML=html;
+    columns[w.col].appendChild(el);
+  }
+
+  localStorage.setItem("widgets",JSON.stringify(widgets));
+}
+
+render();
+
+
+function resetAll(){
+  localStorage.clear();
+  location.reload();
+}
+</script>
+</body>
+</html>

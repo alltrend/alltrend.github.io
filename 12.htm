@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>全方位電台音樂播放器</title>
+<style>
+body { 
+  margin:0; 
+  background:linear-gradient(180deg, #001f3f, #004080); 
+  color:#0ff; 
+  text-align:center; 
+  font-family:sans-serif;
+  overflow-y:auto;
+  overflow-x:hidden;
+}
+
+h1 { margin-top:20px; }
+
+canvas {
+  display:block;
+  margin:20px auto;
+  background:transparent; /* 背景透明 */
+  border:none;            /* 去除框線 */
+}
+
+.knob {
+  width:120px; height:120px;
+  border-radius:50%;
+  border:6px solid #0ff;
+  margin:20px auto;
+  animation: spin 6s linear infinite;
+  box-shadow: 0 0 40px #0ff;
+}
+
+@keyframes spin {
+  from { transform:rotate(0deg); }
+  to { transform:rotate(360deg); }
+}
+
+/* 🌈 中央呼吸光球 */
+.breathing-bg {
+  position:fixed;
+  top:50%;
+  left:50%;
+  width:800px;
+  height:800px;
+  transform:translate(-50%,-50%);
+  border-radius:50%;
+  filter: blur(80px);
+  z-index:-2;
+  animation: breathe 6s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  0% { background:hsl(200,100%,50%); transform:translate(-50%,-50%) scale(0.8); opacity:0.5; }
+  50% { background:hsl(320,100%,60%); transform:translate(-50%,-50%) scale(1.3); opacity:0.9; }
+  100% { background:hsl(100,100%,50%); transform:translate(-50%,-50%) scale(0.8); opacity:0.5; }
+}
+
+/* 🌫 粒子層 */
+canvas#particles {
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  z-index:-3;
+  pointer-events:none;
+}
+
+select { margin:10px; padding:5px; font-size:16px; }
+#info { margin-top:20px; }
+
+
+.rainbow-flow {
+  font-size: 2.5em;
+  font-weight: bold;
+  background: linear-gradient(
+    to right,
+    red,
+    orange,
+    yellow,
+    cyan,       /* 淺藍 */
+    #66B3FF,    /* 亮藍 */
+    pink,
+    gold,
+    #40E0D0,    /* 藍綠偏亮藍 */
+    #FF69B4,    /* 桃紅 */
+    #FFD700     /* 金色 */
+  );
+  background-size: 600% auto; /* 漸層範圍放大，顏色更明顯 */
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: rainbow-scroll 12s linear infinite;
+}
+/* 彩虹持續流動效果：由左至右 */
+@keyframes rainbow-scroll {
+  from { background-position: 0% 50%; }
+  to   { background-position: 100% 50%; }
+}
+
+
+html, body, header, .title {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+
+/* Reset */
+html,body {
+height:100%;
+  overflow-x: hidden;   /* 禁止橫向滾動 */
+  overflow-y: auto;     /* ✅ 允許垂直滾動 */
+}
+
+
+/* 📱 小型手機（小於 480px） */
+@media (max-width: 479px) {
+  .toolbar {
+    flex-direction: column;
+    gap: 6px;
+  }
+  .toolbar select,
+  .toolbar input,
+  .toolbar button {
+    width: 100%;
+  }
+  table {
+    font-size: 13px;
+  }
+  #container {
+    grid-template-columns: 1fr;
+  }
+  #sidebar {
+    position: absolute;
+    top: 42px;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: #fff;
+    z-index: 1000;
+    border-right: none;
+    border-top: 1px solid #ddd;
+  }
+  #map {
+    height: calc(100vh - 42px);
+  }
+  header > * {
+    flex: 1 1 100%;
+  }
+}
+/* 📱 中型手機（480px 到 767px） */
+@media (min-width: 480px) and (max-width: 767px) {
+  .toolbar {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .toolbar select,
+  .toolbar input,
+  .toolbar button {
+    width: 100%;
+  }
+  table {
+    font-size: 14px;
+  }
+  #container {
+    grid-template-columns: 1fr;
+  }
+  #sidebar {
+    position: absolute;
+    top: 42px;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: #fff;
+    z-index: 1000;
+    border-right: none;
+    border-top: 1px solid #ddd;
+  }
+  #map {
+    height: calc(100vh - 42px);
+  }
+  header > * {
+    flex: 1 1 100%;
+  }
+}
+/* 📱 大型手機／小平板（768px 到 1023px） */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .toolbar {
+    flex-direction: row;
+    gap: 12px;
+  }
+  .toolbar select,
+  .toolbar input,
+  .toolbar button {
+    width: auto;
+  }
+  table {
+    font-size: 15px;
+  }
+  #container {
+    grid-template-columns: 1fr;
+  }
+  #sidebar {
+    position: absolute;
+    top: 42px;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: #fff;
+    z-index: 1000;
+    border-right: none;
+    border-top: 1px solid #ddd;
+  }
+  #map {
+    height: calc(100vh - 42px);
+  }
+  header > * {
+    flex: 1 1 100%;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="breathing-bg"></div>
+<canvas id="particles"></canvas>
+<h1 class="rainbow-flow">🎧全方位電台音樂播放器🎧</h1>
+<!-- <div class="knob"></div> -->
+
+<!-- 示波器與 EQ，背景透明、無框線 -->
+<canvas id="osc" width="800" height="200"></canvas>
+<canvas id="eq" width="800" height="200"></canvas>
+
+<div>
+<select id="playlist">
+<option value="http://stream.rcs.revma.com/aw9uqyxy2tzuv">中廣流行網 FM103.3</option>
+<option value="http://stream.rcs.revma.com/ndk05tyy2tzuv">中廣音樂網 (網路)</option>
+<option value="http://stream.rcs.revma.com/fgtx07f3qtzuv">中廣新聞網 AM65.7</option>
+<option value="https://stream.rcs.revma.com/p2e3rfg3qtzuv">中廣鄉親網 FM91.9</option>
+<option value="https://stream.rcs.revma.com/1qxn2vg3qtzuv">中廣 I GO AM53.1</option>
+<option value="https://stream.rcs.revma.com/em90w4aeewzuv">飛碟聯播網 FM92.1</option>
+<option value="https://stream.rcs.revma.com/55tyxsy4qtzuv?">News98廣播台 FM98.1</option>
+<option value="http://fm901.myDS.me:8080/901.mp3">台北城市廣播 FM90.1</option>
+<option value="http://fm929.cityfm.tw:8080/929.mp3">台中城市廣播 FM92.9</option>
+<option value="http://fm901.cityfm.tw:8080/901.mp3">台南城市廣播 FM99.7</option>
+<option value="http://fm983.cityfm.tw:8080/983.mp3">城市廣播 FM98.3</option>
+<option value="https://stream.rcs.revma.com/xpgtqc74hv8uv">ASIAFM 亞洲電台 FM92.7</option>
+<option value="https://stream.rcs.revma.com/kydend74hv8uv">ASIAFM 亞太電台 FM92.3</option>
+<option value="https://stream.rcs.revma.com/e0tdah74hv8uv">ASIAFM 飛揚調頻 FM89.5</option>
+<option value="https://stream.rcs.revma.com/7mnq8rt7k5zuv">竹科廣播台 FM97.5</option>
+<option value="https://flv.ccdntech.com/live/_definst_/mp4:vod117_Live/live1/playlist.m3u8">正聲廣播台 FM104.1</option>
+<option value="https://flv.ccdntech.com/live/_definst_/mp4:vod117_Live/live2/playlist.m3u8">正聲音樂派網路電台</option>
+<option value="https://stream.ginnet.cloud/live0130lo-yfyo/_definst_/fm/playlist.m3u8">台北廣播電台 FM93.1</option>
+<option value="https://stream.ginnet.cloud/live0130lo-yfyo/_definst_/am/playlist.m3u8">台北廣播電台 AM113.4</option>
+<option value="https://streamak0138.akamaized.net/live0138lh-mbm9/_definst_/rti3/playlist.m3u8">中央廣播電台 華語線上收聽</option>
+<option value="https://streamak0138.akamaized.net/live0138lh-mbm9/_definst_/rti6/playlist.m3u8">中央廣播電台 台客粵語和歐美外語</option>
+<option value="https://stream.rcs.revma.com/044q61ha7a0uv">全國廣播 MRadio FM10.6</option>
+<option value="https://stream.ginnet.cloud/live0119lo-p4rb/_definst_/fm903/playlist.m3u8">羅東電台 FM90.3</option>
+<option value="https://stream.ginnet.cloud/live0119lo-p4rb/_definst_/fm1043/playlist.m3u8">GoGoRadio 桃園 FM104.3</option>
+<option value="https://stream.rcs.revma.com/pet2dvug1bkvv/">高雄廣播電台 FM94.3</option>
+<option value="https://cast.ner.gov.tw/1">國立教育廣播電台 臺北總台 FM101.7</option>
+<option value="http://stream.pbs.gov.tw:1935/live/mp3:PBS/playlist.m3u8">警察廣播台全國網 FM104.9</option>
+<option value="https://stream.pbs.gov.tw/live/TPS/chunklist_w880278143.m3u8">警察廣播台台北台 FM94.3</option>
+<option value="https://stream.pbs.gov.tw/live/ELS/playlist.m3u8">警察廣播台 宜蘭台 FM101.3</option>
+<option value="https://stream.pbs.gov.tw/live/SCS/playlist.m3u8">警察廣播台 新竹台 AM151.2</option>
+<option value="https://stream.pbs.gov.tw/live/TCS/playlist.m3u8">警察廣播台 台中台 FM94.5</option>
+<option value="https://stream.pbs.gov.tw/live/TNS/playlist.m3u8">警察廣播台 台南台 AM131.4</option>
+<option value="https://stream.pbs.gov.tw/live/KSS/playlist.m3u8">警察廣播台 高雄台 FM93.1</option>
+<option value="https://stream.pbs.gov.tw/live/HLS/playlist.m3u8">警察廣播台 花蓮台 FM94.3</option>
+<option value="https://stream.pbs.gov.tw/live/TTS/playlist.m3u8">警察廣播台 台東台 FM94.3</option>
+<option value="https://play.gojoy.org/audio/stream">GOJOY夠跩</option>
+<option value="https://stream.radiojar.com/ehzvurp9tv8uv">BOSS ONLINE RADIO</option>
+<option value="https://azuracast.conceptradio.fr/radio/8030/stream.mp3">Taiwan Lounge Radio</option>
+<option value="http://lizeradio.com:8080/;">栗子的輕音樂</option>
+<option value="">--微微笑廣播網--</option>
+<option value="http://211.72.65.62:8080/">台北 北台灣之聲 FM107.1</option>
+<option value="http://61.220.209.152:8081/">宜蘭 噶瑪蘭 FM97.9</option>
+<option value="http://211.72.65.61:8080/">桃園 國際 FM101.1</option>
+<option value="http://61.220.245.236:8080/">桃園 風城 FM98.7</option>
+<option value="http://211.72.230.118:8081/">新竹 竹塹 FM90.3</option>
+<option value="http://59.125.41.65:8081/">台中 歡喜之聲 FM106.3</option>
+<option value="http://60.248.53.115:8081/">嘉義 環球 FM107.1</option>
+<option value="http://59.125.209.209:8081/">台南 凱旋 FM97.9</option>
+<option value="http://59.120.255.155:8081/">高雄 下港之聲 FM90.5</option>
+<option value="http://59.120.255.169:8081/">屏東 屏東之聲 FM92.5</option>
+<option value="http://59.120.255.170:8081/">屏東 潮州之聲 FM90.9</option>
+<option value="http://59.120.255.171:8081/">屏東 大武山 FM91.3</option>
+<option value="http://211.72.65.63:8080/">金門 大金 FM106.3</option>
+<option value="">--其他音樂/地方台--</option>
+<option value="http://59.120.88.155:8000/live.mp3">Family977 古典音樂 FM97.7</option>
+<option value="http://1.34.23.16:8080/broadwavehigh.mp3">美聲廣播 FM91.5</option>
+<option value="http://61.218.61.251:8080/">幸福電台 FM102.5</option>
+<option value="http://61.219.59.31:8081/">花蓮希望之聲 FM90.5</option>
+<option value="http://211.20.119.101:8081">台中廣播 FM100.7</option>
+<option value="http://211.20.119.102:8081/">太陽廣播 FM89.1</option>
+<option value="http://125.227.87.206:8000/FM98.5">寶島聯播網 基北區 FM92.3</option>
+<option value="http://125.227.87.206:8000/FM99.1">寶島聯播網 中區 FM99.1</option>
+<option value="http://125.227.87.206:8000/FM96.9">寶島聯播網 高屏區 FM96.9</option>
+<option value="http://60.250.148.112:8000/live">大樹下廣播 FM90.5</option>
+<option value="http://61.216.152.235:8000/FM905">大樹下廣播 分流 FM90.5</option>
+<option value="https://stream.rcs.revma.com/k41z6wadu5hvv.m4a?1698707651">輕鬆電台 FM96.9</option>
+<option value="http://live.fm935newhakka.com.tw:5006/live">新客家廣播 FM93.5</option>
+<option value="http://211.20.119.103:8081/">苗栗正義電台 FM 88.9</option>
+<option value="https://stream.rcs.revma.com/mk0c5vq122hvv">漁業廣播電臺</option>
+<option value="https://stream.rcs.revma.com/k41z6wadu5hvv.m4a?1698707651">FM 96.9 輕鬆電台</option>
+<option value="http://211.20.119.102:8081/">FM 89.1 太陽廣播網路直播</option>
+<option value="http://60.249.186.105:9000/;?icy=http">FM 92.1 高屏 金聲廣播電台</option>
+<option value="https://s4.radio.co/sc6742e54d/listen">台灣羚聲</option>
+<option value="http://61.218.61.251:8080/">FM 102.5 幸福電台</option>
+<option value="http://61.219.59.31:8081/">FM 90.5 花蓮希望之聲廣播電台</option>
+<option value="https://stream.rcs.revma.com/srn5f9kmwxhvv">FM 96.7 環宇廣播電台</option>
+<option value="http://cdn280.ccdntech.com/live-http/_definst_/vod280_Live/needs/playlist.m3u8">needs RADIO 全球華語廣播網</option>
+<option value="http://cdn280.ccdntech.com/live-http/_definst_/vod280_Live/stars/playlist.m3u8">Stars RADIO 星蹤之愛廣播網</option>
+<option value="https://am981.ddns.net:9005/stream.ogg">鳳鳴廣播電台 1台</option>
+<option value="https://am1161.ddns.net:9005/stream.ogg">鳳鳴廣播電台 2台</option>
+<option value="https://stream.rcs.revma.com/uyaghqmdm3hvv">神農廣播股份有限公司</option>
+<option value="https://stream.rcs.revma.com/9ssfduqkr0hvv">曾文溪廣播電台</option>
+<option value="https://streamipcf2.akamaized.net/live2/_definst_/fm963/playlist.m3u8">Alian FM96.3廣播 原住民族文化</option>
+<option value="http://43.254.16.40:8000/CH.AM810">AM 810 國聲廣播</option>
+<option value="http://43.254.16.40:8000/KS.FM89.3">FM 89.3 南方之音</option>
+<option value="http://43.254.16.40:8000/DaAiRadio">大愛網路廣播電台 (分流)</option>
+<option value="http://43.254.16.40:8000/TC.FM98.5">FM 98.5 非凡音廣播電台</option>
+<option value="http://43.254.16.40:8000/CH.AM1179">AM 1179 國聲廣播</option>
+<option value="http://43.254.16.40:8000/HC.FM97.9">FM 97.9 新竹之音</option>
+<option value="http://43.254.16.40:8000/CH.FM88.7">FM 88.7 花園電台</option>
+<option value="http://43.254.16.40:8000/CY.FM91.3">FM 91.3 寶島聯播網 嘉義之音</option>
+<option value="http://43.254.16.40:8000/CH.FM97.3">FM 97.3 靉友之聲</option>
+<option value="http://43.254.16.40:8000/guide">資悠網路廣播實驗電台</option>
+<option value="http://43.254.16.40:8000/CH.FM91.1">FM 91.1 關懷電台</option>
+<option value="http://43.254.16.40:8000/CY.FM91.7">FM 91.7 嘉義北回電台</option>
+<option value="http://43.254.16.40:8000/CY.FM93.3">FM 93.3 雲嘉電台</option>
+<option value="http://43.254.16.40:8000/HC.FM99.3">FM 99.3 新聲廣播電台</option>
+<option value="http://43.254.16.40:8000/HL.AM1242">AM 1242 花蓮燕聲廣播電台</option>
+<option value="http://43.254.16.40:8000/HL.AM1044">AM 1044 花蓮燕聲廣播電台</option>
+<option value="http://43.254.16.40:8000/KL.AM1404">AM 1404 益世電台</option>
+<option value="http://43.254.16.40:8000/KS.FM99.5">FM 99.5 雲端新電台</option>
+<option value="http://43.254.16.40:8000/KS.FM98.3">FM 98.3 港都電台</option>
+<option value="http://43.254.16.40:8000/ML.FM97.1">FM 97.1 大漢之音</option>
+<option value="http://43.254.16.40:8000/NT.AM963">AM 963 台廣南投中興台</option>
+<option value="http://43.254.16.40:8000/NT.AM630">AM 630 台廣南投松嶺台</option>
+<option value="http://43.254.16.40:8000/PH.AM756">AM 756 勝利澎湖馬公台</option>
+<option value="http://43.254.16.40:8000/TC.FM98.7">FM 98.7 每日廣播電台</option>
+<option value="http://43.254.16.40:8000/TC.FM89.1">FM 89.1 太陽廣播電台</option>
+<option value="http://43.254.16.40:8000/TC.FM97.7">FM 97.7 好家庭古典音樂電台</option>
+<option value="http://43.254.16.40:8000/TN.AM1071">AM 1071 電聲廣播電台</option>
+<option value="http://43.254.16.40:8000/TN.AM774">AM 774 勝利一台</option>
+<option value="http://43.254.16.40:8000/TN.AM954">AM 954 建國電台</option>
+<option value="http://43.254.16.40:8000/TN.FM99.7">FM 99.7 台南都會聲音</option>
+<option value="http://43.254.16.40:8000/TN.AM1188">AM 1188 勝利二台</option>
+<option value="http://43.254.16.40:8000/TN.AM801">AM 801 建國廣播電台</option>
+<option value="http://43.254.16.40:8000/TP.AM1323">AM 1323 台廣台北一台</option>
+<option value="http://43.254.16.40:8000/TP.AM1296">AM 1296 民本一台</option>
+<option value="http://43.254.16.40:8000/TP.FM91.3">FM 91.3 BROVO 電台</option>
+<option value="http://43.254.16.40:8000/TP.FM102.5">FM 102.5 幸福廣播電台</option>
+<option value="http://43.254.16.40:8000/TP.FM90.5">FM 90.5 大樹下電台</option>
+<option value="http://43.254.16.40:8000/TP.AM1188">AM 1188 台廣台北二台</option>
+<option value="http://43.254.16.40:8000/TP.AM855">AM 855 民本二台</option>
+<option value="http://43.254.16.40:8000/TP.FM93.7">FM 93.7 寶島客家廣播電台</option>
+<option value="http://43.254.16.40:8000/TP.AM819">AM 819 正聲台北調幅台</option>
+<option value="http://43.254.16.40:8000/TY.AM621">AM 621 台廣大溪一台</option>
+<option value="http://43.254.16.40:8000/TY.AM1062">AM 1062 台廣大溪二台</option>
+<option value="http://43.254.16.40:8000/YL.FM106.3">FM 106.3 農鄉廣播電台</option>
+<option value="https://stream.rcs.revma.com/akqrbx94gbkvv">講客廣播電臺 FM105.9</option>
+<option value="https://stream.rcs.revma.com/hpeqh9mkc6hvv">領袖廣播電台 FM93.7</option>
+<option value="">--校園廣播台--</option>
+<option value="http://140.136.115.115:8000/fjuvoice885.mp3">輔大之聲 FM88.5</option>
+<option value="http://140.119.169.241:8000/ade.taiwan.mp3">政大之聲 FM88.7</option>
+<option value="http://radio.mcu.edu.tw:8080/radio">銘傳之聲 FM88.3</option>
+<option value="http://163.13.182.81:8001/votk">淡江之聲 FM88.7</option>
+<option value="https://stream.ginnet.cloud/live0115lo-89xv/_definst_/fm881/playlist.m3u8">世新廣播電台 FM88.1</option>
+<option value="https://stream.ginnet.cloud/live0115lo-89xv/_definst_/am729/playlist.m3u8">世新廣播電台 AM729</option>
+<option value="http://120.97.105.18:8000/vota">台藝之聲 FM88.3</option>
+<option value="http://radio.ndhu.edu.tw/radio.mp3">東華之聲網路電台</option>
+<option value="">--宗教廣播台--</option>
+<option value="https://stream.ginnet.cloud/live0119lo-p4rb/_definst_/fm909/playlist.m3u8">佳音廣播電台 FM90.9</option>
+<option value="https://stream.ginnet.cloud/live0119lo-p4rb/_definst_/modern/playlist.m3u8">佳音聖樂網 FM90.9</option>
+<option value="http://us3.internet-radio.com:8232/stream">牽手之聲網路電台</option>
+<option value="https://stream.radiojar.com/z3ctv2zxm2zuv">KNLS 生命之光廣播電台</option>
+<option value="https://btsu4k5-hisng.cdn.hinet.net/live/pool/btsLive2/hievent-hls/btsLive2.m3u8">佛衛慈悲台 站點一</option>
+<option value="http://btsw-ott2b.cdn.hinet.net/live_bts/btsw01/playlist.m3u8">佛衛慈悲台 站點二</option>
+<option value="">--動漫廣播台--</option>
+<option value="https://ottava2.out.airtime.pro/ottava2_a">「OTTAVA」日本線上古典音樂廣播電台</option>
+<option value="https://antares.dribbcast.com/proxy/kpop?mp=/s">BigBRadio 音樂電台 Kpop類型</option>
+<option value="https://antares.dribbcast.com/proxy/jpop?mp=/s">BigBRadio 音樂電台 Jpop類型</option>
+<option value="https://antares.dribbcast.com/proxy/cpop?mp=/s">BigBRadio 音樂電台 Cpop類型</option>
+<option value="https://antares.dribbcast.com/proxy/apop?mp=/s">BigBRadio 音樂電台 Apop類型</option>
+<option value="https://stream.phate.io/phateio.mp3">phate.io 飛特動漫音樂電台直播 (可點歌)</option>
+<option value="http://mtradio.asuscomm.com:8000/;">MT.Radio ACG動漫音樂電台</option>
+<option value="http://curiosity.shoutca.st:8019/stream">VocaloidRadio ACG動漫音樂電台</option>
+<option value="https://ais-edge104-live365-dal02.cdnstream.com/a53497">Japanimradio ACG動漫音樂電台</option>
+<option value="https://ss-edge.joeycast.com/anime.mp3">BOX : Weeb Anime Network ACG動漫音樂電台</option>
+<option value="https://radio.stereoanime.net/listen/stereoanime/;">Stereoanime.net ACG動漫音樂電台</option>
+<option value="https://animefm.stream.laut.fm/animefm">Anime.FM ACG動漫音樂電台</option>
+<option value="https://stream.animeradio.de/animeradio.mp3">AnimeRadio.de ACG動漫音樂電台</option>
+<option value="https://cast.animenexus.net/radio/8000/animenexus">Radio Anime Nexus ACG動漫音樂電台</option>
+<option value="http://stream.gensokyoradio.net:8000/1">Gensokyo Radio 幻想郷ラジオ 動漫音樂電台 (64k)</option>
+<option value="http://stream.gensokyoradio.net:8000/2">Gensokyo Radio 幻想郷ラジオ 動漫音樂電台 (128k)</option>
+<option value="http://stream.gensokyoradio.net:8000/3">Gensokyo Radio 幻想郷ラジオ 動漫音樂電台 (256k)</option>
+<option value="https://usa2.fastcast4u.com/proxy/greekota?mp=/1&1703920567172">Greek Otaku Radio ACG動漫音樂電台</option>
+<option value="http://109.169.23.124:8069/stream">Otaku's Radio ACG動漫音樂電台</option>
+<option value="http://gyusyabu.ddo.jp:8000/;stream.mp3">Retro PC Game Music Streaming 早期遊戲音樂電台</option>
+<option value="https://chiru.no:8000/stream.mp3">chiru.no ACG動漫音樂電台</option>
+<option value="">--海外廣播電台--</option>
+<option value="https://api.allorigins.win/raw?url=http://59.152.232.107:8000/Channel1-64MP3">D100廣播台 香港</option>
+<option value="https://api.allorigins.win/raw?url=http://sc.apple-fm.net:9020/;stream.mp3">Apple FM音樂台 香港</option>
+<option value="https://playerservices.streamtheworld.com/api/livestream-redirect/YES933_SC">Yes93.3廣播台 新加坡</option>
+<option value="https://22283.live.streamtheworld.com:443/UFM_1003_SC">UFM 100.3音樂台 新加坡</option>
+<option value="https://playerservices.streamtheworld.com/api/livestream-redirect/LOVE972FM_PREM_SC">Love97.2音樂台 新加坡</option>
+<option value="https://playerservices.streamtheworld.com/api/livestream-redirect/988_FM_SC">988廣播台 馬來西亞</option>
+</select>
+</div>
+
+<div id="info">
+  <h2 id="songTitle">🎶 準備播放...</h2>
+  <p id="time">00:00 / 00:00</p>
+</div>
+
+<audio id="player" controls></audio>
+<script>
+// ===== 基本 =====
+const audio = document.getElementById("player");
+const playlist = document.getElementById("playlist");
+const songTitle = document.getElementById("songTitle");
+const time = document.getElementById("time");
+
+audio.crossOrigin = "anonymous";
+
+// ===== AudioContext =====
+let ctx, analyser, oscAnalyser;
+
+function initAudio() {
+  if (!ctx) {
+    ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const src = ctx.createMediaElementSource(audio);
+
+    analyser = ctx.createAnalyser();
+    oscAnalyser = ctx.createAnalyser();
+
+    analyser.fftSize = 256;
+    oscAnalyser.fftSize = 2048;
+
+    src.connect(analyser);
+    src.connect(oscAnalyser);
+
+    analyser.connect(ctx.destination);
+    oscAnalyser.connect(ctx.destination);
+  }
+}
+
+async function startPlayback() {
+  initAudio();
+  if (ctx.state === "suspended") await ctx.resume();
+  try { await audio.play(); }
+  catch(e){ console.log("播放被擋:", e); }
+}
+
+// 點擊解鎖
+document.body.addEventListener("click", startPlayback, { once:true });
+
+// 切歌
+playlist.addEventListener("change", async () => {
+  audio.src = playlist.value;
+  songTitle.textContent = "🎶 正在播放：" + playlist.options[playlist.selectedIndex].text;
+  await startPlayback();
+});
+
+// 時間顯示
+audio.addEventListener("timeupdate", () => {
+  const f = s => isNaN(s) ? "00:00" :
+  `${String(Math.floor(s/60)).padStart(2,"0")}:${String(Math.floor(s%60)).padStart(2,"0")}`;
+  time.textContent = `${f(audio.currentTime)} / ${f(audio.duration)}`;
+});
+
+// ===== EQ =====
+const eqCanvas = document.getElementById("eq");
+const eqCtx = eqCanvas.getContext("2d");
+
+let hueShift = 0;
+let direction = 1;       // 1 = 左→右, -1 = 右→左
+let frameCount = 0;      // 計數器
+const switchInterval = 300; // 跑多少幀再換方向 (可調整) 200 約3秒
+
+function drawEQ(){
+  requestAnimationFrame(drawEQ);
+  if (!analyser) return;
+
+  const data = new Uint8Array(analyser.frequencyBinCount);
+  analyser.getByteFrequencyData(data);
+
+  // 背景透明
+  eqCtx.clearRect(0,0,eqCanvas.width,eqCanvas.height);
+
+  // 調整速度：這裡的 +3 就是顏色流動速度
+  hueShift = (hueShift + 3) % 360;
+  frameCount++;
+
+  // 每隔一段時間才切換方向
+  if (frameCount >= switchInterval) {
+    direction *= -1;
+    frameCount = 0;
+  }
+
+  let x=0;
+  const w=(eqCanvas.width/data.length)*2.5;
+
+  for(let i=0;i<data.length;i++){
+    let h=data[i];
+    // 根據方向決定色相偏移
+    let hue = (i*10*direction + h/2 + hueShift) % 360;
+    let sat = Math.min(100, 70 + h/2);
+    let light = Math.min(80, 40 + h/3);
+
+    eqCtx.fillStyle = `hsl(${hue},${sat}%,${light}%)`;
+    eqCtx.fillRect(x, eqCanvas.height - h/2, w, h/2);
+    x += w + 1;
+  }
+}
+drawEQ();
+
+
+// ===== OSC =====
+const oscCanvas = document.getElementById("osc");
+const oscCtx = oscCanvas.getContext("2d");
+
+function drawOsc(){
+  requestAnimationFrame(drawOsc);
+  if (!oscAnalyser) return;
+
+  const data = new Uint8Array(oscAnalyser.fftSize);
+  oscAnalyser.getByteTimeDomainData(data);
+
+  oscCtx.clearRect(0,0,oscCanvas.width,oscCanvas.height); // 背景透明
+  oscCtx.beginPath();
+  oscCtx.lineWidth = 3; // ★ 加這行，讓波形變粗
+
+  let slice=oscCanvas.width/data.length;
+  let x=0;
+
+  for(let i=0;i<data.length;i++){
+    let v=data[i]/128.0;
+    let y=v*oscCanvas.height/2;
+    if(i===0) oscCtx.moveTo(x,y);
+    else oscCtx.lineTo(x,y);
+    x+=slice;
+  }
+
+  // 避免初始水平線：只有在有播放時才畫
+  if (!audio.paused && audio.currentTime>0) {
+    oscCtx.strokeStyle="#0ff";
+    oscCtx.stroke();
+  }
+}
+drawOsc();
+
+// ===== 粒子（霧化） =====
+const pCanvas=document.getElementById("particles");
+const pCtx=pCanvas.getContext("2d");
+pCanvas.width=window.innerWidth;
+pCanvas.height=window.innerHeight;
+
+let particles=[];
+for(let i=0;i<120;i++){
+  particles.push({
+    x:Math.random()*pCanvas.width,
+    y:Math.random()*pCanvas.height,
+    r:Math.random()*12+8,
+    dx:(Math.random()-0.5)*1.5,
+    dy:(Math.random()-0.5)*1.5,
+    color:`hsl(${Math.random()*360},100%,50%)`
+  });
+}
+
+function drawParticles(){
+  pCtx.clearRect(0,0,pCanvas.width,pCanvas.height);
+
+  particles.forEach(p=>{
+    let g = pCtx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*2);
+    g.addColorStop(0,p.color);
+    g.addColorStop(1,"transparent");
+
+    pCtx.beginPath();
+    pCtx.arc(p.x,p.y,p.r*2,0,Math.PI*2);
+    pCtx.fillStyle=g;
+    pCtx.fill();
+
+    p.x+=p.dx;
+    p.y+=p.dy;
+
+    if(p.x<0||p.x>pCanvas.width) p.dx*=-1;
+    if(p.y<0||p.y>pCanvas.height) p.dy*=-1;
+  });
+
+  requestAnimationFrame(drawParticles);
+}
+drawParticles();
+</script>
+</body>
+</html>
