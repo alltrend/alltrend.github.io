@@ -105,44 +105,68 @@ html,body{
 }
 
 /* 頂部導覽列 */
-header{
-  position:fixed;top:0;left:0;width:100%;
-  background:rgba(0,0,0,0.4);
-  backdrop-filter:blur(6px);
-  display:flex;justify-content:center;align-items:center;
-  padding:10px 20px;z-index:10;
+header {
+  position: fixed;
+  top: 0; left: 0; width: 100%;
+  background: transparent;   /* 改成全透明 */
+  backdrop-filter: blur(6px); /* 保留模糊效果 */
+  display: flex; justify-content: center; align-items: center;
+  padding: 10px 20px; z-index: 10;
 }
 
 header h1 {
+  filter: blur(0.3px); /* 讓文字本身模糊 */
   font-size: 48px;
-  color: var(--accent);
-  margin-right: 40px;
+  margin-right: 10px;
+  animation: rainbowCycle 18s linear infinite; /* 18秒循環 */
   text-shadow: 
-    0 0 20px rgba(102,217,255,1),     /* 近光暈 */
-    0 0 40px rgba(102,217,255,0.9),   /* 中層光暈 */
-    0 0 80px rgba(102,217,255,0.7),   /* 外層光暈 */
-    0 0 160px rgba(102,217,255,0.5);  /* 最外層寬光暈 */
+    0 0 20px currentColor,     
+    0 0 40px currentColor,   
+    0 0 80px currentColor,
+    0 0 160px currentColor,   
+    0 0 240px currentColor;  
 }
-
+/* 保持原本的導覽列樣式 */
 nav ul {
   list-style: none;
   display: flex;
   gap: 20px;
 }
-
 nav a {
-  color: var(--text);
+  color: var(--text); /* 固定文字顏色，不受動畫影響 */
   text-decoration: none;
   font-weight: 500;
   transition: color 0.3s, text-shadow 0.3s;
 }
-
 nav a:hover {
   color: var(--accent);
   text-shadow: 
     0 0 15px rgba(102,217,255,0.9),
     0 0 30px rgba(102,217,255,0.7),
     0 0 60px rgba(102,217,255,0.5);
+}
+@keyframes rainbowCycle {
+  0%   { color: #ff6666; }   /* 淺紅 */
+  5%   { color: #ff9966; }   /* 橘粉 */
+  10%  { color: #ffcc66; }   /* 金黃 */
+  15%  { color: #ffee66; }   /* 淺黃 */
+  20%  { color: #ff66aa; }   /* 桃紅 */
+  25%  { color: #ff99cc; }   /* 粉紅 */
+  30%  { color: #ffccff; }   /* 淡粉紫 */
+  35%  { color: #cc99ff; }   /* 淺紫 */
+  40%  { color: #b3c6ff; }   /* 淡藍紫 (比9999ff更亮) */
+  45%  { color: #99ccff; }   /* 淺亮藍 */
+  50%  { color: #aaddff; }   /* 天空藍 (取代偏暗6699ff) */
+  55%  { color: #cceeff; }   /* 淡冰藍 (取代偏綠66ffff) */
+  60%  { color: #99ffff; }   /* 冰藍 */
+  65%  { color: #ccffff; }   /* 淺水藍 */
+  70%  { color: #e6ffff; }   /* 幾乎白的藍 */
+  75%  { color: #ffccdd; }   /* 淡粉白 */
+  80%  { color: #ffddee; }   /* 淡紫粉 */
+  85%  { color: #ffeeff; }   /* 淡紫白 */
+  90%  { color: #fff0f5; }   /* 淺玫瑰白 */
+  95%  { color: #ffe6f2; }   /* 淡粉白亮色 */
+  100% { color: #ff6666; }   /* 回到淺紅 */
 }
 
 /* 主要容器置中 */
