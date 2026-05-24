@@ -3,7 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>AI 聊天平台入口</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&display=swap" rel="stylesheet">
+</head>
+<title>全方位AI聊天平台入口</title>
 <style>
   body {
     margin: 0;
@@ -18,12 +21,13 @@
     overflow: hidden;
   }
   h1 {
-  filter: blur(1.3px); /* 讓文字本身模糊 */
-  font-size: 3.7em; /* 字放大 */
-  font-weight: bold;
+  filter: blur(1.3px); /* 減少模糊，粗細更清楚 */
+  font-size: 3.7em;
+  font-weight: 800; /* 使用 Montserrat 的特粗字重 */
+  font-family: "Noto Sans TC", "Noto Serif TC", "Microsoft JhengHei", "PingFang TC", sans-serif;
   animation: colorchange 12s infinite;
   z-index: 2;
-  text-shadow: 0 0 30px currentColor, 0 0 50px currentColor; /* 光暈跟隨字色 */
+  text-shadow: 0 0 30px currentColor, 0 0 50px currentColor;
 }
   @keyframes colorchange {
     0% { color: #ff0000; }
@@ -212,7 +216,7 @@ height:100%;
 </head>
 <body>
 <canvas id="particles"></canvas>
-<h1>AI 聊天平台入口</h1>
+<h1>全方位AI聊天平台入口</h1>
 <div class="btn-container">
   <button class="btn" onclick="location.href='https://copilot.microsoft.com'">Copilot AI</button>
   <button class="btn" onclick="location.href='https://chatgpt.com'">ChatGPT AI</button>
@@ -298,6 +302,23 @@ function drawParticles() {
 window.addEventListener("resize", resizeCanvas);
 resizeCanvas();
 setInterval(drawParticles, 30);
+
+
+// 定義字型清單
+const fonts = [
+  '"Noto Sans TC"',       // 思源黑體
+  '"Noto Serif TC"',      // 思源宋體
+  '"Microsoft JhengHei"', // 微軟正黑體
+  '"PingFang TC"',        // 蘋方字體
+  'sans-serif'            // 保底
+];
+
+// 隨機挑一個字型
+const randomFont = fonts[Math.floor(Math.random() * fonts.length)];
+
+// 套用到 h1，並加上完整 fallback 順序
+document.querySelector("h1").style.fontFamily =
+`${randomFont}, "Noto Sans TC", "Noto Serif TC", "Microsoft JhengHei", "PingFang TC", sans-serif`;
 </script>
 </body>
 </html>
