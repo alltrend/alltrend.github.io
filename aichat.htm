@@ -2,93 +2,181 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
-<title>AI Chat</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>AI Chat Hub</title>
 <style>
-    body {
-      margin: 0;
-      background-color: #005FAF; /* 深藍背景 */
-      font-family: Arial, sans-serif;
-      color: #fff;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      min-height: 100vh;
-      padding-top: 30px;
-    }
-    .btn {
-      background: linear-gradient(
-        270deg,
-        #001f4d, #003366, #004b97, #0066cc, #3399ff,
-        #6633cc, #9900cc, #cc00ff, #00cccc, #00ff99,
-        #004b97, #001f4d
-      );
-      background-size: 2000% 2000%; /* 放大漸層，方便流動 */
-      color: #fff;
-      border: none;
-      padding: 15px 30px;
-      margin: 10px;
-      border-radius: 30px;
-      cursor: pointer;
-      font-size: 16px;
-      font-weight: bold;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-      transition: box-shadow 0.3s;
-      display: block;
-      width: 250px;
-      text-align: center;
-      animation: rainbow 15s linear infinite; /* 多彩漸層自動流動 */
-    }
-    /* 滑鼠移過去：光暈 + 彈跳 */
-    .btn:hover {
-      box-shadow: 0 8px 20px rgba(0,0,0,0.6), 0 0 15px rgba(255,255,255,0.5);
-      animation: rainbow 15s linear infinite, bounce 0.4s ease;
-    }
-    /* 按下去：縮小 */
-    .btn:active {
-      transform: scale(0.95);
-    }
-    /* 多彩漸層流動動畫 */
-    @keyframes rainbow {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-    /* 彈跳動畫 */
-    @keyframes bounce {
-      0%   { transform: scale(1); }
-      30%  { transform: scale(1.1); }
-      50%  { transform: scale(0.95); }
-      70%  { transform: scale(1.05); }
-      100% { transform: scale(1); }
-    }
+  body {
+    margin: 0;
+    background: #005FAF;
+    font-family: Arial, sans-serif;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding: 30px;
+    overflow: hidden;
+  }
+  h1 {
+  filter: blur(1.3px); /* 讓文字本身模糊 */
+  font-size: 3.7em; /* 字放大 */
+  font-weight: bold;
+  animation: colorchange 12s infinite;
+  z-index: 2;
+  text-shadow: 0 0 30px currentColor, 0 0 50px currentColor; /* 光暈跟隨字色 */
+}
+  @keyframes colorchange {
+    0% { color: #ff0000; }
+    10% { color: #ff7f00; }
+    20% { color: #ff00ff; }
+    30% { color: #ff1493; }
+    40% { color: #ff4500; }
+    50% { color: #ffd700; }
+    60% { color: #ff69b4; }
+    70% { color: #ff6347; }
+    80% { color: #9370db; }
+    90% { color: #1e90ff; }
+    100% { color: #ff0000; }
+  }
+  .btn-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 15px;
+    width: 90%;
+    max-width: 1200px;
+    z-index: 2;
+  }
+  .btn {
+    background: linear-gradient(
+      270deg,
+      #001f4d, #003366, #004b97, #0066cc, #3399ff,
+      #6633cc, #9900cc, #cc00ff, #00cccc, #00ff99,
+      #004b97, #001f4d
+    );
+    background-size: 2000% 2000%;
+    color: #fff;
+    border: none;
+    padding: 15px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: bold;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    animation: rainbow 15s linear infinite;
+    transition: box-shadow 0.3s, transform 0.2s;
+  }
+  .btn:hover {
+    box-shadow: 0 8px 20px rgba(0,0,0,0.6), 0 0 15px rgba(255,255,255,0.5);
+    animation: rainbow 15s linear infinite, bounce 0.4s ease;
+  }
+  .btn:active { transform: scale(0.95); }
+  @keyframes rainbow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  @keyframes bounce {
+    30% { transform: scale(1.1); }
+    50% { transform: scale(0.95); }
+    70% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+  }
+  canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 1;
+  }
+  
+  
+  
 </style>
 </head>
 <body>
-<button class="btn" onclick="location.href='https://copilot.microsoft.com'">Copilot AI</button>
-<button class="btn" onclick="location.href='https://chatgpt.com'">ChatGPT AI</button>
-<button class="btn" onclick="location.href='https://gemini.google.com'">Gemini AI</button>
-<button class="btn" onclick="location.href='https://claude.ai'">Claude AI</button>
-<button class="btn" onclick="location.href='https://www.perplexity.ai'">Perplexity AI</button>
-<button class="btn" onclick="location.href='https://chat.mistral.ai'">Mistral AI 聊天室</button>
-<button class="btn" onclick="location.href='https://chat.deepseek.com'">DeepSeek AI 聊天室</button>
-<button class="btn" onclick="location.href='https://kimi.com'">Kimi AI 聊天室</button>
-<button class="btn" onclick="location.href='https://yiyan.baidu.com'">文心一言 AI 聊天室</button>
-<button class="btn" onclick="location.href='https://qianwen.com'">千問 AI 聊天室</button>
-<button class="btn" onclick="location.href='https://chat.sensetime.com'">商量 AI 聊天室</button>
-<button class="btn" onclick="location.href='https://pi.ai'">Pi AI 聊天室</button>
-<button class="btn" onclick="location.href='https://grok.com'">Grok AI 聊天室</button>
-<button class="btn" onclick="location.href='https://manus.im'">Manus AI 聊天室</button>
-<button class="btn" onclick="location.href='https://flowith.io'">Flowith AI 聊天室</button>
-<button class="btn" onclick="location.href='https://character.ai'">Character.AI</button>
-<button class="btn" onclick="location.href='https://forefront.ai'">Forefront AI</button>
-<button class="btn" onclick="location.href='https://huggingface.co/chat'">HuggingChat</button>
-<button class="btn" onclick="location.href='https://www.jasper.ai'">Jasper AI</button>
-<button class="btn" onclick="location.href='https://poe.com'">Poe (Quora)</button>
-<button class="btn" onclick="location.href='https://replika.ai'">Replika</button>
-<button class="btn" onclick="location.href='https://writesonic.com'">Writesonic / Chatsonic</button>
-<button class="btn" onclick="location.href='https://robylon.ai'">Robylon</button>
-<button class="btn" onclick="location.href='https://yourgpt.ai'">YourGPT</button>
-<button class="btn" onclick="location.href='https://twitch.com'">Twitch</button>
+<canvas id="particles"></canvas>
+<h1>AI 聊天平台入口</h1>
+<div class="btn-container">
+  <button class="btn" onclick="location.href='https://copilot.microsoft.com'">Copilot AI</button>
+  <button class="btn" onclick="location.href='https://chatgpt.com'">ChatGPT AI</button>
+  <button class="btn" onclick="location.href='https://gemini.google.com'">Gemini AI</button>
+  <button class="btn" onclick="location.href='https://claude.ai'">Claude AI</button>
+  <button class="btn" onclick="location.href='https://www.perplexity.ai'">Perplexity AI</button>
+  <button class="btn" onclick="location.href='https://chat.mistral.ai'">Mistral AI 聊天室</button>
+  <button class="btn" onclick="location.href='https://chat.deepseek.com'">DeepSeek AI 聊天室</button>
+  <button class="btn" onclick="location.href='https://kimi.com'">Kimi AI 聊天室</button>
+  <button class="btn" onclick="location.href='https://yiyan.baidu.com'">文心一言 AI 聊天室</button>
+  <button class="btn" onclick="location.href='https://qianwen.com'">千問 AI 聊天室</button>
+  <button class="btn" onclick="location.href='https://chat.sensetime.com'">商量 AI 聊天室</button>
+  <button class="btn" onclick="location.href='https://pi.ai'">Pi AI 聊天室</button>
+  <button class="btn" onclick="location.href='https://grok.com'">Grok AI 聊天室</button>
+  <button class="btn" onclick="location.href='https://manus.im'">Manus AI 聊天室</button>
+  <button class="btn" onclick="location.href='https://flowith.io'">Flowith AI 聊天室</button>
+  <button class="btn" onclick="location.href='https://character.ai'">Character.AI</button>
+  <button class="btn" onclick="location.href='https://forefront.ai'">Forefront AI</button>
+  <button class="btn" onclick="location.href='https://huggingface.co/chat'">HuggingChat</button>
+  <button class="btn" onclick="location.href='https://www.jasper.ai'">Jasper AI</button>
+  <button class="btn" onclick="location.href='https://poe.com'">Poe (Quora)</button>
+  <button class="btn" onclick="location.href='https://replika.ai'">Replika</button>
+  <button class="btn" onclick="location.href='https://writesonic.com'">Writesonic / Chatsonic</button>
+  <button class="btn" onclick="location.href='https://robylon.ai'">Robylon</button>
+  <button class="btn" onclick="location.href='https://yourgpt.ai'">YourGPT</button>
+  <button class="btn" onclick="location.href='https://twitch.com'">Twitch</button>
+</div>
+<script>
+const canvas = document.getElementById("particles");
+const ctx = canvas.getContext("2d");
+let particles = [];
+let colors = [
+  "#ff0000","#ff7f00","#ffff00","#ff00ff","#ff1493","#ff4500",
+  "#ffd700","#ff69b4","#ff6347","#9370db","#1e90ff","#ffb6c1",
+  "#dc143c","#8a2be2","#ff8c00","#ffdab9","#ff82ab","#ff5f5f",
+  "#ff3030","#ffccff","#ff6eb4","#ff3366","#ff99cc"
+]; // 20+ 亮色系，排除綠色
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  let baseCount = 60;
+  let scaleFactor = Math.floor((canvas.width * canvas.height) / 50000);
+  let totalParticles = baseCount + scaleFactor;
+  particles = [];
+  for (let i = 0; i < totalParticles; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      r: Math.random() * 20 + 10, // 粒子半徑大，最大接近30px
+      dx: (Math.random() - 0.5) * 1.5,
+      dy: (Math.random() - 0.5) * 1.5,
+      color: colors[Math.floor(Math.random() * colors.length)]
+    });
+  }
+}
+
+function drawParticles() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  particles.forEach(p => {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = p.color;
+    // 光暈效果：主色 + 白色混合
+    ctx.shadowBlur = 40;
+    ctx.shadowColor = p.color;
+    // 額外加一層白色光暈，避免暗色看起來像黑色
+    ctx.fill();
+    ctx.shadowBlur = 20;
+    ctx.shadowColor = "rgba(255,255,255,0.6)";
+    ctx.fill();
+    // 粒子移動
+    p.x += p.dx;
+    p.y += p.dy;
+    if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
+    if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
+  });
+}
+
+window.addEventListener("resize", resizeCanvas);
+resizeCanvas();
+setInterval(drawParticles, 30);
+</script>
 </body>
 </html>
