@@ -245,10 +245,13 @@ const canvas = document.getElementById("particles");
 const ctx = canvas.getContext("2d");
 let particles = [];
 let colors = [
-  "#ff0000","#ff7f00","#ffff00","#ff00ff","#ff1493","#ff4500",
-  "#ffd700","#ff69b4","#ff6347","#9370db","#1e90ff","#ffb6c1",
-  "#dc143c","#8a2be2","#ff8c00","#ffdab9","#ff82ab","#ff5f5f",
-  "#ff3030","#ffccff","#ff6eb4","#ff3366","#ff99cc"
+  "#1e90ff","#1e90ff","#1e90ff","#87cefa","#87cefa","#87cefa",
+  "#00bfff","#00bfff","#add8e6","#40e0d0","#9370db","#ba55d3",
+  "#dda0dd","#8a2be2","#ff69b4","#ffb6c1","#ff82ab","#ff6eb4",
+  "#ff1493","#ffd700","#ff7f00","#ff8c00","#ffdab9","#ff0000",
+  "#ff3030","#ff5f5f","#dc143c","#ffff00","#ff00ff","#ffccff",
+  "#ff99cc","#f0e68c","#ffe4e1","#faf0e6","#e6e6fa","#ffc0cb",
+  "#ffdead","#fffacd","#fff0f5","#ffefd5","#ffe4b5","#ffebcd"
 ]; // 20+ 亮色系，排除綠色
 
 function resizeCanvas() {
