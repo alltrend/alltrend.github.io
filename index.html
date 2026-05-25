@@ -111,13 +111,15 @@ header {
   background: transparent;   /* 改成全透明 */
   backdrop-filter: blur(6px); /* 保留模糊效果 */
   display: flex; justify-content: center; align-items: center;
-  padding: 10px 20px; z-index: 10;
+  padding: 0 20px; z-index: 10;
 }
 
 header h1 {
   filter: blur(0.3px); /* 讓文字本身模糊 */
   font-size: 48px;
   margin-right: 10px;
+  margin-bottom: 10px; /* 縮短與底下的距離 */
+  line-height: 1.2;    /* 調整行高，避免太鬆 */
   animation: rainbowCycle 18s linear infinite; /* 18秒循環 */
   text-shadow: 
     0 0 20px currentColor,     
@@ -179,7 +181,7 @@ nav a:hover {
   gap: 3vh;
   align-items: center;
   justify-content: flex-start;
-  padding: 100px 20px 40px 20px;
+  padding: 45px 20px 40px 20px;
   max-width: 1200px;
   margin: 0 auto;
 }
@@ -189,9 +191,11 @@ nav a:hover {
   text-align: center;
   font-weight: 700;
   letter-spacing: .05em;
-  margin: 3vh 0;
+  margin-top: 10px;    /* 微負值，往上拉一點 */
+  margin-bottom: 10px; /* 與下面元素保持適度距離 */
   color: #66B3FF;
   font-size: 36px;
+  line-height: 1.2;    /* 行高縮小，避免太鬆 */
 }
 
 /* Grid 卡片 */
