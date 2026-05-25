@@ -152,10 +152,9 @@ height:100%;
 </head>
 <body>
 <canvas id="particles"></canvas>
-  <h1>🔎全方位網路智慧搜尋🔎</h1>
-  <input type="text" id="input" placeholder="輸入你的需求...">
-  
-  <!-- 手動選單 -->
+<h1>🔎全方位網路智慧搜尋🔎</h1>
+<input type="text" id="input" placeholder="輸入你的需求...">
+<!-- 手動選單 -->
 <select id="engineSelect">
 <option value="">🤖 自動判斷</option>
 <option value="google">🔎 Google</option>
@@ -170,16 +169,24 @@ height:100%;
 <option value="yandex">🔴 Yandex</option>
 <option value="startpage">🔐 Startpage</option>
 <option value="youtube">▶️ YouTube</option>
-<option value="shopee">🛒 Shopee</option>
+<option value="douyin">🎵 Douyin</option>
+<option value="bilibili">🎥 Bilibili</option>
+<option value="youku">📺 Youku</option>
+<option value="wetv">📺 WeTV</option>
+<option value="tudou">🎬 Tudou</option>
+<option value="iqiyi">🎬 iQIYI</option>
+<option value="netflix">🎬 Netflix</option>
+<option value="spotify">🎵 Spotify</option>
 <option value="ubereats">🍔 UberEats</option>
 <option value="booking">🏨 Booking</option>
 <option value="stackoverflow">💻 StackOverflow</option>
 <option value="wikipedia">📖 Wikipedia</option>
 <option value="yahoodic">📘 Yahoo字典</option>
-<option value="ruten">🛍️ Ruten</option>
 <option value="pixnet">📰 Pixnet</option>
 <option value="reddit">👽 Reddit</option>
 <option value="tieba">💬 Baidu Tieba</option>
+<option value="shopee">🛒 Shopee</option>
+<option value="ruten">🛍️ Ruten</option>
 <option value="pchome">🛒 PChome</option>
 <option value="amazon">📦 Amazon</option>
 <option value="douban">🎬 Douban</option>
@@ -206,14 +213,6 @@ height:100%;
 <option value="bus">🚌 公車</option>
 <option value="ebill">💳 eBill</option>
 <option value="etax">🧾 eTax</option>
-<option value="douyin">🎵 Douyin</option>
-<option value="bilibili">🎥 Bilibili</option>
-<option value="youku">📺 Youku</option>
-<option value="wetv">📺 WeTV</option>
-<option value="tudou">🎬 Tudou</option>
-<option value="iqiyi">🎬 iQIYI</option>
-<option value="netflix">🎬 Netflix</option>
-<option value="spotify">🎵 Spotify</option>
 <option value="instagram">📸 Instagram</option>
 <option value="facebook">📘 Facebook</option>
 <option value="twitter">🐦 Twitter</option>
@@ -247,17 +246,14 @@ height:100%;
 <option value="klook">🎉 Klook</option>
 <option value="funnow">🎉 FunNow</option>
 </select>
-  
 <button onclick="smartSearch()">搜尋</button>
 <div id="result"></div>
-
 <script>
 function smartSearch(){
   const text = document.getElementById("input").value.trim();
   const manualChoice = document.getElementById("engineSelect").value;
   if(!text) return;
   const query = encodeURIComponent(text);
-
   const engines = {
   google: "https://www.google.com/search?q=",
   bing: "https://www.bing.com/search?q=",
@@ -354,9 +350,8 @@ function smartSearch(){
   klook: "https://www.klook.com/zh-TW/search/?q=",
   funnow: "https://www.funnow.com/zh-TW/search?keyword="
   };
-
+  
   let chosen = "google"; // 預設 Google
-
   if(manualChoice){ 
     // 手動選擇優先
     chosen = manualChoice;
@@ -389,7 +384,6 @@ function smartSearch(){
   document.getElementById("input").focus();
 }
 
-
 document.getElementById("input").addEventListener("keypress", function(event) {
   if (event.key === "Enter") {
     smartSearch(); 
@@ -397,15 +391,12 @@ document.getElementById("input").addEventListener("keypress", function(event) {
   }
 });
 
-
 // 粒子背景效果
 const canvas = document.getElementById("particles");
 const ctx = canvas.getContext("2d");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
-
 let particles = [];
-
 function createParticles(){
   particles = []; // 清空舊的粒子
   for(let i=0; i<90; i++){
@@ -429,10 +420,8 @@ function drawParticles(){
     ctx.shadowBlur = 40;
     ctx.shadowColor = p.color;
     ctx.fill();
-
     p.x += p.speedX;
     p.y += p.speedY;
-
     if(p.x < 0 || p.x > canvas.width) p.speedX *= -1;
     if(p.y < 0 || p.y > canvas.height) p.speedY *= -1;
   });
@@ -442,7 +431,6 @@ function animate(){
   drawParticles();
   requestAnimationFrame(animate);
 }
-
 createParticles();
 animate();
 
@@ -452,7 +440,6 @@ function resizeCanvas() {
   canvas.height = window.innerHeight;
   createParticles(); // 重新分佈粒子
 }
-
 window.addEventListener("resize", resizeCanvas);
 </script>
 </body>
