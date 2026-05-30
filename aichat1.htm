@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&display=swap" rel="stylesheet">
+</head>
+<title>全方位AI聊天平台入口</title>
+<style>
+  body {
+    margin: 0;
+    background: #005FAF;
+    font-family: Arial, sans-serif;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding: 30px;
+    overflow: hidden;
+  }
+  h1 {
+  margin-top: 0 !important;   /* 強制把上方間距設為 0 */
+  margin-bottom: 0.2em !important; /* 視需要調整下方間距 */
+  filter: blur(1.3px); /* 減少模糊，粗細更清楚 */
+  font-size: 3.7em;
+  font-weight: 800; /* 使用 Montserrat 的特粗字重 */
+  font-family: "Noto Sans TC", "Noto Serif TC", "Microsoft JhengHei", "PingFang TC", sans-serif;
+  animation: colorchange 12s infinite;
+  z-index: 2;
+  text-shadow: 0 0 30px currentColor, 0 0 50px currentColor;
+}
+  @keyframes colorchange {
+    0% { color: #ff0000; }
+    10% { color: #ff7f00; }
+    20% { color: #ff00ff; }
+    30% { color: #ff1493; }
+    40% { color: #ff4500; }
+    50% { color: #ffd700; }
+    60% { color: #ff69b4; }
+    70% { color: #ff6347; }
+    80% { color: #9370db; }
+    90% { color: #1e90ff; }
+    100% { color: #ff0000; }
+  }
+  .btn-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 15px;
+    width: 90%;
+    max-width: 1200px;
+    z-index: 2;
+  }
+  .btn {
+    background: linear-gradient(
+      270deg,
+      #001f4d, #003366, #004b97, #0066cc, #3399ff,
+      #6633cc, #9900cc, #cc00ff, #00cccc, #00ff99,
+      #004b97, #001f4d
+    );
+    background-size: 2000% 2000%;
+    color: #fff;
+    border: none;
+    padding: 15px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: bold;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    animation: rainbow 15s linear infinite;
+    transition: box-shadow 0.3s, transform 0.2s;
+  }
+  .btn:hover {
+    box-shadow: 0 8px 20px rgba(0,0,0,0.6), 0 0 15px rgba(255,255,255,0.5);
+    animation: rainbow 15s linear infinite, bounce 0.4s ease;
+  }
+  .btn:active { transform: scale(0.95); }
+  @keyframes rainbow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  @keyframes bounce {
+    30% { transform: scale(1.1); }
+    50% { transform: scale(0.95); }
+    70% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+  }
+  canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 1;
+  }
+  
+  
+  html, body, header, .title {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+
+/* Reset */
+html,body {
+height:100%;
+  overflow-x: hidden;   /* 禁止橫向滾動 */
+  overflow-y: auto;     /* ✅ 允許垂直滾動 */
+}
+
+
+/* 📱 小型手機（小於 480px） */
+@media (max-width: 479px) {
+  .toolbar {
+    flex-direction: column;
+    gap: 6px;
+  }
+  .toolbar select,
+  .toolbar input,
+  .toolbar button {
+    width: 100%;
+  }
+  table {
+    font-size: 13px;
+  }
+  #container {
+    grid-template-columns: 1fr;
+  }
+  #sidebar {
+    position: absolute;
+    top: 42px;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: #fff;
+    z-index: 1000;
+    border-right: none;
+    border-top: 1px solid #ddd;
+  }
+  #map {
+    height: calc(100vh - 42px);
+  }
+  header > * {
+    flex: 1 1 100%;
+  }
+}
+/* 📱 中型手機（480px 到 767px） */
+@media (min-width: 480px) and (max-width: 767px) {
+  .toolbar {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .toolbar select,
+  .toolbar input,
+  .toolbar button {
+    width: 100%;
+  }
+  table {
+    font-size: 14px;
+  }
+  #container {
+    grid-template-columns: 1fr;
+  }
+  #sidebar {
+    position: absolute;
+    top: 42px;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: #fff;
+    z-index: 1000;
+    border-right: none;
+    border-top: 1px solid #ddd;
+  }
+  #map {
+    height: calc(100vh - 42px);
+  }
+  header > * {
+    flex: 1 1 100%;
+  }
+}
+/* 📱 大型手機／小平板（768px 到 1023px） */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .toolbar {
+    flex-direction: row;
+    gap: 12px;
+  }
+  .toolbar select,
+  .toolbar input,
+  .toolbar button {
+    width: auto;
+  }
+  table {
+    font-size: 15px;
+  }
+  #container {
+    grid-template-columns: 1fr;
+  }
+  #sidebar {
+    position: absolute;
+    top: 42px;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: #fff;
+    z-index: 1000;
+    border-right: none;
+    border-top: 1px solid #ddd;
+  }
+  #map {
+    height: calc(100vh - 42px);
+  }
+  header > * {
+    flex: 1 1 100%;
+  }
+}
+</style>
+</head>
+<body>
+<canvas id="particles"></canvas>
+<h1>全方位AI聊天平台入口</h1>
+<div class="btn-container">
+  <button class="btn" onclick="location.href='https://copilot.microsoft.com'">Copilot AI</button>
+  <button class="btn" onclick="location.href='https://chatgpt.com'">ChatGPT AI</button>
+  <button class="btn" onclick="location.href='https://gemini.google.com'">Gemini AI</button>
+  <button class="btn" onclick="location.href='https://claude.ai'">Claude AI</button>
+  <button class="btn" onclick="location.href='https://www.perplexity.ai'">Perplexity AI</button>
+  <button class="btn" onclick="location.href='https://chat.mistral.ai'">Mistral AI 聊天室</button>
+  <button class="btn" onclick="location.href='https://chat.deepseek.com'">DeepSeek AI 聊天室</button>
+  <button class="btn" onclick="location.href='https://kimi.com'">Kimi AI 聊天室</button>
+  <button class="btn" onclick="location.href='https://yiyan.baidu.com'">文心一言 AI 聊天室</button>
+  <button class="btn" onclick="location.href='https://qianwen.com'">千問 AI 聊天室</button>
+  <button class="btn" onclick="location.href='https://chat.sensetime.com'">商量 AI 聊天室</button>
+  <button class="btn" onclick="location.href='https://pi.ai'">Pi AI 聊天室</button>
+  <button class="btn" onclick="location.href='https://grok.com'">Grok AI 聊天室</button>
+  <button class="btn" onclick="location.href='https://manus.im'">Manus AI 聊天室</button>
+  <button class="btn" onclick="location.href='https://flowith.io'">Flowith AI 聊天室</button>
+  <button class="btn" onclick="location.href='https://character.ai'">Character.AI</button>
+  <button class="btn" onclick="location.href='https://forefront.ai'">Forefront AI</button>
+  <button class="btn" onclick="location.href='https://huggingface.co/chat'">HuggingChat</button>
+  <button class="btn" onclick="location.href='https://www.jasper.ai'">Jasper AI</button>
+  <button class="btn" onclick="location.href='https://poe.com'">Poe (Quora)</button>
+  <button class="btn" onclick="location.href='https://replika.ai'">Replika</button>
+  <button class="btn" onclick="location.href='https://writesonic.com'">Writesonic / Chatsonic</button>
+  <button class="btn" onclick="location.href='https://robylon.ai'">Robylon</button>
+  <button class="btn" onclick="location.href='https://yourgpt.ai'">YourGPT</button>
+  <button class="btn" onclick="location.href='https://twitch.com'">Twitch</button>
+</div>
+<script>
+const canvas = document.getElementById("particles");
+const ctx = canvas.getContext("2d");
+let particles = [];
+let colors = [
+  "#1e90ff","#1e90ff","#1e90ff","#87cefa","#87cefa","#87cefa",
+  "#00bfff","#00bfff","#add8e6","#40e0d0","#9370db","#ba55d3",
+  "#dda0dd","#8a2be2","#ff69b4","#ffb6c1","#ff82ab","#ff6eb4",
+  "#ff1493","#ffd700","#ff7f00","#ff8c00","#ffdab9","#ff0000",
+  "#ff3030","#ff5f5f","#dc143c","#ffff00","#ff00ff","#ffccff",
+  "#ff99cc","#f0e68c","#ffe4e1","#faf0e6","#e6e6fa","#ffc0cb",
+  "#ffdead","#fffacd","#fff0f5","#ffefd5","#ffe4b5","#ffebcd"
+]; // 20+ 亮色系，排除綠色
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  let baseCount = 60;
+  let scaleFactor = Math.floor((canvas.width * canvas.height) / 50000);
+  let totalParticles = baseCount + scaleFactor;
+  particles = [];
+  for (let i = 0; i < totalParticles; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      r: Math.random() * 20 + 10, // 粒子半徑大，最大接近30px
+      dx: (Math.random() - 0.5) * 1.5,
+      dy: (Math.random() - 0.5) * 1.5,
+      color: colors[Math.floor(Math.random() * colors.length)]
+    });
+  }
+}
+
+function drawParticles() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  particles.forEach(p => {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = p.color;
+    // 光暈效果：主色 + 白色混合
+    ctx.shadowBlur = 40;
+    ctx.shadowColor = p.color;
+    // 額外加一層白色光暈，避免暗色看起來像黑色
+    ctx.fill();
+    ctx.shadowBlur = 20;
+    ctx.shadowColor = "rgba(255,255,255,0.6)";
+    ctx.fill();
+    // 粒子移動
+    p.x += p.dx;
+    p.y += p.dy;
+    if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
+    if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
+  });
+}
+
+window.addEventListener("resize", resizeCanvas);
+resizeCanvas();
+setInterval(drawParticles, 30);
+
+
+// 定義字型清單
+const fonts = [
+  '"Noto Sans TC"',       // 思源黑體
+  '"Noto Serif TC"',      // 思源宋體
+  '"Microsoft JhengHei"', // 微軟正黑體
+  '"PingFang TC"',        // 蘋方字體
+  'sans-serif'            // 保底
+];
+
+// 隨機挑一個字型
+const randomFont = fonts[Math.floor(Math.random() * fonts.length)];
+
+// 套用到 h1，並加上完整 fallback 順序
+document.querySelector("h1").style.fontFamily =
+`${randomFont}, "Noto Sans TC", "Noto Serif TC", "Microsoft JhengHei", "PingFang TC", sans-serif`;
+</script>
+</body>
+</html>
