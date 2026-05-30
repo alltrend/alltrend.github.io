@@ -376,9 +376,20 @@ function smartSearch(){
 
   const url = engines[chosen] + query;
   window.open(url, "_blank");
+  
+  let countdown = 20; // 倒數秒數，可自行調整
+  document.getElementById("result").innerHTML = `
+    🤖 使用【${chosen}】，搜尋『${text}』<br><a href="${url}" target="_blank">🔗 開啟結果</a><br>
+    ⏳ ${countdown} 秒後自動開啟 alltrend.github.io`;
+  const timer = setInterval(()=>{
+    countdown--;
+    document.getElementById("result").innerHTML = `🤖 使用【${chosen}】，搜尋『${text}』<br><a href="${url}" target="_blank">🔗 開啟結果</a><br>
+    ⏳ ${countdown} 秒後自動開啟 alltrend.github.io `;
+    if(countdown <= 0){
+    clearInterval(timer);
+    // 🚀 倒數結束後，另開新分頁執行 alltrend.github.io
+    window.open("http://alltrend.github.io", "_blank"); } },1000);
 
-  document.getElementById("result").innerHTML =
-    `🤖 使用【${chosen}】，搜尋『${text}』`;
     // 搜完後清空並自動聚焦
   document.getElementById("input").value = "";
   document.getElementById("input").focus();
@@ -441,6 +452,18 @@ function resizeCanvas() {
   createParticles(); // 重新分佈粒子
 }
 window.addEventListener("resize", resizeCanvas);
+
+
+window.addEventListener("DOMContentLoaded",()=>{
+  const params = new URLSearchParams(window.location.search);
+  const q = params.get("q");
+  if(q){
+    document.getElementById("input").value = q;
+    smartSearch(); // 自動觸發搜尋
+  }
+});
+
+
 </script>
 </body>
 </html>

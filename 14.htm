@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>⚙全方位網路AI聊天室二📡</title>
+<style>
+*{box-sizing:border-box;}
+
+html,body{
+  margin:0;
+  height:100%;
+  overflow:hidden;
+  font-family:Arial;
+  background: radial-gradient(circle at center,#005FAF,#005FAF);
+  color:white;
+}
+
+/* ===== canvas ===== */
+#bg{
+  position:fixed;
+  inset:0;
+  z-index:0;
+}
+
+/* ===== app ===== */
+#app{
+  position:relative;
+  z-index:2;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  padding:14px;
+}
+
+.topBar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  position:relative;
+  min-height:15px;
+  padding:15px 0;
+}
+
+.logo {
+  position:absolute;
+  left:50%;
+  transform:translateX(-50%);
+  font-weight: bold;
+  font-size: 50px;
+  background: linear-gradient(
+    90deg,
+    #ff0000,   /* 紅 */
+    #ff4000,   /* 橘紅 */
+    #ff7f00,   /* 橙 */
+    #ffbf00,   /* 橙黃 */
+    #ffff00,   /* 黃 */
+    #ffe600,   /* 亮黃 */
+    #ffcc00,   /* 金黃 */
+    #ff66cc,   /* 粉紅 */
+    #ff1493,   /* 桃紅 */
+    #ff69b4,   /* 亮粉 */
+    #ff00ff,   /* 紫紅 */
+    #d020f0,   /* 紫亮 */
+    #8b00ff,   /* 紫 */
+    #9932cc,   /* 紫藍 */
+    #7dd3fc,   /* 亮藍 */
+    #00bfff,   /* 天藍 */
+    #1e90ff,   /* 藍亮 */
+    #00ffff,   /* 青藍 */
+    #40e0d0,   /* 藍綠 */
+    #ff4500,   /* 橘紅亮 */
+    #ff6347,   /* 番茄紅 */
+    #ffdab9,   /* 桃色亮 */
+    #ffffff,   /* 白光 */
+    #ffd700,   /* 金光 */
+    #f0e68c    /* 亮卡其黃 */
+  );
+  background-size: 800% 800%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: rainbow 20s linear infinite;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.9),
+               0 0 20px rgba(255, 255, 255, 0.7),
+               0 0 40px rgba(255, 255, 255, 0.6);
+}
+@keyframes rainbow {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ===== messages ===== */
+#messages{
+  flex:1;
+  overflow:auto;
+  padding:12px;
+  border-radius:12px;
+  background:rgba(255,255,255,0.06);
+}
+
+.msg{margin:6px 0;}
+.user{color:#ffb3b3;}
+.ai{color:#9be7ff;}
+.system{color:#ffd86f;}
+
+.card{
+  margin-top:8px;
+  padding:10px;
+  border-radius:10px;
+  background:rgba(255,255,255,0.06);
+}
+
+.card a{
+  color:#4ade80;
+  text-decoration:none;
+  word-break:break-all;
+}
+
+/* ===== input ===== */
+.inputWrap{
+  display:flex;
+  gap:10px;
+  margin-top:10px;
+}
+
+input{
+  flex:1;
+  padding:12px;
+  border-radius:10px;
+  border:none;
+  outline:none;
+}
+
+button{
+  padding:12px;
+  border:none;
+  border-radius:10px;
+  background:#3b82f6;
+  color:white;
+  cursor:pointer;
+}
+
+/* ===== summary ===== */
+.summary{
+  margin-top:10px;
+  padding:10px;
+  border-radius:10px;
+  background:rgba(255,255,255,0.08);
+  border-left:4px solid #22c55e;
+}
+
+
+input[type="range"]{
+  width:120px !important;
+  max-width:100px !important;
+  min-width:100px !important;
+}
+
+
+html, body, header, .title {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+
+/* Reset */
+html,body {
+height:100%;
+  overflow-x: hidden;   /* 禁止橫向滾動 */
+  overflow-y: auto;     /* ✅ 允許垂直滾動 */
+}
+
+
+/* 📱 小型手機（小於 480px） */
+@media (max-width: 479px) {
+  .toolbar {
+    flex-direction: column;
+    gap: 6px;
+  }
+  .toolbar select,
+  .toolbar input,
+  .toolbar button {
+    width: 100%;
+  }
+  table {
+    font-size: 13px;
+  }
+  #container {
+    grid-template-columns: 1fr;
+  }
+  #sidebar {
+    position: absolute;
+    top: 42px;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: #fff;
+    z-index: 1000;
+    border-right: none;
+    border-top: 1px solid #ddd;
+  }
+  #map {
+    height: calc(100vh - 42px);
+  }
+  header > * {
+    flex: 1 1 100%;
+  }
+}
+/* 📱 中型手機（480px 到 767px） */
+@media (min-width: 480px) and (max-width: 767px) {
+  .toolbar {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .toolbar select,
+  .toolbar input,
+  .toolbar button {
+    width: 100%;
+  }
+  table {
+    font-size: 14px;
+  }
+  #container {
+    grid-template-columns: 1fr;
+  }
+  #sidebar {
+    position: absolute;
+    top: 42px;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: #fff;
+    z-index: 1000;
+    border-right: none;
+    border-top: 1px solid #ddd;
+  }
+  #map {
+    height: calc(100vh - 42px);
+  }
+  header > * {
+    flex: 1 1 100%;
+  }
+}
+/* 📱 大型手機／小平板（768px 到 1023px） */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .toolbar {
+    flex-direction: row;
+    gap: 12px;
+  }
+  .toolbar select,
+  .toolbar input,
+  .toolbar button {
+    width: auto;
+  }
+  table {
+    font-size: 15px;
+  }
+  #container {
+    grid-template-columns: 1fr;
+  }
+  #sidebar {
+    position: absolute;
+    top: 42px;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: #fff;
+    z-index: 1000;
+    border-right: none;
+    border-top: 1px solid #ddd;
+  }
+  #map {
+    height: calc(100vh - 42px);
+  }
+  header > * {
+    flex: 1 1 100%;
+  }
+}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div id="app">
+<div class="topBar">
+<div class="logo">全方位網路AI聊天室二</div>
+</div>
+<div id="messages"></div>
+<div class="inputWrap">
+<input id="input" placeholder="輸入查詢..." />
+<button onclick="process()">搜尋</button>
+</div>
+<div class="inputWrap" style="margin-top:6px;">
+粒子數：
+<input id="slider" type="range" min="20" max="150" value="80">
+<span id="count">80</span>
+</div>
+</div>
+
+<script>
+/* ================= UI ================= */
+const messages=document.getElementById("messages");
+const input=document.getElementById("input");
+
+function add(role,text){
+  const d=document.createElement("div");
+  d.className="msg "+role;
+  d.innerText=text;
+  messages.appendChild(d);
+  messages.scrollTop=messages.scrollHeight;
+}
+
+/* ================= ENGINE REGISTRY (fix: never disappears) ================= */
+const engines = [
+  {name:"Google", url:q=>`https://www.google.com/search?q=${encodeURIComponent(q)}`},
+  {name:"Bing", url:q=>`https://www.bing.com/search?q=${encodeURIComponent(q)}`},
+  {name:"Yahoo", url:q=>`https://tw.search.yahoo.com/search?p=${encodeURIComponent(q)}`},
+  {name:"Baidu", url:q=>`https://www.baidu.com/s?wd=${encodeURIComponent(q)}`},
+  {name:"DuckDuckGo", url:q=>`https://duckduckgo.com/?q=${encodeURIComponent(q)}`},
+  {name:"AlltrendSearch", url:q=>`alltrendsearch.htm?q=${encodeURIComponent(q)}`},
+  {name:"YouTube", url:q=>`https://www.youtube.com/results?search_query=${encodeURIComponent(q)}`},
+  {name:"BiliBili", url:q=>`https://search.bilibili.com/all?keyword=${encodeURIComponent(q)}`},
+  {name:"DouYin", url:q=>`https://www.douyin.com/search/${encodeURIComponent(q)}`}
+  /* {name:"AlltrendSearch", url:q=>`alltrendsearch.htm`} */
+];
+
+/* always safe fallback */
+function route(q){
+  return engines.map(e=>e.name);
+}
+
+/* ================= SUMMARY LAYER (核心升級) ================= */
+function summarize(q){
+  return `根據多來源檢索與語意整理：「${q}」通常涉及相關資訊、定義與延伸內容，以下提供綜合搜尋結果與來源供進一步查詢。`;
+}
+
+/* ================= SEARCH ================= */
+function process(){
+
+  const q=input.value.trim();
+  if(!q) return;
+
+  add("user","你："+q);
+
+  const selected=route(q);
+
+  add("system","routing → "+selected.join(", "));
+
+  /* summary FIRST (Perplexity核心) */
+  const summary=document.createElement("div");
+  summary.className="summary";
+  summary.innerText="🧠 "+summarize(q);
+  messages.appendChild(summary);
+
+  /* results */
+  engines.forEach(e=>{
+    const url=e.url(q);
+    addCard(e.name,url);
+  });
+
+  input.value="";
+}
+
+/* ================= CARD ================= */
+function addCard(title,url){
+
+  const d=document.createElement("div");
+  d.className="card";
+
+  d.innerHTML=`
+    <b>${title}</b><br/>
+    <a href="${url}" target="_blank">🔗 open</a>
+  `;
+
+  messages.appendChild(d);
+}
+
+/* ================= PARTICLES (stable + resize fixed) ================= */
+const canvas=document.getElementById("bg");
+const ctx=canvas.getContext("2d");
+
+let particles=[];
+let count=80;
+
+const colors=["#ff4d4d","#ffd24d","#4dff88","#4dc4ff","#7a4dff","#ff4df2"];
+
+function init(){
+  canvas.width=innerWidth;
+  canvas.height=innerHeight;
+
+  particles=[];
+
+  for(let i=0;i<count;i++){
+    particles.push({
+      x:Math.random()*innerWidth,
+      y:Math.random()*innerHeight,
+      r:12+Math.random()*20,
+      c:colors[Math.floor(Math.random()*colors.length)],
+      vx:(Math.random()-.5)*0.4,
+      vy:(Math.random()-.5)*0.4
+    });
+  }
+}
+
+function draw(){
+
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  for(let p of particles){
+
+    p.x+=p.vx;
+    p.y+=p.vy;
+
+    if(p.x<0) p.x=innerWidth;
+    if(p.x>innerWidth) p.x=0;
+    if(p.y<0) p.y=innerHeight;
+    if(p.y>innerHeight) p.y=0;
+
+    ctx.beginPath();
+    ctx.shadowBlur=25;
+    ctx.shadowColor=p.c;
+    ctx.fillStyle=p.c;
+    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fill();
+  }
+
+  requestAnimationFrame(draw);
+}
+
+/* ===== slider FIX ===== */
+const slider=document.getElementById("slider");
+const countText=document.getElementById("count");
+
+slider.addEventListener("input",(e)=>{
+  count=parseInt(e.target.value);
+  countText.innerText=count;
+  init();
+});
+
+/* ===== resize FIX ===== */
+window.addEventListener("resize",()=>{
+  canvas.width=innerWidth;
+  canvas.height=innerHeight;
+  init();
+});
+
+/* ===== start ===== */
+init();
+draw();
+
+input.addEventListener("keydown",e=>{
+  if(e.key==="Enter") process();
+});
+</script>
+</body>
+</html>
