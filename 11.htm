@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>🌌全球網路AI聊天室🌌</title>
+<title>🌏全球網路AI聊天室🌐</title>
 <style>
 body {
   margin: 0;
@@ -25,13 +25,57 @@ canvas {
   left: 0;
   z-index: -1;
 }
-h2 { text-align: center; font-size: 2em; margin-bottom: 10px; }
+
+h2 {
+  text-align: center;
+  font-size: 50px; /* 改成 50px */
+  margin-top: 5px !important; /* 強制拉到最小 */
+  margin-bottom: 10px; /* 下方間距也縮小 */
+  font-weight: 700;
+  letter-spacing: .05em;
+  animation: rainbow 10s infinite; /* 多彩隨機變化 */
+  text-shadow: 
+    0 0 12px rgba(255, 255, 255, 0.9),
+    0 0 20px rgba(255, 200, 200, 0.8),
+    0 0 30px rgba(200, 200, 255, 0.8),
+    0 0 40px rgba(255, 255, 200, 0.7); /* 光暈效果 */
+}
 #help {
   background: rgba(255, 255, 255, 0.08);
   padding: 15px;
   margin-bottom: 20px;
   border-radius: 6px;
 }
+/* 定義多彩顏色變化，排除綠色系 */
+@keyframes rainbow {
+  0%   { color: #FF0000; }   /* 紅 */
+  4%   { color: #FF7F00; }   /* 橙 */
+  8%   { color: #FFD700; }   /* 金黃 */
+  12%  { color: #FF69B4; }   /* 粉紅 */
+  16%  { color: #FF1493; }   /* 深粉 */
+  20%  { color: #FFA500; }   /* 橘黃 */
+  24%  { color: #FF4500; }   /* 橘紅 */
+  28%  { color: #FF6347; }   /* 番茄紅 */
+  32%  { color: #FFB6C1; }   /* 淺粉 */
+  36%  { color: #FFC0CB; }   /* 粉紅 */
+  40%  { color: #FF00FF; }   /* 紫紅 */
+  44%  { color: #8A2BE2; }   /* 藍紫 */
+  48%  { color: #4B0082; }   /* 靛藍 */
+  52%  { color: #0000FF; }   /* 藍 */
+  56%  { color: #1E90FF; }   /* 亮藍 */
+  60%  { color: #00BFFF; }   /* 天藍 */
+  64%  { color: #87CEFA; }   /* 淺藍 */
+  68%  { color: #ADD8E6; }   /* 淡藍 */
+  72%  { color: #C71585; }   /* 紫紅 */
+  76%  { color: #9400D3; }   /* 深紫 */
+  80%  { color: #9932CC; }   /* 紫羅蘭 */
+  84%  { color: #BA55D3; }   /* 淺紫 */
+  88%  { color: #DA70D6; }   /* 紫粉 */
+  92%  { color: #EE82EE; }   /* 紫羅蘭亮色 */
+  96%  { color: #D8BFD8; }   /* 淡紫 */
+  100% { color: #FF0000; }   /* 回到紅 */
+}
+
 #chatbox {
   border: 1px solid #ffffff33;
   background: rgba(255, 255, 255, 0.05);
@@ -236,7 +280,7 @@ header > * {
 </head>
 <body>
 <canvas id="canvas"></canvas>
-<h2>🌌全球網路AI聊天室🌌</h2>
+<h2>🌏全球網路AI聊天室🌐</h2>
 <div class="search-guide" id="help">
 <details><summary>📢使用說明1：快速搜尋功能（點我展開 / 收合）</summary>
 若你想查資料，請輸入以下格式之一：「google 搜索名稱」、「bing 搜索名稱」、「baidu 搜索名稱」等，AI會自動幫你開啟對應搜尋結果。<br>
@@ -519,24 +563,29 @@ style="width:110px; padding:6px 12px; flex-shrink:0;">自建聊天室
 <button id="sendBtn">送出</button>
 
 <script>
-// 粒子動畫設定
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
-
 const particles = [];
-const particleCount = 120;
-
-// ⭐ 建立粒子（初始化 + 重分佈用）
+let particleCount = 80; // ⭐ 初始值 80
+// 多彩顏色（亮色系，排除綠色）
+const colors = [
+  "#FF0000","#FF7F00","#FFD700","#FF69B4","#FF1493","#FFA500",
+  "#FF4500","#FF6347","#FFB6C1","#FFC0CB","#FF00FF","#8A2BE2",
+  "#4B0082","#0000FF","#1E90FF","#00BFFF","#87CEFA","#ADD8E6",
+  "#C71585","#9400D3","#9932CC","#BA55D3","#DA70D6","#EE82EE",
+  "#D8BFD8"
+];
+// ⭐ 建立粒子
 function createParticles() {
   particles.length = 0;
-
   for (let i = 0; i < particleCount; i++) {
     particles.push({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
-      size: 3 + Math.random() * 8,
+      size: 15 + Math.random() * 30, // ⭐ 粒子加大 (15~30px)
       speedX: (Math.random() - 0.5) * 2,
-      speedY: (Math.random() - 0.5) * 2
+      speedY: (Math.random() - 0.5) * 2,
+      color: colors[Math.floor(Math.random() * colors.length)]
     });
   }
 }
@@ -544,34 +593,30 @@ function createParticles() {
 // ⭐ 動畫
 function animateParticles() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-
   particles.forEach(p => {
     p.x += p.speedX;
     p.y += p.speedY;
-
     // 邊界反彈
     if (p.x < 0 || p.x > canvas.width) p.speedX *= -1;
     if (p.y < 0 || p.y > canvas.height) p.speedY *= -1;
-
     ctx.beginPath();
     ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(255,255,255,0.8)';
+    // 光暈效果
+    const gradient = ctx.createRadialGradient(p.x, p.y, p.size * 0.2, p.x, p.y, p.size);
+    gradient.addColorStop(0, p.color);
+    gradient.addColorStop(1, "rgba(255,255,255,0)");
+    ctx.fillStyle = gradient;
     ctx.fill();
   });
-
   requestAnimationFrame(animateParticles);
 }
-
 // ⭐ 視窗改變 → 重設畫布 + 粒子重分佈
 function resizeCanvas() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
-
-  createParticles(); // ⭐ 關鍵：重新分佈
+  createParticles();
 }
-
 window.addEventListener("resize", resizeCanvas);
-
 // ⭐ 初始化
 resizeCanvas();
 animateParticles();
