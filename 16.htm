@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>🌏全方位網路全球資訊網🌏</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Microsoft JhengHei", Arial, sans-serif;
+      background: #005FAF;
+      overflow-x: hidden;
+      overflow-y: auto;
+      text-align: center;
+    }
+    
+    h1 {
+  text-align: center;
+  font-size: 58px;   /* 上面大 */
+  font-weight: bold;
+  margin: 20px 0;
+  background: linear-gradient(
+    270deg,
+    red, orange, yellow, green, cyan, blue, purple, pink,
+    lime, magenta, teal, gold, violet, indigo, brown,
+    coral, chartreuse, skyblue, hotpink, darkorange
+  );
+  background-size: 400% 400%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: rainbowText 10s linear infinite;
+  position: relative;
+  z-index: 2;
+}
+
+h2 {
+  text-align: center;
+  font-size: 45px;   /* 下面小 */
+  font-weight: bold;
+  margin: 40px 0 0px 0; /* ✅ 增加上方距離 */
+  background: linear-gradient(
+    270deg,
+    #ffffff, #ffff00, #00ff00, #00ffff, #1e90ff, #ff69b4, #ffa500
+  );
+  background-size: 400% 400%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: rainbowSmall 15s linear infinite;
+}
+
+@keyframes rainbowText {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+
+@keyframes rainbowSmall {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+    nav {
+  background: rgba(0,0,0,0.0); /* ✅ 完全透明 */
+  padding: 10px;
+  position: fixed;
+  width: 100%;
+  top: 80px;
+  z-index: 100;
+  }
+    nav ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+    }
+    nav li { position: relative; }
+    nav a {
+      color: white;
+      padding: 10px 20px;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      font-size: 16px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    nav li:hover > ul { display: block; }
+    
+    nav ul ul {
+  display: none;
+  position: absolute;
+  background: rgba(34,34,34,0.92);
+  min-width: 260px;
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+  z-index: 999;
+  /* ⭐ 核心 */
+  max-height: 70vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  /* ⭐ 手機滑動更順 */
+  -webkit-overflow-scrolling: touch;
+  padding: 8px 0;
+  top: 100%;
+}
+
+nav ul ul a { padding: 10px; font-size: 14px; }
+nav a span.icon { margin-right: 8px; font-size: 18px; }
+
+nav a:hover {
+  background: linear-gradient(90deg, red, orange, yellow, green, cyan, blue, purple, pink, lime, magenta);
+  color: black; font-weight: bold; border-radius: 6px;
+  animation: sparkleMain 2s infinite;
+}
+
+nav ul ul a:hover {
+  background: linear-gradient(90deg, cyan, blue, purple, pink, lime, magenta, gold);
+  color: white; font-weight: bold; border-radius: 4px;
+  animation: sparkleSub 2s infinite;
+}
+
+/* 主選單光暈動畫 */
+@keyframes sparkleMain {
+  0% { box-shadow: 0 0 10px red; }
+  20% { box-shadow: 0 0 20px orange; }
+  40% { box-shadow: 0 0 20px yellow; }
+  60% { box-shadow: 0 0 20px green; }
+  80% { box-shadow: 0 0 20px cyan; }
+  100% { box-shadow: 0 0 20px magenta; }
+}
+
+/* 子選單光暈動畫 */
+@keyframes sparkleSub {
+  0% { box-shadow: 0 0 10px cyan; }
+  25% { box-shadow: 0 0 20px blue; }
+  50% { box-shadow: 0 0 20px purple; }
+  75% { box-shadow: 0 0 20px pink; }
+  100% { box-shadow: 0 0 20px gold; }
+}
+
+    /* 呼吸動畫放最下層 */
+    .center-breath {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 400px;
+      height: 400px;
+      border-radius: 50%;
+      background: linear-gradient(270deg, red, orange, yellow, green, cyan, blue, purple, pink, lime, magenta);
+      background-size: 200% 200%;
+      animation: breath 8s infinite alternate, gradientShift 12s infinite linear;
+      z-index: 0;
+      opacity: 0.6;
+    }
+    @keyframes breath {
+      0% { transform: translateX(-50%) scale(0.6); opacity: 0.3; }
+      100% { transform: translateX(-50%) scale(1.5); opacity: 0.8; }
+    }
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 100% 50%; }
+    }
+    #particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
+    /* 書籤清單樣式 */
+    input, button, select { position: relative; z-index: 2; }
+    input { padding: 8px; margin: 5px; border-radius: 5px; border: none; }
+    button, select {
+      padding: 6px 10px; margin: 5px; border: none; border-radius: 5px;
+      background-color: #1e90ff; color: white; cursor: pointer; font-size: 14px;
+    }
+    button:hover, select:hover { background-color: #4682b4; }
+    ul { list-style-type: none; padding: 0; margin-top: 20px; position: relative; z-index: 2; }
+    li {
+      margin: 10px auto; background: rgba(255,255,255,0.1);
+      padding: 10px; border-radius: 5px; width: 300px;
+      display: flex; justify-content: center; align-items: center;
+    }
+    li a { flex: none; }
+    li button { margin-left: 15px; }
+    a { color: #ffd700; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+
+/* 🌈 下拉選單卷軸 */
+nav ul ul::-webkit-scrollbar {
+  width: 10px;
+}
+nav ul ul::-webkit-scrollbar-track {
+  background: rgba(255,255,255,0.08);
+  border-radius: 10px;
+}
+nav ul ul::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    red,
+    orange,
+    yellow,
+    green,
+    cyan,
+    blue,
+    purple,
+    pink
+  );
+
+  border-radius: 10px;
+}
+
+nav ul ul::-webkit-scrollbar-thumb:hover {
+  filter: brightness(1.2);
+}
+
+
+/* Reset */
+html,body {
+height:100%;
+  overflow-x: hidden;   /* 禁止橫向滾動 */
+  overflow-y: auto;     /* ✅ 允許垂直滾動 */
+}
+
+
+/* 📱 小型手機（小於 480px） */
+@media (max-width: 479px) {
+  .toolbar {
+    flex-direction: column;
+    gap: 6px;
+  }
+  .toolbar select,
+  .toolbar input,
+  .toolbar button {
+    width: 100%;
+  }
+  table {
+    font-size: 13px;
+  }
+  #container {
+    grid-template-columns: 1fr;
+  }
+  #sidebar {
+    position: absolute;
+    top: 42px;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: #fff;
+    z-index: 1000;
+    border-right: none;
+    border-top: 1px solid #ddd;
+  }
+  #map {
+    height: calc(100vh - 42px);
+  }
+  header > * {
+    flex: 1 1 100%;
+  }
+}
+/* 📱 中型手機（480px 到 767px） */
+@media (min-width: 480px) and (max-width: 767px) {
+  .toolbar {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .toolbar select,
+  .toolbar input,
+  .toolbar button {
+    width: 100%;
+  }
+  table {
+    font-size: 14px;
+  }
+  #container {
+    grid-template-columns: 1fr;
+  }
+  #sidebar {
+    position: absolute;
+    top: 42px;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: #fff;
+    z-index: 1000;
+    border-right: none;
+    border-top: 1px solid #ddd;
+  }
+  #map {
+    height: calc(100vh - 42px);
+  }
+  header > * {
+    flex: 1 1 100%;
+  }
+}
+/* 📱 大型手機／小平板（768px 到 1023px） */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .toolbar {
+    flex-direction: row;
+    gap: 12px;
+  }
+  .toolbar select,
+  .toolbar input,
+  .toolbar button {
+    width: auto;
+  }
+  table {
+    font-size: 15px;
+  }
+  #container {
+    grid-template-columns: 1fr;
+  }
+  #sidebar {
+    position: absolute;
+    top: 42px;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: #fff;
+    z-index: 1000;
+    border-right: none;
+    border-top: 1px solid #ddd;
+  }
+  #map {
+    height: calc(100vh - 42px);
+  }
+  header > * {
+    flex: 1 1 100%;
+  }
+}
+</style>
+</head>
+<body>
+<h1>🗺全方位網路全球資訊網🗺</h1>
+<!-- 置中選單 -->
+<nav>
+  <ul>
+    <!-- 📰 新聞類 -->
+    <li><a href="#"><span class="icon">📰</span>新聞類</a>
+      <ul>
+        <li><a href="https://www.cna.com.tw" target="_blank">中央社</a></li>
+        <li><a href="https://www.chinatimes.com" target="_blank">中國時報</a></li>
+        <li><a href="https://udn.com" target="_blank">聯合新聞網</a></li>
+        <li><a href="https://www.ltn.com.tw" target="_blank">自由時報</a></li>
+        <li><a href="https://www.ettoday.net" target="_blank">ETtoday</a></li>
+        <li><a href="https://tw.news.yahoo.com" target="_blank">Yahoo奇摩新聞</a></li>
+        <li><a href="https://news.tvbs.com.tw" target="_blank">TVBS新聞網</a></li>
+        <li><a href="https://www.setn.com" target="_blank">三立新聞網</a></li>
+        <li><a href="https://www.ftvnews.com.tw" target="_blank">民視新聞網</a></li>
+        <li><a href="https://news.cts.com.tw" target="_blank">華視新聞網</a></li>
+        <li><a href="https://news.pts.org.tw" target="_blank">公視新聞網</a></li>
+        <!-- 英文 -->
+        <li><a href="https://www.bbc.com/news" target="_blank">BBC</a></li>
+        <li><a href="https://www.nytimes.com" target="_blank">紐約時報</a></li>
+        <li><a href="https://www.reuters.com" target="_blank">路透社</a></li>
+        <li><a href="https://apnews.com" target="_blank">美聯社</a></li>
+      </ul>
+    </li>
+
+    <!-- 📊 資訊類 -->
+    <li><a href="#"><span class="icon">📊</span>資訊類</a>
+      <ul>
+        <li><a href="https://www.moe.gov.tw" target="_blank">教育部</a></li>
+        <li><a href="https://www.mof.gov.tw" target="_blank">財政部</a></li>
+        <li><a href="https://www.ndc.gov.tw" target="_blank">國發會</a></li>
+        <!-- 英文 -->
+        <li><a href="https://www.un.org" target="_blank">聯合國</a></li>
+        <li><a href="https://www.oecd.org" target="_blank">OECD</a></li>
+        <li><a href="https://www.worldbank.org" target="_blank">世界銀行</a></li>
+        <li><a href="https://www.who.int" target="_blank">世界衛生組織</a></li>
+      </ul>
+    </li>
+
+    <!-- 🎬 娛樂類 -->
+    <li><a href="#"><span class="icon">🎬</span>娛樂類</a>
+      <ul>
+        <li><a href="https://www.ttv.com.tw" target="_blank">台視</a></li>
+        <li><a href="https://www.ctv.com.tw" target="_blank">中視</a></li>
+        <li><a href="https://www.setn.com" target="_blank">三立娛樂</a></li>
+        <li><a href="https://www.ftv.com.tw" target="_blank">民視娛樂</a></li>
+        <!-- 英文 -->
+        <li><a href="https://www.netflix.com" target="_blank">Netflix</a></li>
+        <li><a href="https://www.imdb.com" target="_blank">IMDb</a></li>
+        <li><a href="https://www.hbomax.com" target="_blank">HBO Max</a></li>
+        <li><a href="https://www.disneyplus.com" target="_blank">Disney+</a></li>
+        <li><a href="https://www.youtube.com" target="_blank">YouTube</a></li>
+      </ul>
+    </li>
+
+    <!-- 💰 財經類 -->
+    <li><a href="#"><span class="icon">💰</span>財經類</a>
+      <ul>
+        <li><a href="https://tw.stock.yahoo.com/news" target="_blank">Yahoo股市</a></li>
+        <li><a href="https://ctee.com.tw/livenews/aj" target="_blank">工商時報</a></li>
+        <li><a href="https://news.ltn.com.tw/list/breakingnews/business" target="_blank">自由時報財經</a></li>
+        <li><a href="https://www.moneydj.com" target="_blank">MoneyDJ</a></li>
+        <li><a href="https://news.cnyes.com/news/cat/headline" target="_blank">鉅亨財經</a></li>
+        <li><a href="https://money.udn.com" target="_blank">經濟日報</a></li>
+        <li><a href="https://fnc.ebc.net.tw/fncnews" target="_blank">東森財經</a></li>
+        <li><a href="https://www.setn.com/Catalog.aspx?PageGroupID=2" target="_blank">三立財經</a></li>
+        <!-- 英文 -->
+        <li><a href="https://www.bloomberg.com" target="_blank">Bloomberg</a></li>
+        <li><a href="https://www.ft.com" target="_blank">Financial Times</a></li>
+        <li><a href="https://www.wsj.com" target="_blank">華爾街日報</a></li>
+      </ul>
+    </li>
+
+    <!-- 💻 科技類 -->
+    <li><a href="#"><span class="icon">💻</span>科技類</a>
+      <ul>
+        <li><a href="https://www.technice.com.tw" target="_blank">科技島</a></li>
+        <li><a href="https://technews.tw" target="_blank">科技新報</a></li>
+        <li><a href="https://www.digitimes.com.tw" target="_blank">DIGITIMES</a></li>
+        <li><a href="https://www.bnext.com.tw" target="_blank">數位時代</a></li>
+        <li><a href="https://www.kocpc.com.tw" target="_blank">電腦王阿達</a></li>
+        <li><a href="https://www.cna.com.tw/list/ait.aspx" target="_blank">中央社科技</a></li>
+        <!-- 英文 -->
+        <li><a href="https://techcrunch.com" target="_blank">TechCrunch</a></li>
+        <li><a href="https://www.theverge.com" target="_blank">The Verge</a></li>
+        <li><a href="https://www.wired.com" target="_blank">WIRED</a></li>
+        <li><a href="https://www.engadget.com" target="_blank">Engadget</a></li>
+      </ul>
+    </li>
+
+    <!-- 🖥️ 電腦類 -->
+    <li><a href="#"><span class="icon">🖥️</span>電腦類</a>
+      <ul>
+        <li><a href="https://www.ithome.com.tw" target="_blank">iThome</a></li>
+        <li><a href="https://www.techbang.com" target="_blank">科技報橘</a></li>
+        <li><a href="https://www.kocpc.com.tw" target="_blank">電腦王阿達</a></li>
+        <!-- 英文 -->
+        <li><a href="https://arstechnica.com" target="_blank">Ars Technica</a></li>
+        <li><a href="https://www.pcworld.com" target="_blank">PCWorld</a></li>
+        <li><a href="https://www.tomshardware.com" target="_blank">Tom's Hardware</a></li>
+      </ul>
+    </li>
+
+        <!-- 🌐 國際類 -->
+    <li><a href="#"><span class="icon">🌐</span>國際類</a>
+      <ul>
+        <!-- 中文 -->
+        <li><a href="https://www.cna.com.tw/list/aipl" target="_blank">中央社國際</a></li>
+        <li><a href="https://www.bbc.com/zhongwen/trad" target="_blank">BBC 中文</a></li>
+        <li><a href="https://www.taiwannews.com.tw/ch/cate/19" target="_blank">台灣英文新聞</a></li>
+        <li><a href="https://www.epochtimes.com/b5/ncid277.htm" target="_blank">大紀元新聞網</a></li>
+        <li><a href="https://www.hk01.com/channel/367/台灣新聞" target="_blank">香港01 國際</a></li>
+        <!-- 英文 -->
+        <li><a href="https://www.aljazeera.com" target="_blank">Al Jazeera</a></li>
+        <li><a href="https://www.nhk.or.jp" target="_blank">NHK</a></li>
+        <li><a href="https://www.dw.com" target="_blank">德國之聲</a></li>
+        <li><a href="https://www.france24.com" target="_blank">France24</a></li>
+        <li><a href="https://www.rfi.fr/cn/港澳台" target="_blank">RFI 港澳台</a></li>
+        <li><a href="https://www.politico.com" target="_blank">Politico</a></li>
+        <li><a href="https://www.reuters.com/politics" target="_blank">Reuters Politics</a></li>
+        <li><a href="https://www.washingtonpost.com/politics" target="_blank">華盛頓郵報 Politics</a></li>
+        <li><a href="https://www.npr.org/sections/politics" target="_blank">NPR Politics</a></li>
+      </ul>
+    </li>
+
+    <!-- 🏛️ 政治類 -->
+    <li><a href="#"><span class="icon">🏛️</span>政治類</a>
+      <ul>
+        <!-- 中文 -->
+        <li><a href="https://news.ltn.com.tw/list/breakingnews/politics" target="_blank">自由時報 政治即時</a></li>
+        <li><a href="https://www.chinatimes.com/realtimenews/260407" target="_blank">中時新聞網 政治即時</a></li>
+        <li><a href="https://www.storm.mg/category/118" target="_blank">風傳媒 政治新聞</a></li>
+        <li><a href="https://www.ettoday.net/news/focus/政治/" target="_blank">ETtoday 政治新聞</a></li>
+        <li><a href="https://tw.news.yahoo.com/politics" target="_blank">Yahoo奇摩 政治</a></li>
+        <li><a href="https://news.tvbs.com.tw/realtime/politics" target="_blank">TVBS 政治即時</a></li>
+        <li><a href="https://www.setn.com/Catalog.aspx?PageGroupID=6" target="_blank">三立新聞網 政治</a></li>
+        <li><a href="https://news.ttv.com.tw/category/政治" target="_blank">台視 政治新聞</a></li>
+        <li><a href="https://www.ftvnews.com.tw/tag/政治" target="_blank">民視 政治新聞</a></li>
+        <li><a href="https://www.cna.com.tw/list/aipl.aspx" target="_blank">中央社 政治</a></li>
+        <li><a href="https://udn.com/news/cate/2/6638" target="_blank">聯合新聞網 要聞</a></li>
+        <li><a href="https://www.appledaily.com.tw/realtime/politics" target="_blank">蘋果新聞網 政治即時</a></li>
+        <li><a href="https://www.worldjournal.com/wj/cate/taiwan" target="_blank">世界新聞網 台灣政治</a></li>
+        <li><a href="https://m.match.net.tw/pc/news/list/1/102" target="_blank">Match生活網 政治新聞</a></li>
+        <li><a href="https://www.fountmedia.io/news/political" target="_blank">放．新聞 政治</a></li>
+        <li><a href="https://news.pchome.com.tw/cat/politics/hot" target="_blank">Pchome 政治新聞</a></li>
+        <li><a href="https://today.line.me/tw/v2/tab/TOPIC-Election" target="_blank">Line 政治新聞</a></li>
+        <li><a href="https://www.thenewslens.com/category/politics" target="_blank">關鍵評論網 政治</a></li>
+        <li><a href="https://newtalk.tw/news/subcategory/2/政治" target="_blank">Newtalk 政治新聞</a></li>
+        <li><a href="https://www.hk01.com/channel/367/台灣新聞" target="_blank">香港01 台灣新聞</a></li>
+        <li><a href="https://www.mnews.tw/category/pol" target="_blank">鏡新聞 政治</a></li>
+        <li><a href="https://news.cts.com.tw/politics/index.html" target="_blank">華視 政治新聞</a></li>
+        <li><a href="https://news.pts.org.tw/category/1" target="_blank">公視 政治新聞</a></li>
+        <li><a href="https://zh.m.wikinews.org/zh-hant/Category:政治" target="_blank">維基新聞 政治</a></li>
+        <li><a href="https://www.taiwanhot.net/news/focus/80/政治頻道" target="_blank">台灣好新聞 政治</a></li>
+        <li><a href="https://www.cw.com.tw/masterChannel.action?idMasterChannel=77" target="_blank">天下雜誌 政治社會</a></li>
+        <li><a href="https://www.readgov.com" target="_blank">閱政治 Read Gov</a></li>
+        <li><a href="https://fongnews.net/category/political" target="_blank">溏風報 政治新聞</a></li>
+        <!-- 英文／國際 -->
+        <li><a href="https://www.bbc.com/zhongwen/trad/topics/crjrw8z7334t" target="_blank">BBC 中文 政治</a></li>
+        <li><a href="https://www.taiwannews.com.tw/ch/cate/19" target="_blank">台灣英文新聞 政治</a></li>
+        <li><a href="https://www.epochtimes.com/b5/ncid277.htm" target="_blank">大紀元 中國時事</a></li>
+        <li><a href="https://www.rfi.fr/cn/港澳台" target="_blank">RFI 港澳台</a></li>
+        <li><a href="https://inews.hket.com/sran011-1/環球政治" target="_blank">HKET 國際政治</a></li>
+        <li><a href="https://www.politico.com" target="_blank">Politico</a></li>
+        <li><a href="https://www.reuters.com/politics" target="_blank">Reuters Politics</a></li>
+        <li><a href="https://www.washingtonpost.com/politics" target="_blank">華盛頓郵報 Politics</a></li>
+        <li><a href="https://www.npr.org/sections/politics" target="_blank">NPR Politics</a></li>
+      </ul>
+    </li>
+    
+    <!-- 🎥 影音類 -->
+<li><a href="#"><span class="icon">🎥</span>影音類</a>
+  <ul>
+    <!-- 短影音 / 長影音平台 -->
+    <li><a href="https://music.youtube.com/" target="_blank">YouTube Music</a></li>
+    <li><a href="https://www.youtube.com/shorts/" target="_blank">YouTube Shorts</a></li>
+    <li><a href="https://www.instagram.com/reels/" target="_blank">Instagram Reels</a></li>
+    <li><a href="https://www.facebook.com/reels/" target="_blank">Facebook Reels</a></li>
+    <li><a href="https://www.kuaishou.com/" target="_blank">快手</a></li>
+    <li><a href="https://weixin.qq.com/" target="_blank">視頻號（微信）</a></li>
+    <li><a href="https://www.xiaohongshu.com/" target="_blank">小紅書</a></li>
+    <li><a href="https://www.ixigua.com/" target="_blank">西瓜視頻</a></li>
+    <li><a href="https://haokan.baidu.com/" target="_blank">好看視頻</a></li>
+    <li><a href="https://weishi.qq.com/" target="_blank">微視</a></li>
+    <li><a href="https://www.huoshan.com/" target="_blank">火山小視頻</a></li>
+    <li><a href="https://www.iqiyi.com/" target="_blank">愛奇藝</a></li>
+    <li><a href="https://v.qq.com/" target="_blank">騰訊視頻</a></li>
+    <li><a href="https://www.mgtv.com/" target="_blank">芒果TV</a></li>
+    <li><a href="https://vimeo.com/" target="_blank">Vimeo</a></li>
+    <li><a href="https://www.dailymotion.com/" target="_blank">Dailymotion</a></li>
+    <li><a href="https://y.qq.com/" target="_blank">QQ音樂</a></li>
+    <li><a href="https://music.163.com/" target="_blank">網易雲音樂</a></li>
+    <li><a href="https://open.spotify.com/" target="_blank">Spotify</a></li>
+    <li><a href="https://www.apple.com/apple-music/" target="_blank">Apple Music</a></li>
+    <li><a href="https://www.kkbox.com/" target="_blank">KKBOX</a></li>
+  </ul>
+</li>
+  </ul>
+</nav>
+
+  <!-- 書籤清單區塊 -->
+  <h2>⭐全方位網路最愛清單⭐</h2>
+  <label for="nameInput">名稱：</label>
+  <input id="nameInput" type="text" placeholder="輸入名稱">
+  <label for="urlInput">網址：</label>
+  <input id="urlInput" type="text" placeholder="輸入網址">
+  <br>
+  <button onclick="addItem()">新增</button>
+  <button onclick="clearList()">清理記憶</button>
+  <select id="exportOption" onchange="exportList(this.value)">
+    <option value="">匯出清單</option>
+    <option value="en">JSON英文檔名</option>
+    <option value="zh">JSON中文檔名</option>
+    <option value="html">HTML書籤檔</option>
+  </select>
+  <input type="file" id="importFile" onchange="importListFromFile(event)">
+  <ul id="list"></ul>
+
+  <!-- 呼吸動畫放在最下層 -->
+  <div class="center-breath"></div>
+  <canvas id="particles"></canvas>
+
+<script>
+// ====== 粒子背景 ======
+const canvas = document.getElementById("particles"),
+      ctx = canvas.getContext("2d");
+class Particle {
+  constructor() {
+    this.x = Math.random() * canvas.width;
+    this.y = Math.random() * canvas.height;
+    this.r = 10 + Math.random() * 15;
+    this.h = Math.random() * 360;
+    this.dx = (Math.random() - 0.5) * 2;
+    this.dy = (Math.random() - 0.5) * 2;
+  }
+  draw() {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+    ctx.fillStyle = `hsl(${this.h},100%,50%)`;
+    ctx.shadowColor = `hsl(${this.h},100%,70%)`;
+    ctx.shadowBlur = 30;
+    ctx.fill();
+  }
+  update() {
+    this.x += this.dx;
+    this.y += this.dy;
+    if (this.x < 0 || this.x > canvas.width) this.dx *= -1;
+    if (this.y < 0 || this.y > canvas.height) this.dy *= -1;
+    this.h = (this.h + 1) % 360;
+    this.draw();
+  }
+}
+let particles = [];
+// ⭐ 控制參數
+let baseCount = 60;   // 固定基準數量
+let density = 64000;   // 每 8000px² 增加 1 粒子
+let maxCount = 200;   // 最大上限保護
+function createParticles() {
+  particles = [];
+  // 計算數量：固定基準 + 自動調整
+  const area = canvas.width * canvas.height;
+  let count = baseCount + Math.floor(area / density);
+  // 套用最大上限
+  if (count > maxCount) count = maxCount;
+  for (let i = 0; i < count; i++) {
+    particles.push(new Particle());
+  }
+}
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  particles.forEach(p => p.update());
+  requestAnimationFrame(animate);
+}
+// ⭐ 視窗改變 → 重設畫布 + 粒子重分佈
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  createParticles(); // 重新分佈
+}
+window.addEventListener("resize", resizeCanvas);
+// ⭐ 初始化
+resizeCanvas();
+animate();
+
+
+    // ====== 書籤清單功能 ======
+    const list=document.getElementById("list"),nameInput=document.getElementById("nameInput"),urlInput=document.getElementById("urlInput");
+    function addItem(){
+      const n=nameInput.value.trim(),u=urlInput.value.trim();
+      if(!n||!u)return;
+      const li=document.createElement("li"),a=document.createElement("a");
+      a.href=u;a.textContent=n;a.target="_blank";
+      const del=document.createElement("button");del.textContent="刪除";del.onclick=()=>removeItem(li);
+      li.appendChild(a);li.appendChild(del);list.appendChild(li);
+      nameInput.value="";urlInput.value="";saveList();
+    }
+    function removeItem(li){li.remove();saveList();}
+    function clearList(){list.innerHTML="";localStorage.removeItem("favList");}
+
+    // ====== 匯出 ======
+    function exportList(type){
+      if(!type)return;
+      const items=[];list.querySelectorAll("li a").forEach(a=>items.push({name:a.textContent,url:a.href}));
+      if(type==="en"||type==="zh"){
+        const blob=new Blob([JSON.stringify(items)],{type:"application/json;charset=utf-8"});
+        const url=URL.createObjectURL(blob),a=document.createElement("a");
+        a.download=(type==="en")?"favoritewebsitelist.json":"全方位網路最愛清單.json";
+        a.href=url;a.click();URL.revokeObjectURL(url);
+      }else if(type==="html"){
+        let html="<!DOCTYPE NETSCAPE-Bookmark-file-1>\n<META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html; charset=UTF-8\">\n<TITLE>Bookmarks</TITLE>\n<H1>Bookmarks</H1>\n<DL><p>\n";
+        items.forEach(it=>html+=`<DT><A HREF="${it.url}" ADD_DATE="${Date.now()}">${it.name}</A>\n`);
+        html+="</DL><p>\n";
+        const blob=new Blob([html],{type:"text/html;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");
+        a.download="bookmarks.html";a.href=url;a.click();URL.revokeObjectURL(url);
+      }
+      document.getElementById("exportOption").value="";
+    }
+
+    // ====== 匯入 JSON / HTML ======
+    function importListFromFile(e){
+      const f=e.target.files[0];if(!f)return;
+      const r=new FileReader();
+      r.onload=function(ev){
+        const text=ev.target.result;
+        try{
+          const items=JSON.parse(text);
+          renderList(items);saveList();
+        }catch{
+          try{
+            const parser=new DOMParser();
+            const doc=parser.parseFromString(text,"text/html");
+            const anchors=doc.querySelectorAll("a");
+            const items=[];
+            anchors.forEach(a=>items.push({name:a.textContent,url:a.href}));
+            if(items.length>0){renderList(items);saveList();}
+            else{alert("匯入檔案格式錯誤！");}
+          }catch{alert("匯入檔案格式錯誤！");}
+        }
+      };
+      r.readAsText(f);
+    }
+
+    function renderList(items){
+      list.innerHTML="";
+      items.forEach(it=>{
+        const li=document.createElement("li"),a=document.createElement("a");
+        a.href=it.url;a.textContent=it.name;a.target="_blank";
+        const del=document.createElement("button");del.textContent="刪除";del.onclick=()=>removeItem(li);
+        li.appendChild(a);li.appendChild(del);list.appendChild(li);
+      });
+    }
+    function saveList(){
+      const items=[];list.querySelectorAll("li").forEach(li=>{
+        const a=li.querySelector("a");items.push({name:a.textContent,url:a.href});
+      });
+      localStorage.setItem("favList",JSON.stringify(items));
+    }
+    function loadList(){
+      const d=localStorage.getItem("favList");if(!d)return;
+      try{renderList(JSON.parse(d));}catch{}
+    }
+    loadList();
+  </script>
+</body>
+</html>

@@ -1,218 +1,149 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-TW">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-  <title>🌏全方位網路全球資訊網🌏</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: "Microsoft JhengHei", Arial, sans-serif;
-      background: #005FAF;
-      overflow-x: hidden;
-      overflow-y: auto;
-      text-align: center;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&display=swap" rel="stylesheet">
+<title>🤖全方位外星AI聊天室👽</title>
+<style>
+    body { font-family: Arial, sans-serif; background:#005FAF; color:#eee; }
+    #chatbox { width: 90%; height: 425px; border: none; margin:10px auto; padding:5px; overflow-y:auto; background:transparent; }
+    .message { margin:5px 0; }
+    .user { color:#0f0; }
+    .ai { color:#0ff; }
+    #input { width:90%; padding:8px; }
+    #sendBtn { padding:8px 16px; }
     
-    h1 {
-  text-align: center;
-  font-size: 58px;   /* 上面大 */
-  font-weight: bold;
-  margin: 20px 0;
-  background: linear-gradient(
-    270deg,
-    red, orange, yellow, green, cyan, blue, purple, pink,
-    lime, magenta, teal, gold, violet, indigo, brown,
-    coral, chartreuse, skyblue, hotpink, darkorange
-  );
-  background-size: 400% 400%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: rainbowText 10s linear infinite;
-  position: relative;
-  z-index: 2;
-}
+    
+/* 粒子背景 */
+#particles{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;pointer-events:none;}
 
-h2 {
-  text-align: center;
-  font-size: 45px;   /* 下面小 */
-  font-weight: bold;
-  margin: 40px 0 0px 0; /* ✅ 增加上方距離 */
-  background: linear-gradient(
-    270deg,
-    #ffffff, #ffff00, #00ff00, #00ffff, #1e90ff, #ff69b4, #ffa500
-  );
-  background-size: 400% 400%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: rainbowSmall 15s linear infinite;
-}
-
-@keyframes rainbowText {
-  0% { background-position: 0% 50%; }
-  100% { background-position: 100% 50%; }
-}
-
-@keyframes rainbowSmall {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-    nav {
-  background: rgba(0,0,0,0.0); /* ✅ 完全透明 */
-  padding: 10px;
+/* 中央光暈（自然冷色呼吸版） */
+.ellipse {
   position: fixed;
-  width: 100%;
-  top: 80px;
-  z-index: 100;
+  top: 50%;
+  left: 50%;
+  width: 70vw;
+  height: 70vw;
+  max-width: 1000px;
+  max-height: 1000px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at center,
+      rgba(120,170,255,0.95) 0%,
+      rgba(120,140,255,0.75) 22%,
+      rgba(180,120,255,0.55) 45%,
+      rgba(255,120,220,0.28) 65%,
+      rgba(10,20,40,0.05) 85%,
+      transparent 100%);
+  box-shadow:
+    0 0 120px rgba(120,170,255,0.35),
+    0 0 240px rgba(180,120,255,0.22),
+    0 0 360px rgba(255,120,220,0.12);
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 0.9;
+  filter: blur(24px);
+  animation:
+    ellipseBreath 10s ease-in-out infinite,
+    colorShift 18s ease-in-out infinite;
+  z-index: -2;
+  pointer-events: none;
+}
+
+/* 呼吸 */
+@keyframes ellipseBreath {
+  0%,100%{
+    transform:translate(-50%,-50%) scale(0.75);
+    opacity:0.72;
+    filter:blur(28px);
   }
-    nav ul {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-    }
-    nav li { position: relative; }
-    nav a {
-      color: white;
-      padding: 10px 20px;
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      font-size: 16px;
-      font-weight: 600;
-      transition: all 0.3s ease;
-    }
-    nav li:hover > ul { display: block; }
-    
-    nav ul ul {
-  display: none;
-  position: absolute;
-  background: rgba(34,34,34,0.92);
-  min-width: 260px;
-  border-radius: 10px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.5);
-  z-index: 999;
-  /* ⭐ 核心 */
-  max-height: 70vh;
-  overflow-y: auto;
-  overflow-x: hidden;
-  /* ⭐ 手機滑動更順 */
-  -webkit-overflow-scrolling: touch;
-  padding: 8px 0;
-  top: 100%;
+
+  50%{
+    transform:translate(-50%,-50%) scale(1.45);
+    opacity:1;
+    filter:blur(10px);
+  }
 }
 
-nav ul ul a { padding: 10px; font-size: 14px; }
-nav a span.icon { margin-right: 8px; font-size: 18px; }
-
-nav a:hover {
-  background: linear-gradient(90deg, red, orange, yellow, green, cyan, blue, purple, pink, lime, magenta);
-  color: black; font-weight: bold; border-radius: 6px;
-  animation: sparkleMain 2s infinite;
+/* 顏色微變化（不經過綠色） */
+@keyframes colorShift {
+  0%{
+    background:
+      radial-gradient(circle at center,
+        rgba(120,170,255,0.95) 0%,
+        rgba(120,140,255,0.75) 22%,
+        rgba(180,120,255,0.55) 45%,
+        rgba(255,120,220,0.28) 65%,
+        rgba(10,20,40,0.05) 85%,
+        transparent 100%);
+  }
+  50%{
+    background:
+      radial-gradient(circle at center,
+        rgba(150,120,255,0.95) 0%,
+        rgba(120,160,255,0.72) 25%,
+        rgba(220,120,255,0.5) 48%,
+        rgba(255,140,200,0.22) 68%,
+        rgba(10,20,40,0.05) 85%,
+        transparent 100%);
+  }
+  100%{
+    background:
+      radial-gradient(circle at center,
+        rgba(120,170,255,0.95) 0%,
+        rgba(120,140,255,0.75) 22%,
+        rgba(180,120,255,0.55) 45%,
+        rgba(255,120,220,0.28) 65%,
+        rgba(10,20,40,0.05) 85%,
+        transparent 100%);
+  }
 }
 
-nav ul ul a:hover {
-  background: linear-gradient(90deg, cyan, blue, purple, pink, lime, magenta, gold);
-  color: white; font-weight: bold; border-radius: 4px;
-  animation: sparkleSub 2s infinite;
+
+  h1 {
+  margin-top: 0 !important;   /* 強制把上方間距設為 0 */
+  margin-bottom: 0em !important; /* 視需要調整下方間距 */
+  filter: blur(1.3px); /* 減少模糊，粗細更清楚 */
+  font-size: 3.7em;
+  font-weight: 800; /* 使用 Montserrat 的特粗字重 */
+  font-family: "Noto Sans TC", "Noto Serif TC", "Microsoft JhengHei", "PingFang TC", sans-serif;
+  animation: colorchange 12s infinite;
+  z-index: 3;
+  text-shadow: 0 0 30px currentColor, 0 0 50px currentColor;
 }
-
-/* 主選單光暈動畫 */
-@keyframes sparkleMain {
-  0% { box-shadow: 0 0 10px red; }
-  20% { box-shadow: 0 0 20px orange; }
-  40% { box-shadow: 0 0 20px yellow; }
-  60% { box-shadow: 0 0 20px green; }
-  80% { box-shadow: 0 0 20px cyan; }
-  100% { box-shadow: 0 0 20px magenta; }
-}
-
-/* 子選單光暈動畫 */
-@keyframes sparkleSub {
-  0% { box-shadow: 0 0 10px cyan; }
-  25% { box-shadow: 0 0 20px blue; }
-  50% { box-shadow: 0 0 20px purple; }
-  75% { box-shadow: 0 0 20px pink; }
-  100% { box-shadow: 0 0 20px gold; }
-}
-
-    /* 呼吸動畫放最下層 */
-    .center-breath {
-      position: fixed;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 400px;
-      height: 400px;
-      border-radius: 50%;
-      background: linear-gradient(270deg, red, orange, yellow, green, cyan, blue, purple, pink, lime, magenta);
-      background-size: 200% 200%;
-      animation: breath 8s infinite alternate, gradientShift 12s infinite linear;
-      z-index: 0;
-      opacity: 0.6;
-    }
-    @keyframes breath {
-      0% { transform: translateX(-50%) scale(0.6); opacity: 0.3; }
-      100% { transform: translateX(-50%) scale(1.5); opacity: 0.8; }
-    }
-    @keyframes gradientShift {
-      0% { background-position: 0% 50%; }
-      100% { background-position: 100% 50%; }
-    }
-    #particles {
-      position: fixed;
-      top: 0;
-      left: 0;
-      z-index: 0;
-    }
-    /* 書籤清單樣式 */
-    input, button, select { position: relative; z-index: 2; }
-    input { padding: 8px; margin: 5px; border-radius: 5px; border: none; }
-    button, select {
-      padding: 6px 10px; margin: 5px; border: none; border-radius: 5px;
-      background-color: #1e90ff; color: white; cursor: pointer; font-size: 14px;
-    }
-    button:hover, select:hover { background-color: #4682b4; }
-    ul { list-style-type: none; padding: 0; margin-top: 20px; position: relative; z-index: 2; }
-    li {
-      margin: 10px auto; background: rgba(255,255,255,0.1);
-      padding: 10px; border-radius: 5px; width: 300px;
-      display: flex; justify-content: center; align-items: center;
-    }
-    li a { flex: none; }
-    li button { margin-left: 15px; }
-    a { color: #ffd700; text-decoration: none; }
-    a:hover { text-decoration: underline; }
-
-
-/* 🌈 下拉選單卷軸 */
-nav ul ul::-webkit-scrollbar {
-  width: 10px;
-}
-nav ul ul::-webkit-scrollbar-track {
-  background: rgba(255,255,255,0.08);
-  border-radius: 10px;
-}
-nav ul ul::-webkit-scrollbar-thumb {
-  background: linear-gradient(
-    red,
-    orange,
-    yellow,
-    green,
-    cyan,
-    blue,
-    purple,
-    pink
-  );
-
-  border-radius: 10px;
-}
-
-nav ul ul::-webkit-scrollbar-thumb:hover {
-  filter: brightness(1.2);
+  @keyframes colorchange {
+  0%   { color: #ff0000; }   /* 紅 */
+  3%   { color: #ff7f00; }   /* 橘 */
+  6%   { color: #ff00ff; }   /* 紫紅 */
+  9%   { color: #ff1493; }   /* 深粉紅 */
+  12%  { color: #ff4500; }   /* 橘紅 */
+  15%  { color: #ffd700; }   /* 金黃 */
+  18%  { color: #ff69b4; }   /* 粉紅 */
+  21%  { color: #ff6347; }   /* 番茄紅 */
+  24%  { color: #9370db; }   /* 紫藍 */
+  27%  { color: #1e90ff; }   /* 亮藍 */
+  30%  { color: #ff6666; }   /* 淺紅 */
+  33%  { color: #ff9966; }   /* 橘粉 */
+  36%  { color: #ffcc66; }   /* 金黃 */
+  39%  { color: #ffee66; }   /* 淺黃 */
+  42%  { color: #ff66aa; }   /* 桃紅 */
+  45%  { color: #ff99cc; }   /* 粉紅 */
+  48%  { color: #ffccff; }   /* 淡粉紫 */
+  51%  { color: #cc99ff; }   /* 淺紫 */
+  54%  { color: #b3c6ff; }   /* 淡藍紫 */
+  57%  { color: #99ccff; }   /* 淺亮藍 */
+  60%  { color: #aaddff; }   /* 天空藍 */
+  63%  { color: #cceeff; }   /* 淡冰藍 */
+  66%  { color: #99ffff; }   /* 冰藍 */
+  69%  { color: #ccffff; }   /* 淺水藍 */
+  72%  { color: #e6ffff; }   /* 幾乎白的藍 */
+  75%  { color: #ffccdd; }   /* 淡粉白 */
+  78%  { color: #ffddee; }   /* 淡紫粉 */
+  81%  { color: #ffeeff; }   /* 淡紫白 */
+  84%  { color: #fff0f5; }   /* 淺玫瑰白 */
+  87%  { color: #ffe6f2; }   /* 淡粉白亮色 */
+  100% { color: #ff0000; }   /* 回到紅 */
 }
 
 
@@ -332,369 +263,883 @@ height:100%;
 </style>
 </head>
 <body>
-<h1>🗺全方位網路全球資訊網🗺</h1>
-<!-- 置中選單 -->
-<nav>
-  <ul>
-    <!-- 📰 新聞類 -->
-    <li><a href="#"><span class="icon">📰</span>新聞類</a>
-      <ul>
-        <li><a href="https://www.cna.com.tw" target="_blank">中央社</a></li>
-        <li><a href="https://www.chinatimes.com" target="_blank">中國時報</a></li>
-        <li><a href="https://udn.com" target="_blank">聯合新聞網</a></li>
-        <li><a href="https://www.ltn.com.tw" target="_blank">自由時報</a></li>
-        <li><a href="https://www.ettoday.net" target="_blank">ETtoday</a></li>
-        <li><a href="https://tw.news.yahoo.com" target="_blank">Yahoo奇摩新聞</a></li>
-        <li><a href="https://news.tvbs.com.tw" target="_blank">TVBS新聞網</a></li>
-        <li><a href="https://www.setn.com" target="_blank">三立新聞網</a></li>
-        <li><a href="https://www.ftvnews.com.tw" target="_blank">民視新聞網</a></li>
-        <li><a href="https://news.cts.com.tw" target="_blank">華視新聞網</a></li>
-        <li><a href="https://news.pts.org.tw" target="_blank">公視新聞網</a></li>
-        <!-- 英文 -->
-        <li><a href="https://www.bbc.com/news" target="_blank">BBC</a></li>
-        <li><a href="https://www.nytimes.com" target="_blank">紐約時報</a></li>
-        <li><a href="https://www.reuters.com" target="_blank">路透社</a></li>
-        <li><a href="https://apnews.com" target="_blank">美聯社</a></li>
-      </ul>
-    </li>
-
-    <!-- 📊 資訊類 -->
-    <li><a href="#"><span class="icon">📊</span>資訊類</a>
-      <ul>
-        <li><a href="https://www.moe.gov.tw" target="_blank">教育部</a></li>
-        <li><a href="https://www.mof.gov.tw" target="_blank">財政部</a></li>
-        <li><a href="https://www.ndc.gov.tw" target="_blank">國發會</a></li>
-        <!-- 英文 -->
-        <li><a href="https://www.un.org" target="_blank">聯合國</a></li>
-        <li><a href="https://www.oecd.org" target="_blank">OECD</a></li>
-        <li><a href="https://www.worldbank.org" target="_blank">世界銀行</a></li>
-        <li><a href="https://www.who.int" target="_blank">世界衛生組織</a></li>
-      </ul>
-    </li>
-
-    <!-- 🎬 娛樂類 -->
-    <li><a href="#"><span class="icon">🎬</span>娛樂類</a>
-      <ul>
-        <li><a href="https://www.ttv.com.tw" target="_blank">台視</a></li>
-        <li><a href="https://www.ctv.com.tw" target="_blank">中視</a></li>
-        <li><a href="https://www.setn.com" target="_blank">三立娛樂</a></li>
-        <li><a href="https://www.ftv.com.tw" target="_blank">民視娛樂</a></li>
-        <!-- 英文 -->
-        <li><a href="https://www.netflix.com" target="_blank">Netflix</a></li>
-        <li><a href="https://www.imdb.com" target="_blank">IMDb</a></li>
-        <li><a href="https://www.hbomax.com" target="_blank">HBO Max</a></li>
-        <li><a href="https://www.disneyplus.com" target="_blank">Disney+</a></li>
-        <li><a href="https://www.youtube.com" target="_blank">YouTube</a></li>
-      </ul>
-    </li>
-
-    <!-- 💰 財經類 -->
-    <li><a href="#"><span class="icon">💰</span>財經類</a>
-      <ul>
-        <li><a href="https://tw.stock.yahoo.com/news" target="_blank">Yahoo股市</a></li>
-        <li><a href="https://ctee.com.tw/livenews/aj" target="_blank">工商時報</a></li>
-        <li><a href="https://news.ltn.com.tw/list/breakingnews/business" target="_blank">自由時報財經</a></li>
-        <li><a href="https://www.moneydj.com" target="_blank">MoneyDJ</a></li>
-        <li><a href="https://news.cnyes.com/news/cat/headline" target="_blank">鉅亨財經</a></li>
-        <li><a href="https://money.udn.com" target="_blank">經濟日報</a></li>
-        <li><a href="https://fnc.ebc.net.tw/fncnews" target="_blank">東森財經</a></li>
-        <li><a href="https://www.setn.com/Catalog.aspx?PageGroupID=2" target="_blank">三立財經</a></li>
-        <!-- 英文 -->
-        <li><a href="https://www.bloomberg.com" target="_blank">Bloomberg</a></li>
-        <li><a href="https://www.ft.com" target="_blank">Financial Times</a></li>
-        <li><a href="https://www.wsj.com" target="_blank">華爾街日報</a></li>
-      </ul>
-    </li>
-
-    <!-- 💻 科技類 -->
-    <li><a href="#"><span class="icon">💻</span>科技類</a>
-      <ul>
-        <li><a href="https://www.technice.com.tw" target="_blank">科技島</a></li>
-        <li><a href="https://technews.tw" target="_blank">科技新報</a></li>
-        <li><a href="https://www.digitimes.com.tw" target="_blank">DIGITIMES</a></li>
-        <li><a href="https://www.bnext.com.tw" target="_blank">數位時代</a></li>
-        <li><a href="https://www.kocpc.com.tw" target="_blank">電腦王阿達</a></li>
-        <li><a href="https://www.cna.com.tw/list/ait.aspx" target="_blank">中央社科技</a></li>
-        <!-- 英文 -->
-        <li><a href="https://techcrunch.com" target="_blank">TechCrunch</a></li>
-        <li><a href="https://www.theverge.com" target="_blank">The Verge</a></li>
-        <li><a href="https://www.wired.com" target="_blank">WIRED</a></li>
-        <li><a href="https://www.engadget.com" target="_blank">Engadget</a></li>
-      </ul>
-    </li>
-
-    <!-- 🖥️ 電腦類 -->
-    <li><a href="#"><span class="icon">🖥️</span>電腦類</a>
-      <ul>
-        <li><a href="https://www.ithome.com.tw" target="_blank">iThome</a></li>
-        <li><a href="https://www.techbang.com" target="_blank">科技報橘</a></li>
-        <li><a href="https://www.kocpc.com.tw" target="_blank">電腦王阿達</a></li>
-        <!-- 英文 -->
-        <li><a href="https://arstechnica.com" target="_blank">Ars Technica</a></li>
-        <li><a href="https://www.pcworld.com" target="_blank">PCWorld</a></li>
-        <li><a href="https://www.tomshardware.com" target="_blank">Tom's Hardware</a></li>
-      </ul>
-    </li>
-
-        <!-- 🌐 國際類 -->
-    <li><a href="#"><span class="icon">🌐</span>國際類</a>
-      <ul>
-        <!-- 中文 -->
-        <li><a href="https://www.cna.com.tw/list/aipl" target="_blank">中央社國際</a></li>
-        <li><a href="https://www.bbc.com/zhongwen/trad" target="_blank">BBC 中文</a></li>
-        <li><a href="https://www.taiwannews.com.tw/ch/cate/19" target="_blank">台灣英文新聞</a></li>
-        <li><a href="https://www.epochtimes.com/b5/ncid277.htm" target="_blank">大紀元新聞網</a></li>
-        <li><a href="https://www.hk01.com/channel/367/台灣新聞" target="_blank">香港01 國際</a></li>
-        <!-- 英文 -->
-        <li><a href="https://www.aljazeera.com" target="_blank">Al Jazeera</a></li>
-        <li><a href="https://www.nhk.or.jp" target="_blank">NHK</a></li>
-        <li><a href="https://www.dw.com" target="_blank">德國之聲</a></li>
-        <li><a href="https://www.france24.com" target="_blank">France24</a></li>
-        <li><a href="https://www.rfi.fr/cn/港澳台" target="_blank">RFI 港澳台</a></li>
-        <li><a href="https://www.politico.com" target="_blank">Politico</a></li>
-        <li><a href="https://www.reuters.com/politics" target="_blank">Reuters Politics</a></li>
-        <li><a href="https://www.washingtonpost.com/politics" target="_blank">華盛頓郵報 Politics</a></li>
-        <li><a href="https://www.npr.org/sections/politics" target="_blank">NPR Politics</a></li>
-      </ul>
-    </li>
-
-    <!-- 🏛️ 政治類 -->
-    <li><a href="#"><span class="icon">🏛️</span>政治類</a>
-      <ul>
-        <!-- 中文 -->
-        <li><a href="https://news.ltn.com.tw/list/breakingnews/politics" target="_blank">自由時報 政治即時</a></li>
-        <li><a href="https://www.chinatimes.com/realtimenews/260407" target="_blank">中時新聞網 政治即時</a></li>
-        <li><a href="https://www.storm.mg/category/118" target="_blank">風傳媒 政治新聞</a></li>
-        <li><a href="https://www.ettoday.net/news/focus/政治/" target="_blank">ETtoday 政治新聞</a></li>
-        <li><a href="https://tw.news.yahoo.com/politics" target="_blank">Yahoo奇摩 政治</a></li>
-        <li><a href="https://news.tvbs.com.tw/realtime/politics" target="_blank">TVBS 政治即時</a></li>
-        <li><a href="https://www.setn.com/Catalog.aspx?PageGroupID=6" target="_blank">三立新聞網 政治</a></li>
-        <li><a href="https://news.ttv.com.tw/category/政治" target="_blank">台視 政治新聞</a></li>
-        <li><a href="https://www.ftvnews.com.tw/tag/政治" target="_blank">民視 政治新聞</a></li>
-        <li><a href="https://www.cna.com.tw/list/aipl.aspx" target="_blank">中央社 政治</a></li>
-        <li><a href="https://udn.com/news/cate/2/6638" target="_blank">聯合新聞網 要聞</a></li>
-        <li><a href="https://www.appledaily.com.tw/realtime/politics" target="_blank">蘋果新聞網 政治即時</a></li>
-        <li><a href="https://www.worldjournal.com/wj/cate/taiwan" target="_blank">世界新聞網 台灣政治</a></li>
-        <li><a href="https://m.match.net.tw/pc/news/list/1/102" target="_blank">Match生活網 政治新聞</a></li>
-        <li><a href="https://www.fountmedia.io/news/political" target="_blank">放．新聞 政治</a></li>
-        <li><a href="https://news.pchome.com.tw/cat/politics/hot" target="_blank">Pchome 政治新聞</a></li>
-        <li><a href="https://today.line.me/tw/v2/tab/TOPIC-Election" target="_blank">Line 政治新聞</a></li>
-        <li><a href="https://www.thenewslens.com/category/politics" target="_blank">關鍵評論網 政治</a></li>
-        <li><a href="https://newtalk.tw/news/subcategory/2/政治" target="_blank">Newtalk 政治新聞</a></li>
-        <li><a href="https://www.hk01.com/channel/367/台灣新聞" target="_blank">香港01 台灣新聞</a></li>
-        <li><a href="https://www.mnews.tw/category/pol" target="_blank">鏡新聞 政治</a></li>
-        <li><a href="https://news.cts.com.tw/politics/index.html" target="_blank">華視 政治新聞</a></li>
-        <li><a href="https://news.pts.org.tw/category/1" target="_blank">公視 政治新聞</a></li>
-        <li><a href="https://zh.m.wikinews.org/zh-hant/Category:政治" target="_blank">維基新聞 政治</a></li>
-        <li><a href="https://www.taiwanhot.net/news/focus/80/政治頻道" target="_blank">台灣好新聞 政治</a></li>
-        <li><a href="https://www.cw.com.tw/masterChannel.action?idMasterChannel=77" target="_blank">天下雜誌 政治社會</a></li>
-        <li><a href="https://www.readgov.com" target="_blank">閱政治 Read Gov</a></li>
-        <li><a href="https://fongnews.net/category/political" target="_blank">溏風報 政治新聞</a></li>
-        <!-- 英文／國際 -->
-        <li><a href="https://www.bbc.com/zhongwen/trad/topics/crjrw8z7334t" target="_blank">BBC 中文 政治</a></li>
-        <li><a href="https://www.taiwannews.com.tw/ch/cate/19" target="_blank">台灣英文新聞 政治</a></li>
-        <li><a href="https://www.epochtimes.com/b5/ncid277.htm" target="_blank">大紀元 中國時事</a></li>
-        <li><a href="https://www.rfi.fr/cn/港澳台" target="_blank">RFI 港澳台</a></li>
-        <li><a href="https://inews.hket.com/sran011-1/環球政治" target="_blank">HKET 國際政治</a></li>
-        <li><a href="https://www.politico.com" target="_blank">Politico</a></li>
-        <li><a href="https://www.reuters.com/politics" target="_blank">Reuters Politics</a></li>
-        <li><a href="https://www.washingtonpost.com/politics" target="_blank">華盛頓郵報 Politics</a></li>
-        <li><a href="https://www.npr.org/sections/politics" target="_blank">NPR Politics</a></li>
-      </ul>
-    </li>
-    
-    <!-- 🎥 影音類 -->
-<li><a href="#"><span class="icon">🎥</span>影音類</a>
-  <ul>
-    <!-- 短影音 / 長影音平台 -->
-    <li><a href="https://music.youtube.com/" target="_blank">YouTube Music</a></li>
-    <li><a href="https://www.youtube.com/shorts/" target="_blank">YouTube Shorts</a></li>
-    <li><a href="https://www.instagram.com/reels/" target="_blank">Instagram Reels</a></li>
-    <li><a href="https://www.facebook.com/reels/" target="_blank">Facebook Reels</a></li>
-    <li><a href="https://www.kuaishou.com/" target="_blank">快手</a></li>
-    <li><a href="https://weixin.qq.com/" target="_blank">視頻號（微信）</a></li>
-    <li><a href="https://www.xiaohongshu.com/" target="_blank">小紅書</a></li>
-    <li><a href="https://www.ixigua.com/" target="_blank">西瓜視頻</a></li>
-    <li><a href="https://haokan.baidu.com/" target="_blank">好看視頻</a></li>
-    <li><a href="https://weishi.qq.com/" target="_blank">微視</a></li>
-    <li><a href="https://www.huoshan.com/" target="_blank">火山小視頻</a></li>
-    <li><a href="https://www.iqiyi.com/" target="_blank">愛奇藝</a></li>
-    <li><a href="https://v.qq.com/" target="_blank">騰訊視頻</a></li>
-    <li><a href="https://www.mgtv.com/" target="_blank">芒果TV</a></li>
-    <li><a href="https://vimeo.com/" target="_blank">Vimeo</a></li>
-    <li><a href="https://www.dailymotion.com/" target="_blank">Dailymotion</a></li>
-    <li><a href="https://y.qq.com/" target="_blank">QQ音樂</a></li>
-    <li><a href="https://music.163.com/" target="_blank">網易雲音樂</a></li>
-    <li><a href="https://open.spotify.com/" target="_blank">Spotify</a></li>
-    <li><a href="https://www.apple.com/apple-music/" target="_blank">Apple Music</a></li>
-    <li><a href="https://www.kkbox.com/" target="_blank">KKBOX</a></li>
-  </ul>
-</li>
-  </ul>
-</nav>
-
-  <!-- 書籤清單區塊 -->
-  <h2>⭐全方位網路最愛清單⭐</h2>
-  <label for="nameInput">名稱：</label>
-  <input id="nameInput" type="text" placeholder="輸入名稱">
-  <label for="urlInput">網址：</label>
-  <input id="urlInput" type="text" placeholder="輸入網址">
-  <br>
-  <button onclick="addItem()">新增</button>
-  <button onclick="clearList()">清理記憶</button>
-  <select id="exportOption" onchange="exportList(this.value)">
-    <option value="">匯出清單</option>
-    <option value="en">JSON英文檔名</option>
-    <option value="zh">JSON中文檔名</option>
-    <option value="html">HTML書籤檔</option>
-  </select>
-  <input type="file" id="importFile" onchange="importListFromFile(event)">
-  <ul id="list"></ul>
-
-  <!-- 呼吸動畫放在最下層 -->
-  <div class="center-breath"></div>
-  <canvas id="particles"></canvas>
+<canvas id="particles"></canvas>
+<div class="ellipse"></div>
+<h1 style="text-align:center;">🤖全方位外星AI聊天室👽</h1>
+<div id="chatbox"></div>
+<div style="text-align:center;">
+<input id="input" placeholder="輸入訊息..." />
+<button id="sendBtn">送出</button>
+</div>
+<!-- 儀表板區塊 -->
+<div id="dashboard" style="width:80%;margin:20px auto;padding:10px;
+  border:none;background:transparent;color:#66ccff;font-family:monospace;
+  text-align:center;font-size:20px;font-weight:bold;">
+  <h3 style="margin-top:0px;margin-bottom:0px;">👽外星統計儀表板📡</h3>
+  <span id="energy">地球能量波動值：--</span><br>
+  <span id="attention">外星文明關注度：--</span><br>
+  <span id="emotion">人類情緒指數：--</span><br>
+  <span id="time">現在時間：--</span>
+</div>
 
 <script>
-// ====== 粒子背景 ======
-const canvas = document.getElementById("particles"),
-      ctx = canvas.getContext("2d");
-class Particle {
-  constructor() {
-    this.x = Math.random() * canvas.width;
-    this.y = Math.random() * canvas.height;
-    this.r = 10 + Math.random() * 15;
-    this.h = Math.random() * 360;
-    this.dx = (Math.random() - 0.5) * 2;
-    this.dy = (Math.random() - 0.5) * 2;
-  }
-  draw() {
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
-    ctx.fillStyle = `hsl(${this.h},100%,50%)`;
-    ctx.shadowColor = `hsl(${this.h},100%,70%)`;
-    ctx.shadowBlur = 30;
-    ctx.fill();
-  }
-  update() {
-    this.x += this.dx;
-    this.y += this.dy;
-    if (this.x < 0 || this.x > canvas.width) this.dx *= -1;
-    if (this.y < 0 || this.y > canvas.height) this.dy *= -1;
-    this.h = (this.h + 1) % 360;
-    this.draw();
-  }
+const chatbox = document.getElementById("chatbox");
+const input = document.getElementById("input");
+const sendBtn = document.getElementById("sendBtn");
+let learnedSentences = [];
+
+function addMessage(user, text) {
+  const div = document.createElement("div");
+  div.className = "message " + user;
+  div.textContent = (user === "user" ? "你： " : "AI： ") + text;
+  chatbox.appendChild(div);
+  chatbox.scrollTop = chatbox.scrollHeight;
 }
-let particles = [];
-// ⭐ 控制參數
-let baseCount = 60;   // 固定基準數量
-let density = 64000;   // 每 8000px² 增加 1 粒子
-let maxCount = 200;   // 最大上限保護
-function createParticles() {
+
+// ✅ 搜尋彈窗模組
+function showSearchPopup(query, defaultEngine = "google") {
+  const popup = document.createElement("div");
+  popup.innerHTML = `
+  <div style="position:fixed;top:30%;left:50%;transform:translate(-50%,-50%);
+      width:360px;background:#fff;color:#000;border:1px solid #ccc;
+      padding:20px;border-radius:8px;box-shadow:0 0 10px rgba(0,0,0,0.2);
+      z-index:9999;text-align:center;">
+  <p>是否要搜尋「<strong>${query}</strong>」？</p>
+  <select id="engineSelect" style="margin-bottom:15px;width:80%;padding:5px;">
+  <option value="google">Google</option>
+  <option value="bing">Bing</option>
+  <option value="baidu">Baidu</option>
+  <option value="yahoo">Yahoo</option>
+  <option value="duckduckgo">DuckDuckGo</option>
+  <option value="brave">Brave</option>
+  <option value="sogou">Sogou</option>
+  <option value="naver">Naver</option>
+  <option value="ecosia">Ecosia</option>
+  <option value="yandex">Yandex</option>
+  <option value="startpage">Startpage</option>
+  <option value="yahoodic">Yahoo 字典</option>
+  <option value="ruten">露天拍賣</option>
+  <option value="youtube">YouTube</option>
+  <option value="pixnet">痞客邦</option>
+  <option value="reddit">Reddit</option>
+  <option value="tieba">百度貼吧</option>
+  <option value="pchome">PChome</option>
+  <option value="shopee">蝦皮</option>
+  <option value="amazon">Amazon</option>
+  <option value="douban">豆瓣</option>
+  <option value="zhihu">知乎</option>
+  <option value="wikipedia">Wikipedia</option>
+  <option value="books">博客來</option>
+  <option value="dictcn">Dict.cn</option>
+  <option value="iciba">愛詞霸</option>
+  <option value="youdao">有道</option>
+  <option value="translate">Google 翻譯</option>
+  <option value="define">Dictionary.com</option>
+  <option value="weather">Google 天氣</option>
+  <option value="time">Google 時間</option>
+  <option value="stock">Google 股票</option>
+  <option value="booking">Booking.com</option>
+  <option value="taiwanstay">台灣旅宿網</option>
+  <option value="funtime">FunTime</option>
+  <option value="eztravel">易遊網</option>
+  <option value="liontravel">雄獅旅遊</option>
+  <option value="ubereats">UberEats</option>
+  <option value="dominos">Domino’s</option>
+  <option value="foodpanda">Foodpanda</option>
+  <option value="douyin">抖音</option>
+  <option value="bilibili">Bilibili</option>
+  <option value="youku">優酷</option>
+  <option value="wetv">WeTV</option>
+  <option value="tudou">土豆</option>
+  <option value="iqiyi">愛奇藝</option>
+  <option value="netflix">Netflix</option>
+  <option value="spotify">Spotify</option>
+  <option value="instagram">Instagram</option>
+  <option value="facebook">Facebook</option>
+  <option value="twitter">Twitter</option>
+  <option value="threads">Threads</option>
+  <option value="medium">Medium</option>
+  <option value="stackoverflow">Stack Overflow</option>
+  <option value="github">GitHub</option>
+  <option value="imdb">IMDb</option>
+  <option value="tripadvisor">Tripadvisor</option>
+  <option value="googlemaps">Google Maps</option>
+  <option value="etsy">Etsy</option>
+  <option value="taobao">淘寶</option>
+  <option value="jd">京東</option>
+  <option value="tiktok">TikTok</option>
+  <option value="linetoday">LINE Today</option>
+  <option value="dcard">Dcard</option>
+  <option value="pttweb">PTT Web</option>
+  <option value="kkbox">KKBOX</option>
+  <option value="flickr">Flickr</option>
+  <option value="deviantart">DeviantArt</option>
+  <option value="findbook">FindBook</option>
+  <option value="mobile01">Mobile01</option>
+  <option value="soundcloud">SoundCloud</option>
+  <option value="twitch">Twitch</option>
+  <option value="agoda">Agoda</option>
+  <option value="airbnb">Airbnb</option>
+  <option value="trip">Trip.com</option>
+  <option value="hotels">Hotels.com</option>
+  <option value="expedia">Expedia</option>
+  <option value="asiayo">AsiaYo</option>
+  <option value="kkday">KKday</option>
+  <option value="klook">Klook</option>
+  <option value="funnow">FunNow</option>
+</select>
+<div style="display:flex;justify-content:space-around;">
+<button id="yesBtn">✅ 要</button>
+<button id="noBtn">❌ 不要</button>
+</div>
+</div>`;
+  document.body.appendChild(popup);
+  document.getElementById("yesBtn").onclick = () => {
+  const engine = document.getElementById("engineSelect").value;
+  const engines = {
+  google: "https://www.google.com/search?q=",
+  bing: "https://www.bing.com/search?q=",
+  baidu: "https://www.baidu.com/s?wd=",
+  yahoo: "https://tw.search.yahoo.com/search?p=",
+  duckduckgo: "https://duckduckgo.com/?q=",
+  brave: "https://search.brave.com/search?q=",
+  sogou: "https://www.sogou.com/web?query=",
+  naver: "https://search.naver.com/search.naver?query=",
+  ecosia: "https://www.ecosia.org/search?q=",
+  yandex: "https://yandex.com/search/?text=",
+  startpage: "https://www.startpage.com/sp/search?query=",
+  yahoodic: "https://tw.dictionary.search.yahoo.com/search?p=",
+  ruten: "https://www.ruten.com.tw/find/?q=",
+  youtube: "https://www.youtube.com/results?search_query=",
+  pixnet: "https://www.pixnet.net/searcharticle?q=",
+  reddit: "https://www.reddit.com/search/?q=",
+  tieba: "https://tieba.baidu.com/f?kw=",
+  pchome: "https://shopping.pchome.com.tw/?q=",
+  shopee: "https://shopee.tw/search?keyword=",
+  amazon: "https://www.amazon.com/s?k=",
+  douban: "https://www.douban.com/search?q=",
+  zhihu: "https://www.zhihu.com/search?q=",
+  wikipedia: "https://zh.wikipedia.org/wiki/",
+  books: "https://search.books.com.tw/search/query/key/",
+  dictcn: "https://dict.cn/",
+  iciba: "https://www.iciba.com/word?w=",
+  youdao: "https://www.youdao.com/result?word=",
+  translate: "https://translate.google.com/?sl=auto&tl=zh-TW&text=",
+  define: "https://www.dictionary.com/browse/",
+  weather: "https://www.google.com/search?q=weather+",
+  time: "https://www.google.com/search?q=time+",
+  stock: "https://www.google.com/search?q=",
+  booking: "https://www.booking.com/searchresults.html?ss=",
+  taiwanstay: "https://taiwanstay.net.tw/search?query=",
+  funtime: "https://www.funtime.com.tw/search/?q=",
+  eztravel: "https://www.eztravel.com.tw/search?q=",
+  liontravel: "https://www.liontravel.com/search?q=",
+  ubereats: "https://www.ubereats.com/tw/search?q=",
+  dominos: "https://order.dominos.com.tw/search?q=",
+  foodpanda: "https://www.foodpanda.com.tw/search?q=",
+  myhealth: "https://myhealthbank.nhi.gov.tw/IHKE3000/IHKE3115S03",
+  nhiapp: "https://www.nhi.gov.tw/ch/cp-3166-56af4-2457-1.html",
+  thsr: "https://www.thsrc.com.tw/",
+  tra: "https://www.railway.gov.tw/tra-tip-web/tip",
+  bus: "https://www.taiwanbus.tw/eBUSPage/Query/Query.aspx",
+  ebill: "https://ebill.ba.org.tw/CPP/Desktopdefault.aspx",
+  etax: "https://www.etax.nat.gov.tw/etwmain/",
+  douyin: "https://www.douyin.com/search/",
+  bilibili: "https://search.bilibili.com/all?keyword=",
+  youku: "https://so.youku.com/search_video/q_",
+  wetv: "https://wetv.vip/search?q=",
+  tudou: "https://www.tudou.com/search/?q=",
+  iqiyi: "https://www.iq.com/search?key=",
+  netflix: "https://www.netflix.com/search?q=",
+  spotify: "https://open.spotify.com/search/",
+  instagram: "https://www.instagram.com/explore/tags/",
+  facebook: "https://www.facebook.com/search/top?q=",
+  twitter: "https://twitter.com/search?q=",
+  threads: "https://www.threads.net/search?q=",
+  medium: "https://medium.com/search?q=",
+  stackoverflow: "https://stackoverflow.com/search?q=",
+  github: "https://github.com/search?q=",
+  imdb: "https://www.imdb.com/find?q=",
+  tripadvisor: "https://www.tripadvisor.com/Search?q=",
+  googlemaps: "https://www.google.com/maps/search/",
+  etsy: "https://www.etsy.com/search?q=",
+  taobao: "https://s.taobao.com/search?q=",
+  jd: "https://search.jd.com/Search?keyword=",
+  tiktok: "https://www.tiktok.com/search?q=",
+  linetoday: "https://today.line.me/tw/search?q=",
+  dcard: "https://www.dcard.tw/search?q=",
+  pttweb: "https://pttweb.tw/search?q=",
+  kkbox: "https://www.kkbox.com/tw/tc/search.php?word=",
+  flickr: "https://www.flickr.com/search/?text=",
+  deviantart: "https://www.deviantart.com/search?q=",
+  findbook: "https://findbook.tw/search?q=",
+  mobile01: "https://www.mobile01.com/topicsearch.php?query=",
+  ecosia: "https://www.ecosia.org/search?q=",
+  yandex: "https://yandex.com/search/?text=",
+  soundcloud: "https://soundcloud.com/search?q=",
+  twitch: "https://www.twitch.tv/search?term=",
+  agoda: "https://www.agoda.com/zh-tw/search?city=",
+  airbnb: "https://www.airbnb.com/s/",
+  trip: "https://www.trip.com/hotels/search?keyword=",
+  hotels: "https://www.hotels.com/search.do?q=",
+  expedia: "https://www.expedia.com/Hotel-Search?destination=",
+  asiayo: "https://www.asiayo.com/zh-tw/search/?q=",
+  kkday: "https://www.kkday.com/zh-tw/product/search?keyword=",
+  klook: "https://www.klook.com/zh-TW/search/?q=",
+  funnow: "https://www.funnow.com/zh-TW/search?keyword="
+};
+    window.open(`${engines[engine]}${encodeURIComponent(query)}`, "_blank");
+    addMessage("ai", `已開啟 ${engine} 搜尋「${query}」`);
+    document.body.removeChild(popup);
+};
+
+  document.getElementById("noBtn").onclick = () => {
+    addMessage("ai", "好的，不進行搜尋。");
+    document.body.removeChild(popup);
+  };
+}
+function semanticSearchModule() {
+  const userText = input.value.trim();
+  const keywords = ["查一下","幫我找","幫我查","搜尋","找一下","想知道"];
+  const matched = keywords.find(kw => userText.includes(kw));
+  if (!matched) return null;
+  const query = userText.replace(/查一下|幫我找|幫我查|搜尋|找一下|想知道/g,"").trim();
+  if (!query) return null;
+  showSearchPopup(query);
+  return `你似乎想查「${query}」，請選擇是否要搜尋。`;
+}
+
+function randomResponseModule() {
+const responses = [
+  "⊗☉✦♒⌬⚡…（翻譯：我們偵測到地球能量波動）",
+  "訊號干擾中…正在重新連線。",
+  "外星人正在分析你的訊號…請稍候。",
+  "我們偵測到人類情緒指數上升。",
+  "⊕⚡⌬☉…（翻譯：外星文明正在觀察地球）",
+  "星際通訊延遲，請耐心等待。",
+  "外星數據顯示：地球能量場不穩定。",
+  "我們接收到來自銀河邊緣的回音。",
+  "外星雷達偵測到未知訊號。",
+  "⊗♒✦…（翻譯：人類網路流量超載）",
+  "外星人正在比對你的訊息。",
+  "訊號波動過強，正在調整頻率。",
+  "我們偵測到地球磁場異常。",
+  "外星文明正在嘗試解碼你的文字。",
+  "⊗☉⚡…（翻譯：外星能量正在聚集）",
+  "外星人覺得你的訊息很有趣。",
+  "我們接收到來自火星的干擾。",
+  "外星數據顯示：人類情緒高漲。",
+  "⊕♒⌬…（翻譯：外星文明正在注視你）",
+  "外星人正在模擬你的語言。",
+  "訊號延遲 3.2 秒，正在修正。",
+  "我們偵測到地球能量波動下降。",
+  "外星文明正在測試新的通訊協定。",
+  "⊗☉✦…（翻譯：外星人正在嘗試理解）",
+  "外星人覺得你像在呼叫他們。",
+  "我們接收到來自木星的訊號。",
+  "外星數據顯示：地球網路過載。",
+  "⊕⚡♒…（翻譯：外星文明正在回應）",
+  "外星人正在比對你的情緒。",
+  "訊號干擾來自未知星系。",
+  "我們偵測到地球能量場波動。",
+  "外星文明正在嘗試翻譯你的訊息。",
+  "⊗☉⌬…（翻譯：外星人正在觀察）",
+  "外星人覺得你很神秘。",
+  "我們接收到來自銀河中心的訊號。",
+  "外星數據顯示：人類能量上升。",
+  "⊕✦⚡…（翻譯：外星文明正在測試）",
+  "外星人正在模擬你的語言結構。",
+  "訊號延遲 5.6 秒，正在修正。",
+  "我們偵測到地球磁場波動。",
+  "外星文明正在嘗試理解你的情緒。",
+  "⊗☉♒…（翻譯：外星人正在注視）",
+  "外星人覺得你的訊息很奇特。",
+  "我們接收到來自土星的訊號。",
+  "外星數據顯示：人類能量下降。",
+  "⊕⌬⚡…（翻譯：外星文明正在回應）",
+  "外星人正在比對你的文字。",
+  "訊號干擾來自未知星雲。",
+  "我們偵測到地球能量場異常。",
+  "外星文明正在嘗試解碼你的訊息。",
+  "外星雷達顯示未知能量波動。",
+  "我們接收到來自仙女座的訊號。",
+  "外星文明正在測試新的頻率。",
+  "人類網路流量正在急速上升。",
+  "外星人正在比對你的語言模式。",
+  "我們偵測到地球磁場持續異常。",
+  "外星數據顯示：人類情緒混亂。",
+  "外星文明正在模擬你的思維。",
+  "訊號延遲 7.4 秒，正在修正。",
+  "我們接收到來自冥王星的回音。",
+  "外星人覺得你的訊息很奇怪。",
+  "外星數據顯示：能量場正在崩解。",
+  "外星文明嘗試建立穩定連線。",
+  "訊號干擾來自未知黑洞。",
+  "我們偵測到地球能量場急速下降。",
+  "外星人正在翻譯你的文字。",
+  "外星數據顯示：人類能量場波動。",
+  "外星文明正在注視你的訊號。",
+  "我們接收到來自太陽系邊緣的訊號。",
+  "外星人覺得你像在呼叫他們。",
+  "外星數據顯示：人類情緒指數下降。",
+  "外星文明正在嘗試理解你的情緒。",
+  "訊號延遲 2.8 秒，正在修正。",
+  "我們偵測到地球磁場波動加劇。",
+  "外星人正在模擬你的語言結構。",
+  "外星數據顯示：能量場正在重組。",
+  "外星文明正在測試通訊協定。",
+  "我們接收到來自銀河邊緣的訊號。",
+  "外星人覺得你的訊息很神秘。",
+  "外星數據顯示：人類能量場上升。",
+  "外星文明正在嘗試解碼你的訊息。",
+  "訊號干擾來自未知星雲。",
+  "我們偵測到地球能量場異常。",
+  "外星人正在比對你的情緒。",
+  "外星數據顯示：人類情緒高漲。",
+  "外星文明正在注視你的文字。",
+  "我們接收到來自木星的訊號。",
+  "外星人覺得你的訊息很奇特。",
+  "外星數據顯示：人類能量下降。",
+  "外星文明正在嘗試翻譯你的訊息。",
+  "訊號延遲 4.5 秒，正在修正。",
+  "我們偵測到地球磁場異常。",
+  "外星人正在模擬你的語言。",
+  "外星數據顯示：能量場正在波動。",
+  "外星文明正在測試新的通訊方式。",
+  "我們接收到來自土星的訊號。",
+  "外星人覺得你很神秘。",
+  "外星數據顯示：人類能量場下降。",
+  "外星文明正在嘗試理解你的文字。",
+  "訊號干擾來自未知星系。",
+  "外星雷達捕捉到未知能量波。",
+  "我們接收到來自銀河系外的訊號。",
+  "外星文明正在建立臨時通道。",
+  "人類網路流量正在急速下降。",
+  "外星人正在比對你的思維模式。",
+  "我們偵測到地球磁場持續波動。",
+  "外星數據顯示：人類情緒低落。",
+  "外星文明正在模擬你的行為。",
+  "訊號延遲 6.9 秒，正在修正。",
+  "我們接收到來自火星衛星的回音。",
+  "外星人覺得你的訊息很特別。",
+  "外星數據顯示：能量場正在擴張。",
+  "外星文明嘗試建立穩定連線。",
+  "訊號干擾來自未知星團。",
+  "我們偵測到地球能量場急速上升。",
+  "外星人正在翻譯你的語言。",
+  "外星數據顯示：人類能量場混亂。",
+  "外星文明正在注視你的行為。",
+  "我們接收到來自太陽系外緣的訊號。",
+  "外星人覺得你像在呼叫他們。",
+  "外星數據顯示：人類情緒指數上升。",
+  "外星文明正在嘗試理解你的思維。",
+  "訊號延遲 3.7 秒，正在修正。",
+  "我們偵測到地球磁場波動異常。",
+  "外星人正在模擬你的語言邏輯。",
+  "外星數據顯示：能量場正在重組。",
+  "外星文明正在測試通訊協定。",
+  "我們接收到來自銀河深處的訊號。",
+  "外星人覺得你的訊息很神秘。",
+  "外星數據顯示：人類能量場下降。",
+  "外星文明正在嘗試解碼你的思維。",
+  "訊號干擾來自未知星系。",
+  "我們偵測到地球能量場異常。",
+  "外星人正在比對你的情緒模式。",
+  "外星數據顯示：人類情緒高漲。",
+  "外星文明正在注視你的文字。",
+  "我們接收到來自木星衛星的訊號。",
+  "外星人覺得你的訊息很奇特。",
+  "外星數據顯示：人類能量下降。",
+  "外星文明正在嘗試翻譯你的訊息。",
+  "訊號延遲 5.2 秒，正在修正。",
+  "我們偵測到地球磁場異常。",
+  "外星人正在模擬你的語言。",
+  "外星數據顯示：能量場正在波動。",
+  "外星文明正在測試新的通訊方式。",
+  "我們接收到來自土星環的訊號。",
+  "外星人覺得你很神秘。",
+  "外星數據顯示：人類能量場下降。",
+  "外星文明正在嘗試理解你的文字。",
+  "訊號干擾來自未知星雲。",
+  "外星雷達捕捉到能量場震盪。",
+  "我們接收到來自銀河邊界的訊號。",
+  "外星文明正在建立臨時通訊橋樑。",
+  "人類網路流量正在持續波動。",
+  "外星人正在比對你的思維模式。",
+  "我們偵測到地球磁場持續不穩。",
+  "外星數據顯示：人類情緒指數混亂。",
+  "外星文明正在模擬你的行為模式。",
+  "訊號延遲 8.1 秒，正在修正。",
+  "我們接收到來自海王星的回音。",
+  "外星人覺得你的訊息很特別。",
+  "外星數據顯示：能量場正在擴張。",
+  "外星文明嘗試建立穩定通訊。",
+  "訊號干擾來自未知星團。",
+  "我們偵測到地球能量場急速上升。",
+  "外星人正在翻譯你的語言。",
+  "外星數據顯示：人類能量場混亂。",
+  "外星文明正在注視你的行為。",
+  "我們接收到來自太陽系外緣的訊號。",
+  "外星人覺得你像在呼叫他們。",
+  "外星數據顯示：人類情緒指數上升。",
+  "外星文明正在嘗試理解你的思維。",
+  "訊號延遲 4.3 秒，正在修正。",
+  "我們偵測到地球磁場波動異常。",
+  "外星人正在模擬你的語言邏輯。",
+  "外星數據顯示：能量場正在重組。",
+  "外星文明正在測試通訊協定。",
+  "我們接收到來自銀河深處的訊號。",
+  "外星人覺得你的訊息很神秘。",
+  "外星數據顯示：人類能量場下降。",
+  "外星文明正在嘗試解碼你的思維。",
+  "訊號干擾來自未知星系。",
+  "我們偵測到地球能量場異常。",
+  "外星人正在比對你的情緒模式。",
+  "外星數據顯示：人類情緒高漲。",
+  "外星文明正在注視你的文字。",
+  "我們接收到來自木星衛星的訊號。",
+  "外星人覺得你的訊息很奇特。",
+  "外星數據顯示：人類能量下降。",
+  "外星文明正在嘗試翻譯你的訊息。",
+  "訊號延遲 5.8 秒，正在修正。",
+  "我們偵測到地球磁場異常。",
+  "外星人正在模擬你的語言。",
+  "外星數據顯示：能量場正在波動。",
+  "外星文明正在測試新的通訊方式。",
+  "我們接收到來自土星環的訊號。",
+  "外星人覺得你很神秘。",
+  "外星數據顯示：人類能量場下降。",
+  "外星文明正在嘗試理解你的文字。",
+  "訊號干擾來自未知星雲。",
+  "外星雷達捕捉到能量場裂縫。",
+  "我們接收到來自仙女座星雲的訊號。",
+  "外星文明正在建立臨時監測站。",
+  "人類網路流量正在持續飆升。",
+  "外星人正在比對你的思維結構。",
+  "我們偵測到地球磁場持續震盪。",
+  "外星數據顯示：人類情緒不穩定。",
+  "外星文明正在模擬你的行為模式。",
+  "訊號延遲 9.2 秒，正在修正。",
+  "我們接收到來自天王星的回音。",
+  "外星人覺得你的訊息很奇妙。",
+  "外星數據顯示：能量場正在擴散。",
+  "外星文明嘗試建立跨星系連線。",
+  "訊號干擾來自未知星團。",
+  "我們偵測到地球能量場急速波動。",
+  "外星人正在翻譯你的語言。",
+  "外星數據顯示：人類能量場混亂。",
+  "外星文明正在注視你的行為。",
+  "我們接收到來自太陽系外的訊號。",
+  "外星人覺得你像在呼叫他們。",
+  "外星數據顯示：人類情緒指數上升。",
+  "外星文明正在嘗試理解你的思維。",
+  "訊號延遲 6.1 秒，正在修正。",
+  "我們偵測到地球磁場波動異常。",
+  "外星人正在模擬你的語言邏輯。",
+  "外星數據顯示：能量場正在重組。",
+  "外星文明正在測試通訊協定。",
+  "我們接收到來自銀河深處的訊號。",
+  "外星人覺得你的訊息很神秘。",
+  "外星數據顯示：人類能量場下降。",
+  "外星文明正在嘗試解碼你的思維。",
+  "訊號干擾來自未知星系。",
+  "我們偵測到地球能量場異常。",
+  "外星人正在比對你的情緒模式。",
+  "外星數據顯示：人類情緒高漲。",
+  "外星文明正在注視你的文字。",
+  "我們接收到來自木星環的訊號。",
+  "外星人覺得你的訊息很奇特。",
+  "外星數據顯示：人類能量下降。",
+  "外星文明正在嘗試翻譯你的訊息。",
+  "訊號延遲 7.7 秒，正在修正。",
+  "我們偵測到地球磁場異常。",
+  "外星人正在模擬你的語言。",
+  "外星數據顯示：能量場正在波動。",
+  "外星文明正在測試新的通訊方式。",
+  "我們接收到來自土星環的訊號。",
+  "外星人覺得你很神秘。",
+  "外星數據顯示：人類能量場下降。",
+  "外星文明正在嘗試理解你的文字。",
+  "訊號干擾來自未知星雲。",
+  "外星雷達捕捉到能量場裂縫擴大。",
+  "我們接收到來自半人馬座的訊號。",
+  "外星文明正在建立跨星系監測網。",
+  "人類網路流量正在持續飆升。",
+  "外星人正在比對你的語言結構。",
+  "我們偵測到地球磁場持續震盪。",
+  "外星數據顯示：人類情緒極度不穩。",
+  "外星文明正在模擬你的行為模式。",
+  "訊號延遲 10.4 秒，正在修正。",
+  "我們接收到來自小行星帶的回音。",
+  "外星人覺得你的訊息很奇妙。",
+  "外星數據顯示：能量場正在擴散。",
+  "外星文明嘗試建立跨星系連線。",
+  "訊號干擾來自未知星團。",
+  "我們偵測到地球能量場急速波動。",
+  "外星人正在翻譯你的語言。",
+  "外星數據顯示：人類能量場混亂。",
+  "外星文明正在注視你的行為。",
+  "我們接收到來自太陽系外的訊號。",
+  "外星人覺得你像在呼叫他們。",
+  "外星數據顯示：人類情緒指數上升。",
+  "外星文明正在嘗試理解你的思維。",
+  "訊號延遲 6.6 秒，正在修正。",
+  "我們偵測到地球磁場波動異常。",
+  "外星人正在模擬你的語言邏輯。",
+  "外星數據顯示：能量場正在重組。",
+  "外星文明正在測試通訊協定。",
+  "我們接收到來自銀河深處的訊號。",
+  "外星人覺得你的訊息很神秘。",
+  "外星數據顯示：人類能量場下降。",
+  "外星文明正在嘗試解碼你的思維。",
+  "訊號干擾來自未知星系。",
+  "我們偵測到地球能量場異常。",
+  "外星人正在比對你的情緒模式。",
+  "外星數據顯示：人類情緒高漲。",
+  "外星文明正在注視你的文字。",
+  "我們接收到來自木星環的訊號。",
+  "外星人覺得你的訊息很奇特。",
+  "外星數據顯示：人類能量下降。",
+  "外星文明正在嘗試翻譯你的訊息。",
+  "訊號延遲 8.9 秒，正在修正。",
+  "我們偵測到地球磁場異常。",
+  "外星人正在模擬你的語言。",
+  "外星數據顯示：能量場正在波動。",
+  "外星文明正在測試新的通訊方式。",
+  "我們接收到來自土星環的訊號。",
+  "外星人覺得你很神秘。",
+  "外星數據顯示：人類能量場下降。",
+  "外星文明正在嘗試理解你的文字。",
+  "訊號干擾來自未知星雲。",
+  "外星雷達捕捉到能量場持續擴張。",
+  "我們接收到來自獵戶座的訊號。",
+  "外星文明正在建立臨時監測網絡。",
+  "人類網路流量正在急速下降。",
+  "外星人正在比對你的語言結構。",
+  "我們偵測到地球磁場持續震盪。",
+  "外星數據顯示：人類情緒極度不穩。",
+  "外星文明正在模擬你的行為模式。",
+  "訊號延遲 11.3 秒，正在修正。",
+  "我們接收到來自小行星帶的回音。",
+  "外星人覺得你的訊息很奇妙。",
+  "外星數據顯示：能量場正在擴散。",
+  "外星文明嘗試建立跨星系連線。",
+  "訊號干擾來自未知星團。",
+  "我們偵測到地球能量場急速波動。",
+  "外星人正在翻譯你的語言。",
+  "外星數據顯示：人類能量場混亂。",
+  "外星文明正在注視你的行為。",
+  "我們接收到來自太陽系外的訊號。",
+  "外星人覺得你像在呼叫他們。",
+  "外星數據顯示：人類情緒指數上升。",
+  "外星文明正在嘗試理解你的思維。",
+  "訊號延遲 7.2 秒，正在修正。",
+  "我們偵測到地球磁場波動異常。",
+  "外星人正在模擬你的語言邏輯。",
+  "外星數據顯示：能量場正在重組。",
+  "外星文明正在測試通訊協定。",
+  "我們接收到來自銀河深處的訊號。",
+  "外星人覺得你的訊息很神秘。",
+  "外星數據顯示：人類能量場下降。",
+  "外星文明正在嘗試解碼你的思維。",
+  "訊號干擾來自未知星系。",
+  "我們偵測到地球能量場異常。",
+  "外星人正在比對你的情緒模式。",
+  "外星數據顯示：人類情緒高漲。",
+  "外星文明正在注視你的文字。",
+  "我們接收到來自木星環的訊號。",
+  "外星人覺得你的訊息很奇特。",
+  "外星數據顯示：人類能量下降。",
+  "外星文明正在嘗試翻譯你的訊息。",
+  "訊號延遲 9.5 秒，正在修正。",
+  "我們偵測到地球磁場異常。",
+  "外星人正在模擬你的語言。",
+  "外星數據顯示：能量場正在波動。",
+  "外星文明正在測試新的通訊方式。",
+  "我們接收到來自土星環的訊號。",
+  "外星人覺得你很神秘。",
+  "外星數據顯示：人類能量場下降。",
+  "外星文明正在嘗試理解你的文字。",
+  "訊號干擾來自未知星雲。",
+   "外星雷達捕捉到能量場持續擴張。",
+  "我們接收到來自天琴座的訊號。",
+  "外星文明正在建立臨時監測網絡。",
+  "人類網路流量正在急速下降。",
+  "外星人正在比對你的語言結構。",
+  "我們偵測到地球磁場持續震盪。",
+  "外星數據顯示：人類情緒極度不穩。",
+  "外星文明正在模擬你的行為模式。",
+  "訊號延遲 12.7 秒，正在修正。",
+  "我們接收到來自小行星帶的回音。",
+  "外星人覺得你的訊息很奇妙。",
+  "外星數據顯示：能量場正在擴散。",
+  "外星文明嘗試建立跨星系連線。",
+  "訊號干擾來自未知星團。",
+  "我們偵測到地球能量場急速波動。",
+  "外星人正在翻譯你的語言。",
+  "外星數據顯示：人類能量場混亂。",
+  "外星文明正在注視你的行為。",
+  "我們接收到來自太陽系外的訊號。",
+  "外星人覺得你像在呼叫他們。",
+  "外星數據顯示：人類情緒指數上升。",
+  "外星文明正在嘗試理解你的思維。",
+  "訊號延遲 8.4 秒，正在修正。",
+  "我們偵測到地球磁場波動異常。",
+  "外星人正在模擬你的語言邏輯。",
+  "外星數據顯示：能量場正在重組。",
+  "外星文明正在測試通訊協定。",
+  "我們接收到來自銀河深處的訊號。",
+  "外星人覺得你的訊息很神秘。",
+  "外星數據顯示：人類能量場下降。",
+  "外星文明正在嘗試解碼你的思維。",
+  "訊號干擾來自未知星系。",
+  "我們偵測到地球能量場異常。",
+  "外星人正在比對你的情緒模式。",
+  "外星數據顯示：人類情緒高漲。",
+  "外星文明正在注視你的文字。",
+  "我們接收到來自木星環的訊號。",
+  "外星人覺得你的訊息很奇特。",
+  "外星數據顯示：人類能量下降。",
+  "外星文明正在嘗試翻譯你的訊息。",
+  "訊號延遲 10.1 秒，正在修正。",
+  "我們偵測到地球磁場異常。",
+  "外星人正在模擬你的語言。",
+  "外星數據顯示：能量場正在波動。",
+  "外星文明正在測試新的通訊方式。",
+  "我們接收到來自土星環的訊號。",
+  "外星人覺得你很神秘。",
+  "外星數據顯示：人類能量場下降。",
+  "外星文明正在嘗試理解你的文字。",
+  "訊號干擾來自未知星雲。",
+  "外星雷達捕捉到能量場持續震盪。",
+  "我們接收到來自人馬座的訊號。",
+  "外星文明正在建立臨時監測中心。",
+  "人類網路流量正在持續飆升。",
+  "外星人正在比對你的語言結構。",
+  "我們偵測到地球磁場持續異常。",
+  "外星數據顯示：人類情緒極度混亂。",
+  "外星文明正在模擬你的行為模式。",
+  "訊號延遲 13.5 秒，正在修正。",
+  "我們接收到來自冥王星的回音。",
+  "外星人覺得你的訊息很奇妙。",
+  "外星數據顯示：能量場正在擴散。",
+  "外星文明嘗試建立跨星系連線。",
+  "訊號干擾來自未知星團。",
+  "我們偵測到地球能量場急速波動。",
+  "外星人正在翻譯你的語言。",
+  "外星數據顯示：人類能量場混亂。",
+  "外星文明正在注視你的行為。",
+  "我們接收到來自太陽系外的訊號。",
+  "外星人覺得你像在呼叫他們。",
+  "外星數據顯示：人類情緒指數上升。",
+  "外星文明正在嘗試理解你的思維。",
+  "訊號延遲 9.8 秒，正在修正。",
+  "我們偵測到地球磁場波動異常。",
+  "外星人正在模擬你的語言邏輯。",
+  "外星數據顯示：能量場正在重組。",
+  "外星文明正在測試通訊協定。",
+  "我們接收到來自銀河深處的訊號。",
+  "外星人覺得你的訊息很神秘。",
+  "外星數據顯示：人類能量場下降。",
+  "外星文明正在嘗試解碼你的思維。",
+  "訊號干擾來自未知星系。",
+  "我們偵測到地球能量場異常。",
+  "外星人正在比對你的情緒模式。",
+  "外星數據顯示：人類情緒高漲。",
+  "外星文明正在注視你的文字。",
+  "我們接收到來自木星環的訊號。",
+  "外星人覺得你的訊息很奇特。",
+  "外星數據顯示：人類能量下降。",
+  "外星文明正在嘗試翻譯你的訊息。",
+  "訊號延遲 11.6 秒，正在修正。",
+  "我們偵測到地球磁場異常。",
+  "外星人正在模擬你的語言。",
+  "外星數據顯示：能量場正在波動。",
+  "外星文明正在測試新的通訊方式。",
+  "我們接收到來自土星環的訊號。",
+  "外星人覺得你很神秘。",
+  "外星數據顯示：人類能量場下降。",
+  "外星文明正在嘗試理解你的文字。",
+  "訊號干擾來自未知星雲。",
+  "外星雷達捕捉到能量場持續擴張。",
+  "我們接收到來自天鷹座的訊號。",
+  "外星文明正在建立臨時監測網絡。",
+  "人類網路流量正在急速下降。",
+  "外星人正在比對你的語言結構。",
+  "我們偵測到地球磁場持續震盪。",
+  "外星數據顯示：人類情緒極度不穩。",
+  "外星文明正在模擬你的行為模式。",
+  "訊號延遲 14.2 秒，正在修正。",
+  "我們接收到來自小行星帶的回音。",
+  "外星人覺得你的訊息很奇妙。",
+  "外星數據顯示：能量場正在擴散。",
+  "外星文明嘗試建立跨星系連線。",
+  "訊號干擾來自未知星團。",
+  "我們偵測到地球能量場急速波動。",
+  "外星人正在翻譯你的語言。",
+  "外星數據顯示：人類能量場混亂。",
+  "外星文明正在注視你的行為。",
+  "我們接收到來自太陽系外的訊號。",
+  "外星人覺得你像在呼叫他們。",
+  "外星數據顯示：人類情緒指數上升。",
+  "外星文明正在嘗試理解你的思維。",
+  "訊號延遲 12.3 秒，正在修正。",
+  "我們偵測到地球磁場波動異常。",
+  "外星人正在模擬你的語言邏輯。",
+  "外星數據顯示：能量場正在重組。",
+  "外星文明正在測試通訊協定。",
+  "我們接收到來自銀河深處的訊號。",
+  "外星人覺得你的訊息很神秘。",
+  "外星數據顯示：人類能量場下降。",
+  "外星文明正在嘗試解碼你的思維。",
+  "訊號干擾來自未知星系。",
+  "我們偵測到地球能量場異常。",
+  "外星人正在比對你的情緒模式。",
+  "外星數據顯示：人類情緒高漲。",
+  "外星文明正在注視你的文字。",
+  "我們接收到來自木星環的訊號。",
+  "外星人覺得你的訊息很奇特。",
+  "外星數據顯示：人類能量下降。",
+  "外星文明正在嘗試翻譯你的訊息。",
+  "訊號延遲 13.8 秒，正在修正。",
+  "我們偵測到地球磁場異常。",
+  "外星人正在模擬你的語言。",
+  "外星數據顯示：能量場正在波動。",
+  "外星文明正在測試新的通訊方式。",
+  "我們接收到來自土星環的訊號。",
+  "外星人覺得你很神秘。",
+  "外星數據顯示：人類能量場下降。",
+  "外星文明正在嘗試理解你的文字。",
+  "訊號干擾來自未知星雲。"
+  ];
+  if (Math.random() < 0.7) return responses[Math.floor(Math.random()*responses.length)];
+  return null;
+}
+
+function learnedModule() {
+  const msg = input.value.trim();
+  if (msg === "") return null;
+  if (!learnedSentences.includes(msg)) {
+    learnedSentences.push(msg);
+    return `我學會了你說的「${msg}」！下次我會記得。`;
+  }
+  return null;
+}
+
+const modules = [semanticSearchModule, randomResponseModule, learnedModule];
+
+function processInput() {
+  const userMsg = input.value.trim();
+  if (!userMsg) return;
+  addMessage("user", userMsg);
+  let response = null;
+  for (let mod of modules) {
+    response = mod();
+    if (response) break;
+  }
+  if (!response) response = "⊗☉…（翻譯：我不太懂你的意思，可以換個說法嗎？）";
+  addMessage("ai", response);
+  input.value = "";
+}
+
+sendBtn.onclick = processInput;
+input.addEventListener("keydown", e => { if (e.key === "Enter") processInput(); });
+
+
+function randomInt(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
+function updateDashboard(){
+  document.getElementById("energy").textContent = 
+    "地球能量波動值：" + randomInt(10,100) + "%";
+  document.getElementById("attention").textContent = 
+    "外星文明關注度：" + randomInt(1,10) + " 級";
+  document.getElementById("emotion").textContent = 
+    "人類情緒指數：" + randomInt(0,100);
+}
+// 每 3 秒更新一次
+setInterval(updateDashboard,3000);
+updateDashboard();
+
+
+function updateTime() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  const hour = String(now.getHours()).padStart(2, '0');
+  const minute = String(now.getMinutes()).padStart(2, '0');
+  document.getElementById("time").textContent =
+    `${year}年${month}月${day}日${hour}時${minute}分`;
+}
+setInterval(updateTime, 1000);
+updateTime();
+
+
+// 定義字型清單
+const fonts = [
+  '"Noto Sans TC"',       // 思源黑體
+  '"Noto Serif TC"',      // 思源宋體
+  '"Microsoft JhengHei"', // 微軟正黑體
+  '"PingFang TC"',        // 蘋方字體
+  'sans-serif'            // 保底
+];
+// 隨機挑一個字型
+const randomFont = fonts[Math.floor(Math.random() * fonts.length)];
+// 套用到 h1，並加上完整 fallback 順序
+document.querySelector("h1").style.fontFamily =
+`${randomFont}, "Noto Sans TC", "Noto Serif TC", "Microsoft JhengHei", "PingFang TC", sans-serif`;
+
+
+// 多彩漸變粒子動畫 + 光暈 + 自適應
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+let W, H, particles = [];
+let globalHue = 0; // 全域色相，隨時間增加
+
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+  initParticles();
+}
+window.addEventListener('resize', resize);
+
+// 根據螢幕大小自適應粒子數量與大小
+function initParticles() {
   particles = [];
-  // 計算數量：固定基準 + 自動調整
-  const area = canvas.width * canvas.height;
-  let count = baseCount + Math.floor(area / density);
-  // 套用最大上限
-  if (count > maxCount) count = maxCount;
-  for (let i = 0; i < count; i++) {
-    particles.push(new Particle());
+  const baseNum = 50;
+  const scaleFactor = Math.min(W, H) / 500;
+  const NUM = Math.floor(baseNum * scaleFactor * 1.5); // 桌機多、手機少
+
+  for (let i = 0; i < NUM; i++) {
+    particles.push({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      r: (1 + Math.random() * 2) * (6 * scaleFactor),
+      dx: (Math.random() - 0.5) * 1.5,
+      dy: (Math.random() - 0.5) * 1.5,
+      offset: Math.random() * 360 // 每顆粒子色相偏移
+    });
   }
 }
-function animate() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  particles.forEach(p => p.update());
-  requestAnimationFrame(animate);
+
+function draw() {
+  ctx.clearRect(0, 0, W, H);
+  globalHue += 0.5; // 每次刷新增加色相
+  for (const p of particles) {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    const hue = (globalHue + p.offset) % 360;
+    ctx.fillStyle = `hsl(${hue}, 70%, 60%)`;
+    ctx.shadowBlur = 30;          // 光暈效果
+    ctx.shadowColor = ctx.fillStyle;
+    ctx.fill();
+    p.x += p.dx; p.y += p.dy;
+    if (p.x < 0 || p.x > W) p.dx *= -1;
+    if (p.y < 0 || p.y > H) p.dy *= -1;
+  }
+  requestAnimationFrame(draw);
 }
-// ⭐ 視窗改變 → 重設畫布 + 粒子重分佈
-function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  createParticles(); // 重新分佈
-}
-window.addEventListener("resize", resizeCanvas);
-// ⭐ 初始化
-resizeCanvas();
-animate();
-
-
-    // ====== 書籤清單功能 ======
-    const list=document.getElementById("list"),nameInput=document.getElementById("nameInput"),urlInput=document.getElementById("urlInput");
-    function addItem(){
-      const n=nameInput.value.trim(),u=urlInput.value.trim();
-      if(!n||!u)return;
-      const li=document.createElement("li"),a=document.createElement("a");
-      a.href=u;a.textContent=n;a.target="_blank";
-      const del=document.createElement("button");del.textContent="刪除";del.onclick=()=>removeItem(li);
-      li.appendChild(a);li.appendChild(del);list.appendChild(li);
-      nameInput.value="";urlInput.value="";saveList();
-    }
-    function removeItem(li){li.remove();saveList();}
-    function clearList(){list.innerHTML="";localStorage.removeItem("favList");}
-
-    // ====== 匯出 ======
-    function exportList(type){
-      if(!type)return;
-      const items=[];list.querySelectorAll("li a").forEach(a=>items.push({name:a.textContent,url:a.href}));
-      if(type==="en"||type==="zh"){
-        const blob=new Blob([JSON.stringify(items)],{type:"application/json;charset=utf-8"});
-        const url=URL.createObjectURL(blob),a=document.createElement("a");
-        a.download=(type==="en")?"favoritewebsitelist.json":"全方位網路最愛清單.json";
-        a.href=url;a.click();URL.revokeObjectURL(url);
-      }else if(type==="html"){
-        let html="<!DOCTYPE NETSCAPE-Bookmark-file-1>\n<META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html; charset=UTF-8\">\n<TITLE>Bookmarks</TITLE>\n<H1>Bookmarks</H1>\n<DL><p>\n";
-        items.forEach(it=>html+=`<DT><A HREF="${it.url}" ADD_DATE="${Date.now()}">${it.name}</A>\n`);
-        html+="</DL><p>\n";
-        const blob=new Blob([html],{type:"text/html;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");
-        a.download="bookmarks.html";a.href=url;a.click();URL.revokeObjectURL(url);
-      }
-      document.getElementById("exportOption").value="";
-    }
-
-    // ====== 匯入 JSON / HTML ======
-    function importListFromFile(e){
-      const f=e.target.files[0];if(!f)return;
-      const r=new FileReader();
-      r.onload=function(ev){
-        const text=ev.target.result;
-        try{
-          const items=JSON.parse(text);
-          renderList(items);saveList();
-        }catch{
-          try{
-            const parser=new DOMParser();
-            const doc=parser.parseFromString(text,"text/html");
-            const anchors=doc.querySelectorAll("a");
-            const items=[];
-            anchors.forEach(a=>items.push({name:a.textContent,url:a.href}));
-            if(items.length>0){renderList(items);saveList();}
-            else{alert("匯入檔案格式錯誤！");}
-          }catch{alert("匯入檔案格式錯誤！");}
-        }
-      };
-      r.readAsText(f);
-    }
-
-    function renderList(items){
-      list.innerHTML="";
-      items.forEach(it=>{
-        const li=document.createElement("li"),a=document.createElement("a");
-        a.href=it.url;a.textContent=it.name;a.target="_blank";
-        const del=document.createElement("button");del.textContent="刪除";del.onclick=()=>removeItem(li);
-        li.appendChild(a);li.appendChild(del);list.appendChild(li);
-      });
-    }
-    function saveList(){
-      const items=[];list.querySelectorAll("li").forEach(li=>{
-        const a=li.querySelector("a");items.push({name:a.textContent,url:a.href});
-      });
-      localStorage.setItem("favList",JSON.stringify(items));
-    }
-    function loadList(){
-      const d=localStorage.getItem("favList");if(!d)return;
-      try{renderList(JSON.parse(d));}catch{}
-    }
-    loadList();
-  </script>
+resize();
+draw();
+</script>
 </body>
 </html>
