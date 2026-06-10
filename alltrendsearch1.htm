@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&display=swap" rel="stylesheet">
+<title>全方位智慧搜尋引擎</title>
+<style>
+    body {
+      margin: 0;
+      height: 100vh;
+      background: #005FAF;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+      padding-top: 5px;
+    }
+
+    h1 {
+      font-weight: 900;
+      margin-top: 0; 
+      margin-bottom: 0;    /* 下方距離可依需求調整 */
+      text-align: center;
+      font-size: 3.8vw;
+      font-family: "Noto Sans TC", "Noto Serif TC", "Microsoft JhengHei", "PingFang TC", sans-serif;
+      animation: colorChange 20s infinite alternate;
+      text-shadow: 0 0 20px #fff, 0 0 40px #ff00ff;
+      z-index: 2;
+    }
+
+    @keyframes colorChange {
+      0% { color: #3399FF; }
+      25% { color: #00FFFF; }
+      50% { color: #9966FF; }
+      75% { color: #FF00FF; }
+      100% { color: #FF99FF; }
+    }
+
+    .search-box {
+      z-index: 2;
+      margin-top: 10px;
+      text-align: center;
+    }
+
+    input, select, button {
+      font-size: 18px;
+      padding: 10px;
+      margin: 5px;
+    }
+
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1;
+    }
+
+    .breathing-circle {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 800px;
+      height: 800px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #3399FF, transparent);
+      animation: breathe 6s infinite alternate, circleColor 12s infinite alternate;
+      filter: blur(60px); /* 模糊化邊緣 */
+      z-index: 1;
+    }
+
+    @keyframes breathe {
+      from { transform: translate(-50%, -50%) scale(0.8); opacity: 0.6; }
+      to { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+    }
+
+    @keyframes circleColor {
+      0% { background: radial-gradient(circle, #3399FF, transparent); }
+      25% { background: radial-gradient(circle, #00FFFF, transparent); }
+      50% { background: radial-gradient(circle, #9966FF, transparent); }
+      75% { background: radial-gradient(circle, #FF00FF, transparent); }
+      100% { background: radial-gradient(circle, #FF99FF, transparent); }
+    }
+
+    #results {
+      z-index: 2;
+      color: #fff;
+      margin-top: 15px;
+      text-align: center;
+    }
+    
+    
+/* Reset */
+html,body {
+  height:100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+
+/* 📱 小型手機（小於 480px） */
+@media (max-width: 479px) {
+  .toolbar {
+    flex-direction: column;
+    gap: 6px;
+  }
+  .toolbar select,
+  .toolbar input,
+  .toolbar button {
+    width: 100%;
+  }
+  table {
+    font-size: 13px;
+  }
+  #container {
+    grid-template-columns: 1fr;
+  }
+  #sidebar {
+    position: absolute;
+    top: 42px;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: #fff;
+    z-index: 1000;
+    border-right: none;
+    border-top: 1px solid #ddd;
+  }
+  #map {
+    height: calc(100vh - 42px);
+  }
+  header > * {
+    flex: 1 1 100%;
+  }
+}
+/* 📱 中型手機（480px 到 767px） */
+@media (min-width: 480px) and (max-width: 767px) {
+  .toolbar {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .toolbar select,
+  .toolbar input,
+  .toolbar button {
+    width: 100%;
+  }
+  table {
+    font-size: 14px;
+  }
+  #container {
+    grid-template-columns: 1fr;
+  }
+  #sidebar {
+    position: absolute;
+    top: 42px;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: #fff;
+    z-index: 1000;
+    border-right: none;
+    border-top: 1px solid #ddd;
+  }
+  #map {
+    height: calc(100vh - 42px);
+  }
+  header > * {
+    flex: 1 1 100%;
+  }
+}
+/* 📱 大型手機／小平板（768px 到 1023px） */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .toolbar {
+    flex-direction: row;
+    gap: 12px;
+  }
+  .toolbar select,
+  .toolbar input,
+  .toolbar button {
+    width: auto;
+  }
+  table {
+    font-size: 15px;
+  }
+  #container {
+    grid-template-columns: 1fr;
+  }
+  #sidebar {
+    position: absolute;
+    top: 42px;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: #fff;
+    z-index: 1000;
+    border-right: none;
+    border-top: 1px solid #ddd;
+  }
+  #map {
+    height: calc(100vh - 42px);
+  }
+  header > * {
+    flex: 1 1 100%;
+  }
+}
+</style>
+</head>
+<body>
+<h1>全方位智慧搜尋引擎</h1>
+<div class="search-box">
+<input type="text" id="searchBox" placeholder="輸入關鍵字...">
+<select id="engineSelect">
+<option value="auto">🤖 自動判斷</option>
+<option value="google">🔎 Google</option>
+<option value="bing">🟦 Bing</option>
+<option value="yahoo">🟪 Yahoo</option>
+<option value="baidu">🐼 Baidu</option>
+<option value="duckduckgo">🦆 DuckDuckGo</option>
+<option value="brave">🦁 Brave</option>
+<option value="sogou">🐶 Sogou</option>
+<option value="naver">🅽 Naver</option>
+<option value="ecosia">🌱 Ecosia</option>
+<option value="yandex">🔴 Yandex</option>
+<option value="startpage">🔐 Startpage</option>
+<option value="youtube">▶ YouTube</option>
+<option value="douyin">🎵 Douyin</option>
+<option value="bilibili">🎥 Bilibili</option>
+<option value="youku">📺 Youku</option>
+<option value="wetv">📺 WeTV</option>
+<option value="tudou">🎬 Tudou</option>
+<option value="iqiyi">🎬 iQIYI</option>
+<option value="netflix">🎬 Netflix</option>
+<option value="spotify">🎵 Spotify</option>
+<option value="ubereats">🍔 UberEats</option>
+<option value="booking">🏨 Booking</option>
+<option value="stackoverflow">💻 StackOverflow</option>
+<option value="wikipedia">📖 Wikipedia</option>
+<option value="yahoodic">📘 Yahoo字典</option>
+<option value="pixnet">📰 Pixnet</option>
+<option value="reddit">👽 Reddit</option>
+<option value="tieba">💬 Baidu Tieba</option>
+<option value="shopee">🛒 Shopee</option>
+<option value="ruten">🛍️ Ruten</option>
+<option value="pchome">🛒 PChome</option>
+<option value="amazon">📦 Amazon</option>
+<option value="douban">🎬 Douban</option>
+<option value="zhihu">❓ Zhihu</option>
+<option value="books">📚 Books.com.tw</option>
+<option value="dictcn">📕 Dict.cn</option>
+<option value="iciba">📗 iCIBA</option>
+<option value="youdao">📙 Youdao</option>
+<option value="translate">🌐 Google Translate</option>
+<option value="define">📖 Dictionary.com</option>
+<option value="weather">☁️ Weather</option>
+<option value="time">⏰ Time</option>
+<option value="stock">💹 Stock</option>
+<option value="taiwanstay">🏡 TaiwanStay</option>
+<option value="funtime">🎉 FunTime</option>
+<option value="eztravel">✈️ ezTravel</option>
+<option value="liontravel">🦁 LionTravel</option>
+<option value="dominos">🍕 Domino’s</option>
+<option value="foodpanda">🐼 Foodpanda</option>
+<option value="myhealth">🏥 MyHealthBank</option>
+<option value="nhiapp">🏥 NHI App</option>
+<option value="thsr">🚄 高鐵</option>
+<option value="tra">🚆 台鐵</option>
+<option value="bus">🚌 公車</option>
+<option value="ebill">💳 eBill</option>
+<option value="etax">🧾 eTax</option>
+<option value="instagram">📸 Instagram</option>
+<option value="facebook">📘 Facebook</option>
+<option value="twitter">🐦 Twitter</option>
+<option value="threads">🧵 Threads</option>
+<option value="medium">✍️ Medium</option>
+<option value="github">🐙 GitHub</option>
+<option value="imdb">🎬 IMDb</option>
+<option value="tripadvisor">🌍 TripAdvisor</option>
+<option value="googlemaps">🗺️ Google Maps</option>
+<option value="etsy">🎁 Etsy</option>
+<option value="taobao">🛍️ Taobao</option>
+<option value="jd">🛒 JD.com</option>
+<option value="tiktok">🎵 TikTok</option>
+<option value="linetoday">📱 LINE Today</option>
+<option value="dcard">💬 Dcard</option>
+<option value="pttweb">💬 PTT Web</option>
+<option value="kkbox">🎵 KKBOX</option>
+<option value="flickr">📷 Flickr</option>
+<option value="deviantart">🎨 DeviantArt</option>
+<option value="findbook">📚 FindBook</option>
+<option value="mobile01">💻 Mobile01</option>
+<option value="soundcloud">🎵 SoundCloud</option>
+<option value="twitch">🎮 Twitch</option>
+<option value="agoda">🏨 Agoda</option>
+<option value="airbnb">🏡 Airbnb</option>
+<option value="trip">✈️ Trip.com</option>
+<option value="hotels">🏨 Hotels.com</option>
+<option value="expedia">✈️ Expedia</option>
+<option value="asiayo">🏡 AsiaYo</option>
+<option value="kkday">🎉 KKday</option>
+<option value="klook">🎉 Klook</option>
+<option value="funnow">🎉 FunNow</option>
+</select>
+<button onclick="search()">搜尋</button>
+</div>
+
+<div class="breathing-circle"></div>
+<canvas id="particles"></canvas>
+<div id="results"></div>
+
+<script>
+    function search() {
+    const keyword = document.getElementById("searchBox").value;
+    const engine = document.getElementById("engineSelect").value;
+    const resultsDiv = document.getElementById("results");
+    const data = [
+  // 科技相關 (前 60 筆)
+  "AI 技術", "機器學習", "深度學習", "量子電腦", "雲端服務", "區塊鏈", "加密貨幣", "5G 通訊", "物聯網", "智慧城市",
+  "自駕車", "機器人", "半導體", "晶片設計", "電腦視覺", "自然語言處理", "演算法", "大數據", "邊緣運算", "虛擬實境",
+  "擴增實境", "混合實境", "數位孿生", "網路安全", "資安防護", "防毒軟體", "駭客攻擊", "資料加密", "防火牆", "雲端備份",
+  "程式設計", "前端開發", "後端架構", "全端工程", "API 設計", "資料庫", "SQL", "NoSQL", "MongoDB", "PostgreSQL",
+  "Python", "JavaScript", "TypeScript", "C++", "Java", "Go", "Rust", "Swift", "Kotlin", "PHP",
+  "Git", "GitHub", "版本控制", "DevOps", "CI/CD", "自動化測試", "單元測試", "UI/UX", "設計思維", "產品管理",
+  // 生活健康 (60 筆)
+  "健康飲食", "運動健身", "心理健康", "生活小技巧", "居家設計", "環保永續", "理財投資", "職場技能", "創業案例", "語言學習",
+  "瑜伽", "冥想", "跑步", "游泳", "健身房", "有氧運動", "重量訓練", "飲食控制", "生酮飲食", "地中海飲食",
+  "素食", "全素", "間歇性斷食", "睡眠品質", "壓力管理", "時間管理", "效率提升", "專注力", "學習方法", "考試技巧",
+  "家庭教育", "親子互動", "人際關係", "溝通技巧", "情緒管理", "自我成長", "目標設定", "習慣養成", "正念生活", "極簡主義",
+  "居家收納", "室內設計", "園藝", "手作", "烹飪", "烘焙", "咖啡文化", "茶道", "紅酒知識", "美食探索",
+  "旅遊規劃", "交通資訊", "住宿推薦", "背包客", "登山健行", "海島度假", "文化探索", "世界遺產", "國際新聞", "生活潮流",
+  // 娛樂文化 (60 筆)
+  "娛樂八卦", "電影影評", "音樂推薦", "遊戲攻略", "動漫文化", "攝影技巧", "藝術設計", "最新潮流", "科幻小說", "歷史故事",
+  "流行音樂", "古典音樂", "爵士樂", "搖滾樂", "嘻哈音樂", "K-pop", "J-pop", "演唱會", "音樂節", "舞蹈",
+  "戲劇", "舞台劇", "歌劇", "芭蕾舞", "現代舞", "文學", "詩歌", "小說", "散文", "漫畫",
+  "動畫", "卡通", "電視劇", "綜藝節目", "脫口秀", "電影", "短片", "紀錄片", "影展", "奧斯卡",
+  "遊戲主機", "PC 遊戲", "手機遊戲", "線上遊戲", "角色扮演", "射擊遊戲", "策略遊戲", "模擬遊戲", "獨立遊戲", "電競",
+  "YouTube", "直播", "Podcast", "廣播", "新聞媒體", "社群平台", "Facebook", "Instagram", "TikTok", "Twitter",
+  // 教育知識 (60 筆)
+  "學習資源", "語言學習", "數學", "物理", "化學", "生物", "地理", "歷史", "哲學", "心理學",
+  "經濟學", "政治學", "社會學", "人類學", "法學", "醫學", "工程學", "建築學", "設計學", "教育學",
+  "程式教育", "線上課程", "MOOC", "Coursera", "Udemy", "edX", "Khan Academy", "哈佛大學", "麻省理工", "史丹佛大學",
+  "台灣大學", "清華大學", "交通大學", "成功大學", "中山大學", "中正大學", "師範大學", "政大", "北科大", "高科大",
+  "研究方法", "論文寫作", "學術期刊", "發表會", "研討會", "工作坊", "學術交流", "知識分享", "圖書館", "書籍",
+  "閱讀習慣", "速讀技巧", "筆記方法", "思維導圖", "批判思考", "創意思考", "問題解決", "邏輯推理", "推理小說", "科普文章",
+  // 旅遊美食 (60 筆)
+  "旅遊攻略", "背包客", "登山健行", "海島度假", "美食地圖", "文化探索", "世界遺產", "交通資訊", "住宿推薦", "旅行社",
+  "自由行", "跟團旅遊", "機票比價", "廉價航空", "高鐵", "火車", "巴士", "租車", "自駕遊", "郵輪",
+  "歐洲旅遊", "美洲旅遊", "亞洲旅遊", "非洲旅遊", "大洋洲旅遊", "台灣旅遊", "日本旅遊", "韓國旅遊", "中國旅遊", "香港旅遊",
+  "泰國旅遊", "越南旅遊", "新加坡旅遊", "馬來西亞旅遊", "印尼旅遊", "印度旅遊", "美國旅遊", "加拿大旅遊", "墨西哥旅遊", "巴西旅遊",
+  "義大利旅遊", "法國旅遊", "德國旅遊", "西班牙旅遊", "英國旅遊", "瑞士旅遊", "奧地利旅遊", "荷蘭旅遊", "比利時旅遊", "希臘旅遊",
+  "美食食譜", "烹飪技巧", "甜點", "麵包", "咖啡", "茶", "紅酒", "啤酒", "雞尾酒", "街頭美食",
+  // 時事 / 政策
+  "地震","普發一萬登記","停班停課","颱風","報稅","選舉","股市行情","匯率","油價","房市",
+  "2025 行事曆","2026 行事曆","大罷免","公投","光復節連假","川普","鄭麗文","關稅","颱風楊柳","停電",
+  "疫苗","防疫政策","健保","交通事故","空汙","能源政策","核電","再生能源","環保議題","勞工權益",
+  // 娛樂 / 演唱會
+  "鬼滅之刃","鬼滅之刃劇場版無限城篇","不可能的任務","角頭 鬥陣欸","BLACKPINK","TWICE","孫燕姿","江蕙","五月天","周杰倫",
+  "蔡依林","GD","劉品言","連晨翔","江祖平","紅姐","Netflix 熱門","韓劇推薦","日劇排行","台劇",
+  "動漫新番","奧斯卡","金曲獎","金馬獎","金鐘獎","演唱會","張惠妹","林俊傑","劉德華","王心凌",
+  "楊丞琳","林志玲","K-pop","J-pop","演唱會門票","音樂節","動漫展","遊戲展","影展","票房排行",
+  // 科技 / AI
+  "ChatGPT","Gemini","DeepSeek","Grok","NotebookLM","Google AI Studio","Cursor","Manus","Nano Banana","Sora",
+  "hanzii.net","AI 工具","AI 畫圖","AI 音樂","AI 翻譯","AI 搜尋","iPhone 新機","三星 Galaxy","台積電","半導體",
+  "晶片","電動車","特斯拉","比特幣","區塊鏈","NFT","VR","AR","MR","雲端服務",
+  "大數據","機器學習","深度學習","量子電腦","自駕車","智慧城市","物聯網","5G","邊緣運算","資安防護",
+  // 體育 / 賽事
+  "F1 賽車","96 分鐘","NBA 季後賽","MLB","中職","足球歐冠","奧運","世足賽","羽球","桌球",
+  "網球","高爾夫","排球","籃球","棒球","足球","游泳","馬拉松","健身","運動賽事",
+  // 生活 / 美食
+  "美食推薦","台北餐廳","夜市美食","咖啡廳","手搖飲","烘焙","甜點","壽司","火鍋","燒烤",
+  "旅遊攻略","自由行","住宿推薦","廉價航空","機票比價","背包客","登山健行","海島度假","世界遺產","文化探索",
+  "洗臉巾","鯊魚夾","Excel ROUND","AirTag","居家設計","室內設計","收納技巧","園藝","烹飪","烘焙食譜",
+  // 旅遊 / 住宿
+  "石垣島","福岡","那霸","高雄巨蛋住宿","台北小巨蛋住宿","東京旅遊","大阪旅遊","京都旅遊","北海道旅遊","沖繩旅遊",
+  "首爾旅遊","釜山旅遊","濟州島","香港旅遊","澳門旅遊","新加坡旅遊","馬來西亞旅遊","泰國旅遊","越南旅遊","印尼旅遊",
+  "美國旅遊","加拿大旅遊","墨西哥旅遊","巴西旅遊","義大利旅遊","法國旅遊","德國旅遊","西班牙旅遊","英國旅遊","希臘旅遊",
+  // 熱門人物 / 社群
+  "柯文哲","侯友宜","賴清德","蔡英文","張惠妹","林俊傑","劉德華","王心凌","楊丞琳","林志玲",
+  "YouTube 熱門","Podcast 排行","Facebook 熱搜","Instagram 熱門","TikTok 熱門","Twitter 熱搜","微博熱搜","PTT 熱門","Dcard 熱門","LINE 熱搜",
+  "網紅","直播主","實況主","Vtuber","網路紅人","社群話題","迷因","短影片","爆紅影片","熱門貼文"
+];
+
+const results = data.filter(item => item.toLowerCase().includes(keyword.toLowerCase()));
+if (engine !== "auto") {
+let url = "";
+switch(engine) {
+  case "google": url = `https://www.google.com/search?q=${keyword}`; break;
+  case "bing": url = `https://www.bing.com/search?q=${keyword}`; break;
+  case "yahoo": url = `https://search.yahoo.com/search?p=${keyword}`; break;
+  case "baidu": url = `https://www.baidu.com/s?wd=${keyword}`; break;
+  case "youtube": url = `https://www.youtube.com/results?search_query=${keyword}`; break;
+  case "shopee": url = `https://shopee.tw/search?keyword=${keyword}`; break;
+  case "ubereats": url = `https://www.ubereats.com/tw/search?q=${keyword}`; break;
+  case "booking": url = `https://www.booking.com/searchresults.html?ss=${keyword}`; break;
+  case "stackoverflow": url = `https://stackoverflow.com/search?q=${keyword}`; break;
+  case "wikipedia": url = `https://zh.wikipedia.org/wiki/${keyword}`; break;
+  case "duckduckgo": url = `https://duckduckgo.com/?q=${keyword}`; break;
+  case "brave": url = `https://search.brave.com/search?q=${keyword}`; break;
+  case "startpage": url = `https://www.startpage.com/do/search?q=${keyword}`; break;
+  case "sogou": url = `https://www.sogou.com/web?query=${keyword}`; break;
+  case "naver": url = `https://search.naver.com/search.naver?query=${keyword}`; break;
+  case "ecosia": url = `https://www.ecosia.org/search?q=${keyword}`; break;
+  case "yandex": url = `https://yandex.com/search/?text=${keyword}`; break;
+  case "reddit": url = `https://www.reddit.com/search/?q=${keyword}`; break;
+  case "amazon": url = `https://www.amazon.com/s?k=${keyword}`; break;
+  case "zhihu": url = `https://www.zhihu.com/search?q=${keyword}`; break;
+  case "github": url = `https://github.com/search?q=${keyword}`; break;
+  case "imdb": url = `https://www.imdb.com/find?q=${keyword}`; break;
+  case "tripadvisor": url = `https://www.tripadvisor.com/Search?q=${keyword}`; break;
+  case "googlemaps": url = `https://www.google.com/maps/search/${keyword}`; break;
+  case "taobao": url = `https://s.taobao.com/search?q=${keyword}`; break;
+  case "jd": url = `https://search.jd.com/Search?keyword=${keyword}`; break;
+  case "tiktok": url = `https://www.tiktok.com/search?q=${keyword}`; break;
+  case "dcard": url = `https://www.dcard.tw/search?q=${keyword}`; break;
+  case "pttweb": url = `https://pttweb.tw/search?q=${keyword}`; break;
+  case "kkbox": url = `https://www.kkbox.com/tw/tc/search.php?word=${keyword}`; break;
+  case "flickr": url = `https://www.flickr.com/search/?text=${keyword}`; break;
+  case "deviantart": url = `https://www.deviantart.com/search?q=${keyword}`; break;
+  case "findbook": url = `https://findbook.tw/search?q=${keyword}`; break;
+  case "mobile01": url = `https://www.mobile01.com/topicsearch.php?query=${keyword}`; break;
+  case "soundcloud": url = `https://soundcloud.com/search?q=${keyword}`; break;
+  case "twitch": url = `https://www.twitch.tv/search?term=${keyword}`; break;
+  case "agoda": url = `https://www.agoda.com/zh-tw/search?city=${keyword}`; break;
+  case "airbnb": url = `https://www.airbnb.com/s/${keyword}`; break;
+  case "expedia": url = `https://www.expedia.com/Hotel-Search?destination=${keyword}`; break;
+  case "kkday": url = `https://www.kkday.com/zh-tw/product/search?keyword=${keyword}`; break;
+  case "klook": url = `https://www.klook.com/zh-TW/search/?q=${keyword}`; break;
+  case "funnow": url = `https://www.funnow.com/zh-TW/search?keyword=${keyword}`; break;
+  default: url = ""; break;
+      }
+        window.open(url, "_blank");
+      } else {
+        if (results.length > 0) {
+          resultsDiv.innerHTML = "<ul>" + results.map(r => "<li>" + r + "</li>").join("") + "</ul>";
+          window.open(`https://www.google.com/search?q=${keyword}`, "_blank");
+        } else {
+          let countdown = 7;
+          resultsDiv.innerHTML = `找不到結果，${countdown} 秒後自動隨機跳轉外部搜尋…`;
+          const engines = [
+`https://www.google.com/search?q=${keyword}`,
+`https://www.bing.com/search?q=${keyword}`,
+`https://search.yahoo.com/search?p=${keyword}`,
+`https://www.baidu.com/s?wd=${keyword}`,
+`https://www.youtube.com/results?search_query=${keyword}`,
+`https://shopee.tw/search?keyword=${keyword}`,
+`https://www.ubereats.com/tw/search?q=${keyword}`,
+`https://www.booking.com/searchresults.html?ss=${keyword}`,
+`https://stackoverflow.com/search?q=${keyword}`,
+`https://zh.wikipedia.org/wiki/${keyword}`,
+`https://duckduckgo.com/?q=${keyword}`,
+`https://search.brave.com/search?q=${keyword}`,
+`https://www.startpage.com/do/search?q=${keyword}`,
+`https://www.sogou.com/web?query=${keyword}`,
+`https://search.naver.com/search.naver?query=${keyword}`,
+`https://www.ecosia.org/search?q=${keyword}`,
+`https://yandex.com/search/?text=${keyword}`,
+`https://tw.dictionary.search.yahoo.com/search?p=${keyword}`,
+`https://www.ruten.com.tw/find/?q=${keyword}`,
+`https://www.pixnet.net/searcharticle?q=${keyword}`,
+`https://www.reddit.com/search/?q=${keyword}`,
+`https://tieba.baidu.com/f?kw=${keyword}`,
+`https://shopping.pchome.com.tw/?q=${keyword}`,
+`https://www.amazon.com/s?k=${keyword}`,
+`https://www.douban.com/search?q=${keyword}`,
+`https://www.zhihu.com/search?q=${keyword}`,
+`https://search.books.com.tw/search/query/key/${keyword}`,
+`https://dict.cn/${keyword}`,
+`https://www.iciba.com/word?w=${keyword}`,
+`https://www.youdao.com/result?word=${keyword}`,
+`https://translate.google.com/?sl=auto&tl=zh-TW&text=${keyword}`,
+`https://www.dictionary.com/browse/${keyword}`,
+`https://www.google.com/search?q=weather+${keyword}`,
+`https://www.google.com/search?q=time+${keyword}`,
+`https://www.google.com/search?q=${keyword}`,
+`https://taiwanstay.net.tw/search?query=${keyword}`,
+`https://www.funtime.com.tw/search/?q=${keyword}`,
+`https://www.eztravel.com.tw/search?q=${keyword}`,
+`https://www.liontravel.com/search?q=${keyword}`,
+`https://order.dominos.com.tw/search?q=${keyword}`,
+`https://www.foodpanda.com.tw/search?q=${keyword}`,
+`https://www.douyin.com/search/${keyword}`,
+`https://search.bilibili.com/all?keyword=${keyword}`,
+`https://so.youku.com/search_video/q_${keyword}`,
+`https://wetv.vip/search?q=${keyword}`,
+`https://www.tudou.com/search/?q=${keyword}`,
+`https://www.iq.com/search?key=${keyword}`,
+`https://www.netflix.com/search?q=${keyword}`,
+`https://open.spotify.com/search/${keyword}`,
+`https://www.instagram.com/explore/tags/${keyword}`,
+`https://www.facebook.com/search/top?q=${keyword}`,
+`https://twitter.com/search?q=${keyword}`,
+`https://www.threads.net/search?q=${keyword}`,
+`https://medium.com/search?q=${keyword}`,
+`https://github.com/search?q=${keyword}`,
+`https://www.imdb.com/find?q=${keyword}`,
+`https://www.tripadvisor.com/Search?q=${keyword}`,
+`https://www.google.com/maps/search/${keyword}`,
+`https://www.etsy.com/search?q=${keyword}`,
+`https://s.taobao.com/search?q=${keyword}`,
+`https://search.jd.com/Search?keyword=${keyword}`,
+`https://www.tiktok.com/search?q=${keyword}`,
+`https://today.line.me/tw/search?q=${keyword}`,
+`https://www.dcard.tw/search?q=${keyword}`,
+`https://pttweb.tw/search?q=${keyword}`,
+`https://www.kkbox.com/tw/tc/search.php?word=${keyword}`,
+`https://www.flickr.com/search/?text=${keyword}`,
+`https://www.deviantart.com/search?q=${keyword}`,
+`https://findbook.tw/search?q=${keyword}`,
+`https://www.mobile01.com/topicsearch.php?query=${keyword}`,
+`https://soundcloud.com/search?q=${keyword}`,
+`https://www.twitch.tv/search?term=${keyword}`,
+`https://www.agoda.com/zh-tw/search?city=${keyword}`,
+`https://www.airbnb.com/s/${keyword}`,
+`https://www.trip.com/hotels/search?keyword=${keyword}`,
+`https://www.hotels.com/search.do?q=${keyword}`,
+`https://www.expedia.com/Hotel-Search?destination=${keyword}`,
+`https://www.asiayo.com/zh-tw/search/?q=${keyword}`,
+`https://www.kkday.com/zh-tw/product/search?keyword=${keyword}`,
+`https://www.klook.com/zh-TW/search/?q=${keyword}`,
+`https://www.funnow.com/zh-TW/search?keyword=${keyword}`
+];
+          const randomEngine = engines[Math.floor(Math.random() * engines.length)];
+          const timer = setInterval(() => {
+            countdown--;
+            resultsDiv.innerHTML = `找不到結果，${countdown} 秒後自動隨機跳轉外部搜尋…`;
+            if (countdown <= 0) {
+              clearInterval(timer);
+              window.open(randomEngine, "_blank");
+            }
+          }, 1000);
+        }
+      }
+    }
+    const canvas = document.getElementById("particles");
+    const ctx = canvas.getContext("2d");
+    let particles = [];
+    const colors = [
+      "#FF0000","#FF9900","#FFFF00","#00FFFF","#0099FF","#3399FF",
+      "#6666FF","#9900FF","#CC00FF","#FF00FF","#FF66CC","#FF99FF",
+      "#FF33FF","#FF0066","#FF6600","#FF3366","#FF9933","#FFCC00",
+      "#FFCC99","#FF99CC","#FF6699","#FF3300","#FF0033","#FF0099",
+      "#9966FF","#6633FF"
+    ];
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+    function createParticles() {
+      particles = [];
+      for (let i = 0; i < 80; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          radius: 15 + Math.random() * 15,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          dx: (Math.random() - 0.5) * 2,
+          dy: (Math.random() - 0.5) * 2
+        });
+      }
+    }
+    function drawParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.shadowColor = p.color;
+        ctx.shadowBlur = 30; /* 粒子光暈模糊 */
+        ctx.fill();
+        p.x += p.dx;
+        p.y += p.dy;
+        if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
+        if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
+      });
+      requestAnimationFrame(drawParticles);
+    }
+    createParticles();
+    drawParticles();
+    
+    
+// 定義字型清單
+const fonts = [
+  '"Noto Sans TC"',       // 思源黑體
+  '"Noto Serif TC"',      // 思源宋體
+  '"Microsoft JhengHei"', // 微軟正黑體
+  '"PingFang TC"',        // 蘋方字體
+  'sans-serif'            // 保底
+];
+// 隨機挑一個字型
+const randomFont = fonts[Math.floor(Math.random() * fonts.length)];
+// 套用到 h1，並加上完整 fallback 順序
+document.querySelector("h1").style.fontFamily =
+`${randomFont}, "Noto Sans TC", "Noto Serif TC", "Microsoft JhengHei", "PingFang TC", sans-serif`;
+
+
+// 綁定 Enter 事件
+document.getElementById("searchBox").addEventListener("keydown", function(event) {
+  if (event.key === "Enter") {
+    event.preventDefault(); // 防止表單預設提交
+    search(); // 呼叫搜尋函式
+  }
+});
+</script>
+</body>
+</html>

@@ -1,33 +1,30 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&display=swap" rel="stylesheet">
-<title>🌐全方位網路智慧搜尋🔎</title>
+<title>🌏全方位智慧AI搜索引擎🌐</title>
 <style>
-    body { font-family: Arial, sans-serif; background:#0D47A1; color:#eee; text-align:center; }
-    input { width: 14%; padding:10px; font-size:16px; margin-top:10px; }
-    select { width: 10%; padding:10px; font-size:16px; margin-top:10px; }
-    button { padding:10px 20px; margin-top:10px; font-size:16px; }
-    #result { margin-top:20px; font-size:18px; color:#0ff; }
-    
-    h1 {
-    filter: blur(1.3px);
-    font-size: 3.6vw;        /* 放大字體 */
-    font-weight: 900;      /* 粗體 */
-    font-family: "Noto Sans TC", "Noto Serif TC", "Microsoft JhengHei", "PingFang TC", sans-serif;
-    margin-top: 0; 
-    margin-bottom: 0;       /* 下方距離可依需求調整 */
-    /* color: skyblue;         天空藍 (也可用 #87CEEB) */
-    text-align: center;     /* 置中顯示 */
-    /* text-shadow: 4px 4px 7px #1e90ff;  加上陰影 (深藍)  */
-    animation: rainbow 20s infinite linear;
-    text-shadow: 0 0 30px currentColor, 0 0 50px currentColor;
+    body {
+      margin: 0; padding: 0;
+      font-family: Arial, sans-serif;
+      background: #005FAF;
+      overflow: hidden;
+      text-align: center;
     }
-    
-  @keyframes rainbow {
+    h1 {
+      filter: blur(1.2px);
+      font-size: 55px;
+      font-weight: bold;
+      margin-top: 0; 
+      margin-bottom: 0;    /* 下方距離可依需求調整 */
+      position: relative;
+      z-index: 5;
+      animation: rainbow 15s infinite linear;
+      text-shadow: 0 0 30px currentColor, 0 0 50px currentColor;
+    }
+
+    @keyframes rainbow {
   /* 粉紅系起始 */
   0%   { color: #FF00CC; text-shadow: 0 0 50px #FF00CC; }
   5%   { color: #FF3399; text-shadow: 0 0 50px #FF3399; }
@@ -55,27 +52,133 @@
   100% { color: #FF00CC; text-shadow: 0 0 50px #FF00CC; }
 }
 
-  #particles {
-  position: fixed;   /* 固定在背景 */
-  top: 0;
+
+  #breathingCircle {
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 350px; height: 350px;
+  border-radius: 50%;
+  animation: pulse 8s infinite alternate, circleColors 60s infinite linear;
+  filter: blur(100px);
+  box-shadow: 0 0 120px #FF00CC, 0 0 160px #FFFF66, 0 0 200px #00FFFF;
+  z-index: -1; /* 粒子上方，文字下方 */
+}
+@keyframes pulse {
+  from { transform: translate(-50%, -50%) scale(1); }
+  to   { transform: translate(-50%, -50%) scale(1.4); }
+}
+@keyframes circleColors {
+  0%   { background: radial-gradient(circle, #FF00CC, transparent); }
+  5%   { background: radial-gradient(circle, #FF3399, transparent); }
+  10%  { background: radial-gradient(circle, #FF66CC, transparent); }
+  15%  { background: radial-gradient(circle, #FF99FF, transparent); }
+  20%  { background: radial-gradient(circle, #FF3366, transparent); }
+  25%  { background: radial-gradient(circle, #FF6699, transparent); }
+  30%  { background: radial-gradient(circle, #FF99CC, transparent); }
+  35%  { background: radial-gradient(circle, #FFCCFF, transparent); }
+  40%  { background: radial-gradient(circle, #FF6600, transparent); }
+  45%  { background: radial-gradient(circle, #FF9933, transparent); }
+  50%  { background: radial-gradient(circle, #FFCC66, transparent); }
+  55%  { background: radial-gradient(circle, #FFFF66, transparent); }
+  60%  { background: radial-gradient(circle, #FF3300, transparent); }
+  65%  { background: radial-gradient(circle, #FF6633, transparent); }
+  70%  { background: radial-gradient(circle, #FF9966, transparent); }
+  75%  { background: radial-gradient(circle, #FFCC99, transparent); }
+  80%  { background: radial-gradient(circle, #FF0000, transparent); }
+  85%  { background: radial-gradient(circle, #FF3333, transparent); }
+  90%  { background: radial-gradient(circle, #FF6666, transparent); }
+  95%  { background: radial-gradient(circle, #FF9999, transparent); }
+  100% { background: radial-gradient(circle, #00FFFF, transparent); }
+}
+
+    input, button {
+      font-size: 20px;
+      padding: 10px;
+      margin: 10px;
+      border-radius: 10px;
+      border: none;
+      position: relative;
+      z-index: 2;
+    }
+    button {
+      cursor: pointer;
+      background: linear-gradient(45deg, #ff0080, #0080ff);
+      color: white;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: linear-gradient(45deg, #ffff00, #ff00ff);
+      transform: scale(1.1);
+    }
+    .modal {
+      display:none; position:fixed; z-index:9999; left:0; top:0;
+      width:100%; height:100%; background:rgba(0,0,0,0.7);
+      backdrop-filter: blur(10px);
+    }
+    .modal-content {
+      background:#111; color:white;
+      margin:10% auto; padding:20px;
+      border-radius:20px; width:400px;
+      box-shadow:0 0 30px #ff00ff;
+    }
+/* 分數條容器 */
+.bar-container {
+  width: 100%;
+  background-color: rgba(255,255,255,0.2); /* 淺色背景 */
+  border-radius: 4px;
+  margin: 8px 0;
+}
+/* 分數條顏色統一主色 */
+.bar {
+  height: 24px;
+  line-height: 24px;
+  text-align: right;
+  padding-right: 8px;
+  color: #fff;
+  border-radius: 4px;
+  background-color: #005FAF;   /* 主色 */
+  font-weight: bold; }
+  canvas { position: fixed; top:0; left:0; z-index:1; }
+
+
+/* 整個 Modal 外框背景 */
+#selectModal {
+  background-color: #005FAF;   /* 主色 */
+  display: none;               /* 預設隱藏 */
+  position: fixed;
+  z-index: 999;
   left: 0;
+  top: 0;
   width: 100%;
   height: 100%;
-  z-index: -1;       /* 放到最底層 */
+  overflow: auto;
 }
-
-
-html, body, header, .title {
-  margin: 0 !important;
-  padding: 0 !important;
+/* Modal 內框背景 */
+#selectModal .modal-content {
+  background-color: #1685cc;   /* 主色 */
+  color: #fff;                 /* 白字對比 */
+  margin: 10% auto;
+  padding: 20px;
+  border-radius: 8px;
+  width: 80%;
+  max-width: 600px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
 }
-
+/* 下拉選單寬度調整 */
+#engine {
+  width: 175px;       /* 改寬一點 */
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+}
 
 /* Reset */
 html,body {
-height:100%;
-  overflow-x: hidden;   /* 禁止橫向滾動 */
-  overflow-y: auto;     /* ✅ 允許垂直滾動 */
+  height:100%;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 
@@ -187,12 +290,18 @@ height:100%;
 </style>
 </head>
 <body>
+<h1>🌏全方位智慧AI搜索引擎🌐</h1>
+<div id="breathingCircle"></div>
 <canvas id="particles"></canvas>
-<h1>🌐全方位網路智慧搜尋🔎</h1>
-<input type="text" id="input" placeholder="輸入你的需求...">
-<!-- 手動選單 -->
-<select id="engineSelect">
-<option value="">🤖 自動判斷</option>
+<input type="text" id="query" placeholder="輸入搜尋內容或語言代碼" size="60">
+<button onclick="autoSearch()">AI自動搜尋</button>
+<button onclick="showModal()">手動選搜尋</button>
+<div id="selectModal" class="modal">
+<div class="modal-content">
+<span class="close" onclick="closeModal()" style="cursor:pointer; float:right;">❌</span>
+<p id="aiSuggestion">AI 建議：</p>
+<div id="bars"></div>
+<select id="engine">
 <option value="google">🔎 Google</option>
 <option value="bing">🟦 Bing</option>
 <option value="yahoo">🟪 Yahoo</option>
@@ -282,14 +391,12 @@ height:100%;
 <option value="klook">🎉 Klook</option>
 <option value="funnow">🎉 FunNow</option>
 </select>
-<button onclick="smartSearch()">搜尋</button>
-<div id="result"></div>
+<button onclick="manualSearch()">開始搜尋</button>
+</div>
+</div>
+  
+<div id="result" style="margin-top:20px; font-weight:bold; color:white;"></div>
 <script>
-function smartSearch(){
-  const text = document.getElementById("input").value.trim();
-  const manualChoice = document.getElementById("engineSelect").value;
-  if(!text) return;
-  const query = encodeURIComponent(text);
   const engines = {
   google: "https://www.google.com/search?q=",
   bing: "https://www.bing.com/search?q=",
@@ -385,140 +492,242 @@ function smartSearch(){
   kkday: "https://www.kkday.com/zh-tw/product/search?keyword=",
   klook: "https://www.klook.com/zh-TW/search/?q=",
   funnow: "https://www.funnow.com/zh-TW/search?keyword="
+};
+// 自動語言偵測 (Unicode 區段)
+function detectLanguage(text) {
+  // 中文（你原本缺這個，致命問題）
+  if (/[\u4E00-\u9FFF]/.test(text)) return "zh";
+  // 日文
+  if (/[\u3040-\u30FF]/.test(text)) return "ja";
+  // 韓文
+  if (/[\uAC00-\uD7AF]/.test(text)) return "ko";
+  // 俄文
+  if (/[\u0400-\u04FF]/.test(text)) return "ru";
+  // 泰文
+  if (/[\u0E00-\u0E7F]/.test(text)) return "th";
+  // 寮國文
+  if (/[\u0E80-\u0EDF]/.test(text)) return "lo";
+  // 印地文
+  if (/[\u0900-\u097F]/.test(text)) return "hi";
+  // 孟加拉文
+  if (/[\u0980-\u09FF]/.test(text)) return "bn";
+  // 阿拉伯文
+  if (/[\u0600-\u06FF]/.test(text)) return "ar";
+  // 柬埔寨文
+  if (/[\u1780-\u17FF]/.test(text)) return "km";
+  // 緬甸文
+  if (/[\u1000-\u109F]/.test(text)) return "my";
+  // 英文（你原本完全沒有）
+  if (/^[a-zA-Z0-9\s.,!?'"()\-]+$/.test(text))
+    return "en";
+  return "unknown";
+}
+function getEngineScores(query) {
+  let scores = {
+    google: 25,
+    bing: 25,
+    yahoo: 25,
+    baidu: 25
   };
-  
-  let chosen = "google"; // 預設 Google
-  if(manualChoice){ 
-    // 手動選擇優先
-    chosen = manualChoice;
-  } else {
-    // 自動判斷
-    if(/中國|大陸|北京|上海/.test(text)) chosen = "baidu";
-    else if(/影片|教學|MV|vlog/.test(text)) chosen = "youtube";
-    else if(/飯店|旅遊|住宿|機票/.test(text)) chosen = "booking";
-    else if(/程式|代碼|bug|技術/.test(text)) chosen = "stackoverflow";
-    else if(/是什麼|定義|知識|百科/.test(text)) chosen = "wikipedia";
-    else if(/外送|吃|餐廳|美食/.test(text)) chosen = "ubereats";
-    else if(/買|商品|價格|便宜/.test(text)) chosen = "shopee";
-    else if(/新聞|時事/.test(text)) chosen = "yahoo";
-    else if(/圖片|AI|技術/.test(text)) chosen = "bing";
+  const lang = detectLanguage(query);
+  const browserLang = (navigator.language || "").toLowerCase();
 
-    // 機率探索：20% 機率隨機挑其它引擎
-    if(Math.random() < 0.2){
-      const extras = ["duckduckgo","brave","startpage","sogou","naver","ecosia","yandex"];
-      chosen = extras[Math.floor(Math.random()*extras.length)];
+  // =========================
+  // ① 搜尋內容語言權重
+  // =========================
+  switch (lang) {
+    case "zh":
+      scores.google += 25;
+      scores.bing += 25;
+      break;
+    case "ja":
+      scores.yahoo += 40;
+      scores.google += 20;
+      break;
+    case "ko":
+      scores.google += 30;
+      scores.yahoo += 20;
+      break;
+    case "en":
+      scores.google += 40;
+      scores.bing += 20;
+      break;
+    case "ru":
+      scores.google += 30;
+      break;
+    case "th":
+    case "lo":
+    case "hi":
+    case "bn":
+    case "km":
+    case "my":
+      scores.google += 30;
+      break;
+    case "ar":
+      scores.google += 30;
+      scores.bing += 20;
+      break;
+  }
+
+  // =========================
+  // ② 瀏覽器語言權重（更穩）
+  // =========================
+  if (browserLang.startsWith("zh-cn")) {
+    scores.baidu += 35;
+  }
+  else if (browserLang.startsWith("zh-tw")) {
+    scores.google += 20;
+    scores.bing += 20;
+  }
+  else if (browserLang.startsWith("ja")) {
+    scores.yahoo += 25;
+  }
+  else if (browserLang.startsWith("ko")) {
+    scores.google += 15;
+  }
+  else if (browserLang.startsWith("en")) {
+    scores.google += 15;
+    scores.bing += 15;
+  }
+
+  // =========================
+  // ③ 找最高分（保留你原本寫法）
+  // =========================
+  let bestEngine = null;
+  let maxScore = -1;
+  for (let engine in scores) {
+    if (scores[engine] > maxScore) {
+      maxScore = scores[engine];
+      bestEngine = engine;
     }
   }
-
-  const url = engines[chosen] + query;
-  window.open(url, "_blank");
-  
-  let countdown = 20; // 倒數秒數，可自行調整
-  document.getElementById("result").innerHTML = `
-    🤖 使用【${chosen}】，搜尋『${text}』<br><a href="${url}" target="_blank">🔗 開啟結果</a><br>
-    ⏳ ${countdown} 秒後自動開啟 alltrend.github.io`;
-  const timer = setInterval(()=>{
-    countdown--;
-    document.getElementById("result").innerHTML = `🤖 使用【${chosen}】，搜尋『${text}』<br><a href="${url}" target="_blank">🔗 開啟結果</a><br>
-    ⏳ ${countdown} 秒後自動開啟 alltrend.github.io `;
-    if(countdown <= 0){
-    clearInterval(timer);
-    // 🚀 倒數結束後，另開新分頁執行 alltrend.github.io
-    window.open("http://alltrend.github.io", "_blank"); } },1000);
-
-    // 搜完後清空並自動聚焦
-  document.getElementById("input").value = "";
-  document.getElementById("input").focus();
+  return { bestEngine, scores };
+}
+function autoSearch() {
+  let query = document.getElementById("query").value.trim();
+  if (query === "") {
+    document.getElementById("result").innerText =
+      "AI 判斷失敗 → 請手動選擇搜尋引擎";
+    showModal();
+    return;
+  }
+  let { bestEngine, scores } = getEngineScores(query);
+  document.getElementById("result").innerText =
+    "AI 建議 → 使用 " +
+    bestEngine.toUpperCase() +
+    " 搜尋: " +
+    query;
+  window.open(
+    engines[bestEngine] + encodeURIComponent(query),
+    "_blank"
+  );
+}
+function manualSearch() {
+  let query = document.getElementById("query").value.trim();
+  let engine = document.getElementById("engine").value;
+  document.getElementById("result").innerText =
+    "手動選擇 → 使用 " +
+    engine.toUpperCase() +
+    " 搜尋: " +
+    query;
+  window.open(
+    engines[engine] + encodeURIComponent(query),
+    "_blank"
+  );
+  closeModal();
+}
+function showModal() {
+  let query = document.getElementById("query").value.trim();
+  let { bestEngine, scores } = getEngineScores(query);
+  document.getElementById("aiSuggestion").innerText =
+    "AI 建議使用 " + bestEngine.toUpperCase();
+  document.getElementById("engine").value = bestEngine;
+  let barsHTML = "";
+  for (let e in scores) {
+    barsHTML += `
+      <div>${e.toUpperCase()} (${scores[e]}%)</div>
+      <div class="bar-container">
+        <div class="bar ${e}" style="width:${scores[e]}%">
+          ${scores[e]}%
+        </div>
+      </div>
+    `;
+  }
+  document.getElementById("bars").innerHTML = barsHTML;
+  document.getElementById("selectModal").style.display = "block";
 }
 
-document.getElementById("input").addEventListener("keypress", function(event) {
-  if (event.key === "Enter") {
-    smartSearch(); 
-    document.getElementById("input").value = ""; // 搜完後清空輸入框
-  }
-});
-
-// 粒子背景效果
-const canvas = document.getElementById("particles");
-const ctx = canvas.getContext("2d");
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-let particles = [];
-function createParticles(){
-  particles = []; // 清空舊的粒子
-  for(let i=0; i<90; i++){
-    particles.push({
-      x: Math.random()*canvas.width,
-      y: Math.random()*canvas.height,
-      size: Math.random()*23+13,
-      color: `hsla(${Math.random()*360}, 70%, 60%, ${0.2 + Math.random()*0.3})`,
-      speedX: (Math.random()-0.5)*0.5,
-      speedY: (Math.random()-0.5)*0.5
-    });
-  }
+function closeModal() {
+  document.getElementById("selectModal").style.display = "none";
 }
+window.onclick = function(event) {
+  let modal = document.getElementById("selectModal");
+  if (event.target === modal) {
+    modal.style.display = "none";
+  }
+};
 
-function drawParticles(){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  particles.forEach(p=>{
-    ctx.beginPath();
-    ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
-    ctx.fillStyle = p.color;
-    ctx.shadowBlur = 40;
-    ctx.shadowColor = p.color;
-    ctx.fill();
-    p.x += p.speedX;
-    p.y += p.speedY;
-    if(p.x < 0 || p.x > canvas.width) p.speedX *= -1;
-    if(p.y < 0 || p.y > canvas.height) p.speedY *= -1;
+    // 粒子背景動畫
+    const canvas = document.getElementById("particles");
+    const ctx = canvas.getContext("2d");
+    let particles = [];
+    const colors = [
+      "#FF0080","#FF8000","#0080FF","#FF00FF","#FFFF00",
+      "#00FFFF","#FF1493","#FFD700","#FF4500","#1E90FF",
+      "#FF69B4","#FFA500","#00CED1","#FF6347","#87CEFA",
+      "#FFB6C1","#FF7F50","#00BFFF","#FF85A1","#FFDAB9",
+      "#FF5F1F","#FF99CC","#FFDD00","#FF3366","#FFAA00"
+    ]; // 26 色亮色系，已去除綠色
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+
+    function initParticles() {
+      particles = [];
+      for (let i = 0; i < 80; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          radius: 15 + Math.random() * 15, // 粒子大小 15~30px
+          color: colors[Math.floor(Math.random() * colors.length)],
+          dx: (Math.random() - 0.5) * 2,
+          dy: (Math.random() - 0.5) * 2
+        });
+      }
+    }
+
+    function drawParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.shadowColor = p.color;
+        ctx.shadowBlur = 30; // 光暈效果
+        ctx.fill();
+        p.x += p.dx;
+        p.y += p.dy;
+        if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
+        if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
+      });
+      requestAnimationFrame(drawParticles);
+    }
+
+    initParticles();
+    drawParticles();
+    
+    
+  document.addEventListener("DOMContentLoaded", function() {
+  document.getElementById("query").addEventListener("keydown", function(event) {
+    if (event.key === "Enter") {
+      event.preventDefault(); // 防止表單預設提交
+      autoSearch(); // 呼叫正確的搜尋函式
+    }
   });
-}
-
-function animate(){
-  drawParticles();
-  requestAnimationFrame(animate);
-}
-createParticles();
-animate();
-
-// ⭐ 視窗改變 → 重設畫布 + 粒子重分佈
-function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  createParticles(); // 重新分佈粒子
-}
-window.addEventListener("resize", resizeCanvas);
-
-
-window.addEventListener("DOMContentLoaded",()=>{
-  const params = new URLSearchParams(window.location.search);
-  const q = params.get("q");
-  if(q){
-    document.getElementById("input").value = q;
-    smartSearch(); // 自動觸發搜尋
-  }
-});
-
-
-// 定義字型清單
-const fonts = [
-  '"Noto Sans TC"',       // 思源黑體
-  '"Noto Serif TC"',      // 思源宋體
-  '"Microsoft JhengHei"', // 微軟正黑體
-  '"PingFang TC"',        // 蘋方字體
-  'sans-serif'            // 保底
-];
-// 隨機挑一個字型
-const randomFont = fonts[Math.floor(Math.random() * fonts.length)];
-// 套用到 h1，並加上完整 fallback 順序
-document.querySelector("h1").style.fontFamily =
-`${randomFont}, "Noto Sans TC", "Noto Serif TC", "Microsoft JhengHei", "PingFang TC", sans-serif`;
-// 綁定 Enter 事件
-document.getElementById("searchBox").addEventListener("keydown", function(event) {
-  if (event.key === "Enter") {
-    event.preventDefault(); // 防止表單預設提交
-    search(); // 呼叫搜尋函式
-  }
 });
 </script>
 </body>
