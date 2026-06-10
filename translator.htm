@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>🌐全方位網路多語言翻譯🌐</title>
+<style>
+    body {
+      background-color: #005FAF; /* 深藍背景 */
+      color: #ffffff;           
+      font-family: Arial, sans-serif;
+      text-align: center;       
+      font-size: 20px;          
+      padding: 40px;
+    }
+    h1 {
+      font-size: 51px;          
+      margin-bottom: 30px;
+      color: #66B3FF;           
+    }
+    textarea {
+      width: 42%;
+      font-size: 18px;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+    }
+    select, button {
+      font-size: 18px;
+      margin: 10px;
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+    }
+    button {
+      background-color: #1e3a8a; 
+      color: #fff;
+    }
+    button:hover {
+      background-color: #2563eb; 
+    }
+    #wordResult {
+      margin-top: 20px;
+      font-size: 22px;
+      background-color: #1e293b;
+      padding: 20px;
+      border-radius: 10px;
+      display: inline-block;
+    }
+    
+    
+  html, body, header, .title {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+
+/* Reset */
+html,body {
+height:100%;
+  overflow-x: hidden;   /* 禁止橫向滾動 */
+  overflow-y: auto;     /* ✅ 允許垂直滾動 */
+}
+
+
+/* 📱 小型手機（小於 480px） */
+@media (max-width: 479px) {
+  .toolbar {
+    flex-direction: column;
+    gap: 6px;
+  }
+  .toolbar select,
+  .toolbar input,
+  .toolbar button {
+    width: 100%;
+  }
+  table {
+    font-size: 13px;
+  }
+  #container {
+    grid-template-columns: 1fr;
+  }
+  #sidebar {
+    position: absolute;
+    top: 42px;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: #fff;
+    z-index: 1000;
+    border-right: none;
+    border-top: 1px solid #ddd;
+  }
+  #map {
+    height: calc(100vh - 42px);
+  }
+  header > * {
+    flex: 1 1 100%;
+  }
+}
+/* 📱 中型手機（480px 到 767px） */
+@media (min-width: 480px) and (max-width: 767px) {
+  .toolbar {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .toolbar select,
+  .toolbar input,
+  .toolbar button {
+    width: 100%;
+  }
+  table {
+    font-size: 14px;
+  }
+  #container {
+    grid-template-columns: 1fr;
+  }
+  #sidebar {
+    position: absolute;
+    top: 42px;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: #fff;
+    z-index: 1000;
+    border-right: none;
+    border-top: 1px solid #ddd;
+  }
+  #map {
+    height: calc(100vh - 42px);
+  }
+  header > * {
+    flex: 1 1 100%;
+  }
+}
+/* 📱 大型手機／小平板（768px 到 1023px） */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .toolbar {
+    flex-direction: row;
+    gap: 12px;
+  }
+  .toolbar select,
+  .toolbar input,
+  .toolbar button {
+    width: auto;
+  }
+  table {
+    font-size: 15px;
+  }
+  #container {
+    grid-template-columns: 1fr;
+  }
+  #sidebar {
+    position: absolute;
+    top: 42px;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: #fff;
+    z-index: 1000;
+    border-right: none;
+    border-top: 1px solid #ddd;
+  }
+  #map {
+    height: calc(100vh - 42px);
+  }
+  header > * {
+    flex: 1 1 100%;
+  }
+}
+</style>
+</head>
+<body>
+<h1>🌐全方位網路多語言翻譯🌐</h1>
+
+  <label for="langSelect">翻譯成：</label>
+  <select id="langSelect">
+    <option value="zh-TW">中文</option>
+    <option value="en">英文</option>
+    <option value="ja">日文</option>
+    <option value="ko">韓文</option>
+  </select>
+
+  <br><br>
+  <textarea id="wordInput" rows="4" placeholder="輸入文字"></textarea>
+  <br><br>
+
+  <!-- Google 翻譯：顯示結果 -->
+  <button onclick="translateWord()">Google 翻譯</button>
+  <!-- Microsoft Translator：直接另開分頁 -->
+  <button onclick="openMicrosoft()">Microsoft Translator</button>
+  <!-- Yahoo 字典：直接另開分頁 -->
+  <button onclick="openYahoo()">Yahoo 字典 (查單字)</button>
+
+  <button onclick="speak()">發音 (Yating 女聲)</button>
+  <button onclick="listen()">語音輸入</button>
+
+  <h3>翻譯結果：</h3>
+  <div id="wordResult"></div>
+
+  <script>
+    // Google 翻譯：顯示結果
+    async function translateWord() {
+      const word = document.getElementById('wordInput').value.trim();
+      const targetLang = document.getElementById('langSelect').value;
+      const resultDiv = document.getElementById('wordResult');
+
+      if (!word) {
+        resultDiv.textContent = "⚠️ 請輸入文字";
+        return;
+      }
+
+      try {
+        const res = await fetch(
+          `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${targetLang}&dt=t&q=${encodeURIComponent(word)}`
+        );
+        if (!res.ok) throw new Error("翻譯失敗");
+
+        const data = await res.json();
+        const translated = data[0][0][0] || "❌ 無法取得翻譯";
+
+        resultDiv.innerHTML = `<strong>來源：Google 翻譯</strong><br>
+        原文：${word}<br>
+        翻譯：${translated}<br>
+        <button onclick="playPronunciation('${word}', 'auto')">🔊原文發音</button>　
+        <button onclick="playPronunciation('${translated}', '${targetLang}')">🔊翻譯發音</button>`;
+      } catch (e) {
+        resultDiv.textContent = "❌ 翻譯失敗，請稍後再試";
+      }
+    }
+
+    // Microsoft Translator：直接另開分頁
+    function openMicrosoft() {
+      const word = document.getElementById('wordInput').value.trim();
+      if (!word) return alert("⚠️ 請輸入文字");
+      const url = `https://www.bing.com/translator?text=${encodeURIComponent(word)}&from=&to=zh-Hant`;
+      window.open(url, "_blank");
+    }
+
+    // Yahoo 字典：直接另開分頁
+    function openYahoo() {
+      const word = document.getElementById('wordInput').value.trim();
+      if (!word) return alert("⚠️ 請輸入文字");
+      const url = `https://tw.dictionary.search.yahoo.com/search?p=${encodeURIComponent(word)}`;
+      window.open(url, "_blank");
+    }
+
+    // 固定 Yating 女聲 + 日韓語音修正
+    function playPronunciation(text, lang) {
+      const utter = new SpeechSynthesisUtterance(text);
+      const voices = speechSynthesis.getVoices();
+      let selectedVoice;
+
+      if (lang === "ja") {
+        selectedVoice = voices.find(v => v.lang === "ja-JP");
+        utter.lang = "ja-JP";
+      } else if (lang === "ko") {
+        selectedVoice = voices.find(v => v.lang === "ko-KR");
+        utter.lang = "ko-KR";
+      } else if (lang === "en") {
+        selectedVoice = voices.find(v => v.lang === "en-US");
+        utter.lang = "en-US";
+      } else {
+        selectedVoice = voices.find(v => v.name.includes("Yating"));
+        utter.lang = "zh-TW";
+      }
+
+      if (selectedVoice) utter.voice = selectedVoice;
+      speechSynthesis.speak(utter);
+    }
+
+    function speak() {
+      const text = document.getElementById("wordResult").innerText || document.getElementById("wordInput").value;
+      if (text) {
+        playPronunciation(text, document.getElementById("langSelect").value);
+      }
+    }
+
+    function listen() {
+      const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+      recognition.lang = "zh-TW"; 
+      recognition.start();
+      recognition.onresult = function(event) {
+        const transcript = event.results[0][0].transcript;
+        document.getElementById("wordInput").value = transcript;
+      };
+    }
+  </script>
+</body>
+</html>

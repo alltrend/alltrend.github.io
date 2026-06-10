@@ -3,6 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&display=swap" rel="stylesheet">
 <title>🌏全方位網路各網點介紹🌐</title>全方位網路入口網站
 <style>
 :root{
@@ -115,11 +117,13 @@ header {
 }
 
 header h1 {
-  filter: blur(0.3px); /* 讓文字本身模糊 */
+  filter: blur(1.1px); /* 讓文字本身模糊 */
   font-size: 48px;
   margin-right: 10px;
   margin-bottom: 10px; /* 縮短與底下的距離 */
   line-height: 1.2;    /* 調整行高，避免太鬆 */
+  font-weight: 900;    /* 粗體 */
+  font-family: "Noto Sans TC", "Noto Serif TC", "Microsoft JhengHei", "PingFang TC", sans-serif;
   animation: rainbowCycle 18s linear infinite; /* 18秒循環 */
   text-shadow: 
     0 0 20px currentColor,     
@@ -358,6 +362,7 @@ height:100%;
     <div class="grid">
       <a class="card" href="radio.htm" target="_blank">全方位廣播音樂播放器</a>
       <a class="card" href="10.htm" target="_blank">全球網路風景/交通/太空影像</a>
+      <a class="card" href="tool.htm" target="_blank">全方位應用生活工具箱</a>
       <a class="card" href="poetry.htm" target="_blank">全方位網路星語詩集</a>
     </div>
   </section>
@@ -367,7 +372,8 @@ height:100%;
     <h2 class="title">📊全方位網路資訊分析📰</h2>
     <div class="grid">
       <a class="card" href="info.htm" target="_blank">全方位網路資訊網</a>
-      <a class="card" href="http://twitch.tv" target="_blank">Twitch 推趣網</a>
+      <a class="card" href="translator.htm" target="_blank">全方位網路多語言翻譯</a>
+      <a class="card" href="tarot.htm" target="_blank">全方位塔羅命理幸運盤</a>
       <a class="card" href="analysis.htm" target="_blank">全方位熱門分析儀表板</a>
     </div>
   </section>
@@ -425,6 +431,28 @@ function draw() {
 }
 resize();
 draw();
+
+
+// 定義字型清單
+const fonts = [
+  '"Noto Sans TC"',       // 思源黑體
+  '"Noto Serif TC"',      // 思源宋體
+  '"Microsoft JhengHei"', // 微軟正黑體
+  '"PingFang TC"',        // 蘋方字體
+  'sans-serif'            // 保底
+];
+// 隨機挑一個字型
+const randomFont = fonts[Math.floor(Math.random() * fonts.length)];
+// 套用到 h1，並加上完整 fallback 順序
+document.querySelector("h1").style.fontFamily =
+`${randomFont}, "Noto Sans TC", "Noto Serif TC", "Microsoft JhengHei", "PingFang TC", sans-serif`;
+// 綁定 Enter 事件
+document.getElementById("searchBox").addEventListener("keydown", function(event) {
+  if (event.key === "Enter") {
+    event.preventDefault(); // 防止表單預設提交
+    search(); // 呼叫搜尋函式
+  }
+});
 </script>
 </body>
 </html>

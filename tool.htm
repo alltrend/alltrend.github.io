@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&display=swap" rel="stylesheet">
+<title>全方位應用生活工具箱</title>
+<style>
+  body { font-family: Arial, sans-serif; text-align: center; background: #84C1FF; }
+  h1 {
+  filter: blur(1.2px);
+  margin-top: 0; 
+  margin-bottom: 0;
+  color: #333;
+  font-family: "Noto Sans TC", "Noto Serif TC", "Microsoft JhengHei", "PingFang TC", sans-serif;
+  font-size: 50px; /* 調整字體大小 */
+  font-weight: 900; /* 可選，讓字更粗 */
+  text-align: center; /* 可選，置中顯示 */
+  text-shadow: 4px 4px 7px #1e90ff;
+}
+    .toolbox { display: flex; flex-wrap: wrap; justify-content: center; margin-top: 20px; }
+    .tool { background: #ACD6FF; border: 1px solid #ccc; border-radius: 8px; margin: 10px; padding: 20px; width: 300px; }
+    canvas { border: 1px solid #000; margin-top: 10px; }
+    button { margin: 5px; padding: 8px 12px; }
+    input { margin: 5px; }
+    
+    
+  .center-file {
+  display: block;
+  margin: 10px auto;
+}
+
+
+html, body, header, .title {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+
+/* Reset */
+html,body {
+height:100%;
+  overflow-x: hidden;   /* 禁止橫向滾動 */
+  overflow-y: auto;     /* ✅ 允許垂直滾動 */
+}
+
+
+/* 📱 小型手機（小於 480px） */
+@media (max-width: 479px) {
+  .toolbar {
+    flex-direction: column;
+    gap: 6px;
+  }
+  .toolbar select,
+  .toolbar input,
+  .toolbar button {
+    width: 100%;
+  }
+  table {
+    font-size: 13px;
+  }
+  #container {
+    grid-template-columns: 1fr;
+  }
+  #sidebar {
+    position: absolute;
+    top: 42px;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: #fff;
+    z-index: 1000;
+    border-right: none;
+    border-top: 1px solid #ddd;
+  }
+  #map {
+    height: calc(100vh - 42px);
+  }
+  header > * {
+    flex: 1 1 100%;
+  }
+}
+/* 📱 中型手機（480px 到 767px） */
+@media (min-width: 480px) and (max-width: 767px) {
+  .toolbar {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .toolbar select,
+  .toolbar input,
+  .toolbar button {
+    width: 100%;
+  }
+  table {
+    font-size: 14px;
+  }
+  #container {
+    grid-template-columns: 1fr;
+  }
+  #sidebar {
+    position: absolute;
+    top: 42px;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: #fff;
+    z-index: 1000;
+    border-right: none;
+    border-top: 1px solid #ddd;
+  }
+  #map {
+    height: calc(100vh - 42px);
+  }
+  header > * {
+    flex: 1 1 100%;
+  }
+}
+/* 📱 大型手機／小平板（768px 到 1023px） */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .toolbar {
+    flex-direction: row;
+    gap: 12px;
+  }
+  .toolbar select,
+  .toolbar input,
+  .toolbar button {
+    width: auto;
+  }
+  table {
+    font-size: 15px;
+  }
+  #container {
+    grid-template-columns: 1fr;
+  }
+  #sidebar {
+    position: absolute;
+    top: 42px;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: #fff;
+    z-index: 1000;
+    border-right: none;
+    border-top: 1px solid #ddd;
+  }
+  #map {
+    height: calc(100vh - 42px);
+  }
+  header > * {
+    flex: 1 1 100%;
+  }
+}
+</style>
+</head>
+<body>
+<h1>🎉 全方位應用生活工具箱 🎉</h1>
+<div class="toolbox">
+<!-- 塗鴉畫板 -->
+<div class="tool">
+<h2>🎨 塗鴉畫板</h2>
+<div class="controls">
+<input type="color" id="colorPicker" value="#000000">
+<input type="range" id="brushSize" min="1" max="20" value="5">
+<button id="penBtn">畫筆</button>
+<button id="eraserBtn">橡皮擦</button>
+<button id="saveBtn">存成 JPG</button>
+<button id="clearBtn">清空</button>
+</div>
+<p id="modeStatus">目前模式：畫筆</p>
+<canvas id="drawingCanvas" width="280" height="200" style="background:#84C1FF;"></canvas>
+</div>
+
+<style>
+  .controls {
+    display: flex;
+    justify-content: center;
+    gap: 4px; /* 按鈕間距縮小 */
+    margin-bottom: 6px;
+    flex-wrap: wrap;
+  }
+  .controls button {
+    padding: 4px 8px; /* 按鈕縮小 */
+  }
+  #modeStatus {
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 6px;
+  }
+</style>
+<script>
+  const canvas = document.getElementById('drawingCanvas');
+  const ctx = canvas.getContext('2d');
+  let drawing = false;
+  let erasing = false;
+  const modeStatus = document.getElementById('modeStatus');
+  canvas.addEventListener('mousedown', e => {
+    drawing = true;
+    ctx.beginPath();
+    ctx.moveTo(e.offsetX, e.offsetY);
+  });
+  canvas.addEventListener('mouseup', () => drawing = false);
+  canvas.addEventListener('mousemove', e => {
+    if (!drawing) return;
+    if (erasing) {
+      // 用 clearRect 擦掉區域
+      const size = document.getElementById('brushSize').value;
+      ctx.clearRect(e.offsetX - size/2, e.offsetY - size/2, size, size);
+    } else {
+      ctx.strokeStyle = document.getElementById('colorPicker').value;
+      ctx.lineWidth = document.getElementById('brushSize').value;
+      ctx.lineCap = "round";
+      ctx.lineTo(e.offsetX, e.offsetY);
+      ctx.stroke();
+    }
+  });
+  // 畫筆模式
+  document.getElementById('penBtn').addEventListener('click', () => {
+    erasing = false;
+    modeStatus.textContent = "目前模式：畫筆";
+  });
+  // 橡皮擦模式
+  document.getElementById('eraserBtn').addEventListener('click', () => {
+    erasing = true;
+    modeStatus.textContent = "目前模式：橡皮擦";
+  });
+  // 存成 JPG
+  document.getElementById('saveBtn').addEventListener('click', () => {
+    const dataURL = canvas.toDataURL("image/jpeg", 0.9);
+    const link = document.createElement('a');
+    link.href = dataURL;
+    link.download = "drawing.jpg";
+    link.click();
+  });
+  // 清空畫布
+  document.getElementById('clearBtn').addEventListener('click', () => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  });
+</script>
+
+
+<div class="tool">
+<h2>🎨 像素藝術生成器</h2>
+  <input type="color" id="pixelColor" value="#000000">
+  <div id="pixelGrid" style="display:inline-block;border:1px solid #000;margin-top:10px;"></div>
+  <button onclick="clearGrid()">清除</button>
+  <button onclick="saveGrid()">存檔</button>
+  <input type="file" id="loadFile" accept="image/png" onchange="loadGrid(event)">
+</div>
+<script>
+  const grid = document.getElementById('pixelGrid');
+  const size = 20, rows = 10, cols = 10;
+
+  function createGrid(){
+    grid.innerHTML='';
+    for (let r = 0; r < rows; r++) {
+      const row = document.createElement('div');
+      row.style.display = 'flex';
+      for (let c = 0; c < cols; c++) {
+        const cell = document.createElement('div');
+        cell.style.width = size + 'px';
+        cell.style.height = size + 'px';
+        cell.style.border = '1px solid #ccc';
+        cell.style.backgroundColor = '#fff';
+        cell.addEventListener('click', () => {
+          const chosenColor = document.getElementById('pixelColor').value;
+          cell.style.backgroundColor = cell.style.backgroundColor === 'rgb(255, 255, 255)' ? chosenColor : '#fff';
+        });
+        row.appendChild(cell);
+      }
+      grid.appendChild(row);
+    }
+  }
+
+  function clearGrid(){
+    Array.from(grid.querySelectorAll('div div')).forEach(cell => cell.style.backgroundColor = '#fff');
+  }
+
+  function saveGrid(){
+    const canvas = document.createElement('canvas');
+    canvas.width = cols * size;
+    canvas.height = rows * size;
+    const ctx = canvas.getContext('2d');
+
+    const rowsDiv = grid.children;
+    for(let r=0;r<rows;r++){
+      const cells = rowsDiv[r].children;
+      for(let c=0;c<cols;c++){
+        ctx.fillStyle = cells[c].style.backgroundColor || '#fff';
+        ctx.fillRect(c*size, r*size, size, size);
+      }
+    }
+
+    const link = document.createElement('a');
+    link.download = 'pixel-art.png';
+    link.href = canvas.toDataURL();
+    link.click();
+  }
+
+  function loadGrid(event){
+    const file = event.target.files[0];
+    if(!file) return;
+    const img = new Image();
+    const reader = new FileReader();
+    reader.onload = e => {
+      img.src = e.target.result;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = cols * size;
+        canvas.height = rows * size;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img,0,0,canvas.width,canvas.height);
+        const rowsDiv = grid.children;
+        for(let r=0;r<rows;r++){
+          const cells = rowsDiv[r].children;
+          for(let c=0;c<cols;c++){
+            const pixel = ctx.getImageData(c*size+size/2, r*size+size/2, 1, 1).data;
+            cells[c].style.backgroundColor = `rgb(${pixel[0]},${pixel[1]},${pixel[2]})`;
+          }
+        }
+      };
+    };
+    reader.readAsDataURL(file);
+  }
+
+  createGrid();
+</script>
+
+
+    <!-- 表情符號拼貼器 -->
+    <div class="tool">
+      <h2>😀 表情符號拼貼器</h2>
+      <select id="emojiSelect">
+        <option>😀</option><option>😂</option><option>😍</option><option>😎</option><option>🤔</option>
+      </select>
+      <div id="emojiCanvas" style="border:1px solid #000;width:280px;height:200px;position:relative;"></div>
+    </div>
+    <script>
+      const emojiCanvas = document.getElementById('emojiCanvas');
+      document.getElementById('emojiSelect').addEventListener('change', e => {
+        const emoji = document.createElement('div');
+        emoji.textContent = e.target.value;
+        emoji.style.position = 'absolute';
+        emoji.style.left = Math.random()*240 + 'px';
+        emoji.style.top = Math.random()*160 + 'px';
+        emojiCanvas.appendChild(emoji);
+      });
+    </script>
+
+    <!-- 隨機顏色調色盤 -->
+    <div class="tool">
+      <h2>🎨 隨機顏色調色盤</h2>
+      <button onclick="generateColors()">生成配色</button>
+      <div id="palette" style="display:flex;justify-content:center;margin-top:10px;"></div>
+    </div>
+    <script>
+      function generateColors() {
+        const palette = document.getElementById('palette');
+        palette.innerHTML = '';
+        for (let i=0;i<5;i++) {
+          const color = '#'+Math.floor(Math.random()*16777215).toString(16);
+          const block = document.createElement('div');
+          block.style.width='50px';block.style.height='50px';
+          block.style.background=color;
+          palette.appendChild(block);
+        }
+      }
+    </script>
+    
+<div class="tool">
+<h2>🎵 虛擬鋼琴鍵盤</h2>
+<div id="piano"></div>
+<button onclick="clearNotes()">清除</button>
+<button onclick="saveNotes()">存檔</button>
+<button onclick="replayNotes()">重播</button>
+<input type="file" id="loadNotesFile" class="center-file" accept="application/json" onchange="loadNotes(event)">
+</div>
+<script>
+  const piano = document.getElementById('piano');
+  const notes = ['C','D','E','F','G','A','B','C2']; // 八度音階
+  const frequencies = {
+    'C': 261.63, 'D': 293.66, 'E': 329.63,
+    'F': 349.23, 'G': 392.00, 'A': 440.00,
+    'B': 493.88, 'C2': 523.25
+  };
+  let playedNotes = [];
+
+  notes.forEach(note => {
+    const key = document.createElement('button');
+    key.textContent = note;
+    key.style.width = '40px';
+    key.style.height = '100px';
+    key.style.margin = '2px';
+    key.addEventListener('click', () => {
+      playSound(note);
+      playedNotes.push(note);
+    });
+    piano.appendChild(key);
+  });
+
+  function playSound(note) {
+    const context = new (window.AudioContext || window.webkitAudioContext)();
+    const oscillator = context.createOscillator();
+    const gainNode = context.createGain();
+    oscillator.type = 'sine';
+    oscillator.frequency.value = frequencies[note];
+    oscillator.connect(gainNode);
+    gainNode.connect(context.destination);
+    oscillator.start();
+    gainNode.gain.setValueAtTime(1, context.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, context.currentTime + 1);
+    oscillator.stop(context.currentTime + 1);
+  }
+
+  function clearNotes(){
+    playedNotes = [];
+    alert("已清除紀錄！");
+  }
+
+  function saveNotes(){
+    const blob = new Blob([JSON.stringify(playedNotes)], {type:"application/json"});
+    const link = document.createElement('a');
+    link.download = "piano-notes.json";
+    link.href = URL.createObjectURL(blob);
+    link.click();
+  }
+
+  function loadNotes(event){
+    const file = event.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      playedNotes = JSON.parse(e.target.result);
+      alert("已載入紀錄：" + playedNotes.join(", "));
+    };
+    reader.readAsText(file);
+  }
+
+  function replayNotes(){
+    if(playedNotes.length === 0){
+      alert("目前沒有紀錄可以重播！");
+      return;
+    }
+    let i = 0;
+    const interval = setInterval(()=>{
+      playSound(playedNotes[i]);
+      i++;
+      if(i >= playedNotes.length) clearInterval(interval);
+    }, 600); // 每 600ms 播放一個音
+  }
+</script>
+
+<div class="tool">
+<h2>🎶 音階練習器</h2>
+<select id="scaleSelect">
+<option value="C">C 大調</option>
+<option value="D">D 大調</option>
+<option value="E">E 大調</option>
+</select>
+<button onclick="playScale()">播放音階</button>
+</div>
+<script>
+  function playScale() {
+    const scale = document.getElementById('scaleSelect').value;
+    const context = new (window.AudioContext || window.webkitAudioContext)();
+
+    // 簡單定義音符頻率
+    const baseFreq = { 'C':261.63, 'D':293.66, 'E':329.63 };
+    const intervals = [0,2,4,5,7,9,11,12]; // 大調音階
+
+    let i = 0;
+    const interval = setInterval(() => {
+      if (i >= intervals.length) { clearInterval(interval); return; }
+      const osc = context.createOscillator();
+      const gain = context.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = baseFreq[scale] * Math.pow(2, intervals[i]/12);
+      osc.connect(gain);
+      gain.connect(context.destination);
+      osc.start();
+      gain.gain.setValueAtTime(1, context.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, context.currentTime + 0.5);
+      osc.stop(context.currentTime + 0.5);
+      i++;
+    }, 600);
+  }
+</script>
+
+    <!-- 井字遊戲 (已完成) -->
+    <div class="tool">
+      <h2>🧠 井字遊戲</h2>
+      <div id="ticTacToe" style="display:grid;grid-template-columns:repeat(3,80px);grid-gap:5px;justify-content:center;"></div>
+      <p id="gameStatus"></p>
+      <button onclick="resetGame()">重新開始</button>
+    </div>
+    <script>
+      const board = document.getElementById('ticTacToe');
+      const statusText = document.getElementById('gameStatus');
+      let currentPlayer = 'X';
+      let cells = Array(9).fill(null);
+
+      function createBoard() {
+        board.innerHTML = '';
+        cells = Array(9).fill(null);
+        currentPlayer = 'X';
+        statusText.textContent = '玩家 X 的回合';
+        for (let i = 0; i < 9; i++) {
+          const cell = document.createElement('div');
+          cell.style.width = '80px';
+          cell.style.height = '80px';
+          cell.style.border = '1px solid #000';
+          cell.style.fontSize = '40px';
+          cell.style.display = 'flex';
+          cell.style.alignItems = 'center';
+          cell.style.justifyContent = 'center';
+          cell.addEventListener('click', () => makeMove(i, cell));
+          board.appendChild(cell);
+        }
+      }
+      function makeMove(i, cell) {
+        if (cells[i]) return;
+        cells[i] = currentPlayer;
+        cell.textContent = currentPlayer;
+        if (checkWin()) {
+          statusText.textContent = `玩家 ${currentPlayer} 勝利！`;
+          return;
+        }
+        currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+        statusText.textContent = `玩家 ${currentPlayer} 的回合`;
+      }
+      function checkWin() {
+        const wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+        return wins.some(([a,b,c]) => cells[a] && cells[a]===cells[b] && cells[a]===cells[c]);
+      }
+      function resetGame() { createBoard(); }
+      createBoard();
+    </script>
+
+    <!-- 反應速度測試器 -->
+    <div class="tool">
+      <h2>⚡ 反應速度測試器</h2>
+      <button id="startReaction">開始測試</button>
+      <p id="reactionMessage"></p>
+    </div>
+    <script>
+      const startBtn = document.getElementById('startReaction');
+      const msg = document.getElementById('reactionMessage');
+      let startTime;
+      startBtn.addEventListener('click', () => {
+        msg.textContent = '準備...';
+        setTimeout(()=>{
+          msg.textContent = '按下去！';
+          startTime = Date.now();
+          document.body.addEventListener('keydown', stopReaction, {once:true});
+          document.body.addEventListener('click', stopReaction, {once:true});
+        }, Math.random()*3000+1000);
+      });
+      function stopReaction() {
+        const reactionTime = Date.now()-startTime;
+        msg.textContent = `反應時間：${reactionTime} 毫秒`;
+      }
+    </script>
+
+    <!-- 記憶配對遊戲 -->
+    <div class="tool">
+      <h2>🃏 記憶配對遊戲</h2>
+      <div id="memoryBoard" style="display:grid;grid-template-columns:repeat(4,60px);gap:5px;justify-content:center;"></div>
+    </div>
+    <script>
+      const memoryBoard = document.getElementById('memoryBoard');
+      const symbols = ['😀','😂','😍','😎','🤔','😴','😡','😇'];
+      let cards = [...symbols,...symbols];
+      cards.sort(()=>Math.random()-0.5);
+      let first=null, second=null;
+      cards.forEach(sym=>{
+        const card=document.createElement('div');
+        card.textContent='❓';
+        card.style.width='60px';card.style.height='60px';
+        card.style.fontSize='30px';card.style.display='flex';
+        card.style.alignItems='center';card.style.justifyContent='center';
+        card.style.border='1px solid #000';
+        card.addEventListener('click',()=>{
+          if(card.textContent!=='❓')return;
+          card.textContent=sym;
+          if(!first){first=card;}
+          else{second=card;setTimeout(checkMatch,500);}
+        });
+        memoryBoard.appendChild(card);
+      });
+      function checkMatch(){
+        if(first.textContent===second.textContent){
+          first=null;second=null;
+        }else{
+          first.textContent='❓';second.textContent='❓';
+          first=null;second=null;
+        }
+      }
+    </script>
+
+    <!-- 心算挑戰 -->
+    <div class="tool">
+      <h2>🧮 心算挑戰</h2>
+      <p id="mathQuestion"></p>
+      <input id="mathAnswer" type="number">
+      <button onclick="checkAnswer()">提交</button>
+      <p id="mathResult"></p>
+    </div>
+    <script>
+      const question=document.getElementById('mathQuestion');
+      const answer=document.getElementById('mathAnswer');
+      const result=document.getElementById('mathResult');
+      let correct;
+      function newQuestion(){
+        const a=Math.floor(Math.random()*10)+1;
+        const b=Math.floor(Math.random()*10)+1;
+        correct=a+b;
+        question.textContent=`${a} + ${b} = ?`;
+        answer.value='';
+        result.textContent='';
+      }
+      function checkAnswer(){
+        if(parseInt(answer.value)===correct){
+          result.textContent='正確！';
+        }else{
+          result.textContent='錯誤，再試一次！';
+        }
+        setTimeout(newQuestion,1000);
+      }
+      newQuestion();
+    </script>
+    <!-- 單位換算器 -->
+    <div class="tool">
+      <h2>📏 單位換算器</h2>
+      <input id="unitValue" type="number" placeholder="輸入數值">
+      <select id="unitType">
+        <option value="cm">公分 → 公尺</option>
+        <option value="kg">公斤 → 公斤轉克</option>
+        <option value="c">攝氏 → 華氏</option>
+      </select>
+      <button onclick="convertUnit()">換算</button>
+      <p id="unitResult"></p>
+    </div>
+    <script>
+      function convertUnit(){
+        const val=parseFloat(document.getElementById('unitValue').value);
+        const type=document.getElementById('unitType').value;
+        let res='';
+        if(type==='cm') res=(val/100)+' 公尺';
+        if(type==='kg') res=(val*1000)+' 克';
+        if(type==='c') res=(val*9/5+32)+' °F';
+        document.getElementById('unitResult').textContent=res;
+      }
+    </script>
+
+    <!-- 倒數提醒器 -->
+    <div class="tool">
+      <h2>⏰ 倒數提醒器</h2>
+      <input id="countdownSec" type="number" placeholder="秒數">
+      <button onclick="startCountdown()">開始倒數</button>
+      <p id="countdownDisplay"></p>
+    </div>
+    <script>
+      function startCountdown(){
+        let sec=parseInt(document.getElementById('countdownSec').value);
+        const display=document.getElementById('countdownDisplay');
+        const timer=setInterval(()=>{
+          display.textContent=sec+' 秒';
+          sec--;
+          if(sec<0){clearInterval(timer);display.textContent='時間到！';}
+        },1000);
+      }
+    </script>
+
+    <!-- 隨機食譜建議 -->
+    <div class="tool">
+      <h2>🍳 隨機食譜建議</h2>
+      <input id="ingredient" placeholder="輸入食材">
+      <button onclick="suggestRecipe()">生成食譜</button>
+      <p id="recipeResult"></p>
+    </div>
+    <script>
+      function suggestRecipe(){
+        const ing=document.getElementById('ingredient').value;
+        const recipes=[`${ing} 炒飯`,`${ing} 義大利麵`,`${ing} 沙拉`,`${ing} 煎餅`];
+        const choice=recipes[Math.floor(Math.random()*recipes.length)];
+        document.getElementById('recipeResult').textContent='建議料理：'+choice;
+      }
+    </script>
+
+    <!-- 心情日記 -->
+    <div class="tool">
+      <h2>💖 心情日記</h2>
+      <input id="moodInput" placeholder="今天心情如何？">
+      <button onclick="moodDiary()">送出</button>
+      <p id="moodResult"></p>
+    </div>
+    <script>
+      function moodDiary(){
+        const mood=document.getElementById('moodInput').value;
+        const messages=['保持微笑！','加油，你很棒！','休息一下，會更好！','今天也要好好照顧自己！'];
+        const msg=messages[Math.floor(Math.random()*messages.length)];
+        document.getElementById('moodResult').textContent=`心情：${mood} → ${msg}`;
+      }
+      
+      
+// 定義字型清單
+const fonts = [
+  '"Noto Sans TC"',       // 思源黑體
+  '"Noto Serif TC"',      // 思源宋體
+  '"Microsoft JhengHei"', // 微軟正黑體
+  '"PingFang TC"',        // 蘋方字體
+  'sans-serif'            // 保底
+];
+// 隨機挑一個字型
+const randomFont = fonts[Math.floor(Math.random() * fonts.length)];
+// 套用到 h1，並加上完整 fallback 順序
+document.querySelector("h1").style.fontFamily =
+`${randomFont}, "Noto Sans TC", "Noto Serif TC", "Microsoft JhengHei", "PingFang TC", sans-serif`;
+// 綁定 Enter 事件
+document.getElementById("searchBox").addEventListener("keydown", function(event) {
+  if (event.key === "Enter") {
+    event.preventDefault(); // 防止表單預設提交
+    search(); // 呼叫搜尋函式
+  }
+});
+</script>
+</div> <!-- toolbox 結束 -->
+</body>
+</html>
