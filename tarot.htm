@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&display=swap" rel="stylesheet">
+<title>🃏 全方位塔羅命理幸運盤 ✨</title>
+<style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      align-items: flex-start;
+      background: #005FAF; /* 深藍背景 */
+      overflow: hidden;
+      font-family: 'Arial', sans-serif;
+      padding-top: 140px; /* 主標題與內容距離加大 */
+    }
+    h1 {
+      filter: blur(1.2px);
+      margin-top: 0; 
+      margin-bottom: 0;
+      position: relative;   /* 讓 h1 可以控制層級 */
+      z-index: 1;           /* h1 在上層 */
+      width: 100%;
+      text-align: center;
+      font-size: 58px;
+      font-weight: 900;
+      font-family: "Noto Sans TC", "Noto Serif TC", "Microsoft JhengHei", "PingFang TC", sans-serif;
+      transition: color 5s ease;
+      /* 光暈效果 */
+      color: #fff;
+      text-shadow:
+        0 0 10px red,
+        0 0 20px orange,
+        0 0 30px yellow,
+        0 0 40px green,
+        0 0 50px cyan,
+        0 0 60px blue,
+        0 0 70px violet;
+    }
+    @keyframes glow {
+  /* 粉紅系起始 */
+  0%   { color: #FF00CC; text-shadow: 0 0 50px #FF00CC; }
+  5%   { color: #FF3399; text-shadow: 0 0 50px #FF3399; }
+  10%  { color: #FF66CC; text-shadow: 0 0 50px #FF66CC; }
+  15%  { color: #FF3366; text-shadow: 0 0 50px #FF3366; }
+  /* 暖色段 */
+  20%  { color: #FF6600; text-shadow: 0 0 50px #FF6600; }
+  25%  { color: #FF9933; text-shadow: 0 0 50px #FF9933; }
+  30%  { color: #FFCC66; text-shadow: 0 0 50px #FFCC66; }
+  35%  { color: #FFFF66; text-shadow: 0 0 50px #FFFF66; }
+  /* 紅色爆發 */
+  42%  { color: #FF0000; text-shadow: 0 0 50px #FF0000; }
+  48%  { color: #FF3333; text-shadow: 0 0 50px #FF3333; }
+  54%  { color: #FF6666; text-shadow: 0 0 50px #FF6666; }
+  /* 青藍過渡（你原本的 #00FFFF 放這裡） */
+  60%  { color: #00FFFF; text-shadow: 0 0 50px #00FFFF; }
+  66%  { color: #3399FF; text-shadow: 0 0 50px #3399FF; }
+  72%  { color: #66CCFF; text-shadow: 0 0 50px #66CCFF; }
+  78%  { color: #99CCFF; text-shadow: 0 0 50px #99CCFF; }
+  /* 紫色收束（補你想要的 #9966FF / #FF00FF） */
+  84%  { color: #9966FF; text-shadow: 0 0 50px #9966FF; }
+  90%  { color: #FF00FF; text-shadow: 0 0 50px #FF00FF; }
+  96%  { color: #FF99FF; text-shadow: 0 0 50px #FF99FF; }
+  /* 回到起點 */
+  100% { color: #FF00CC; text-shadow: 0 0 50px #FF00CC; }
+  }
+
+
+  canvas#particles {
+  position: fixed;   /* 固定在背景 */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;        /* 在最底層 */
+  }
+
+
+    h2 { font-size: 28px; margin-top: 20px; margin-bottom: 10px; }
+    #tarot h2 { color: #46A3FF; text-shadow: 0 0 5px #87cefa, 0 0 10px #00bfff; }
+    #wheel h2 { color: #FFD700; text-shadow: 0 0 5px #FFA500, 0 0 10px #FFD700; }
+    #fortune h2 { color: #DA70D6; text-shadow: 0 0 5px #BA55D3, 0 0 10px #DA70D6; }
+    #zodiac h2 { color: #32CD32; text-shadow: 0 0 5px #228B22, 0 0 10px #32CD32; }
+    #numerology h2 { color: #00CED1; text-shadow: 0 0 5px #20B2AA, 0 0 10px #00CED1; }
+    #energy h2 { color: #FF4500; text-shadow: 0 0 5px #FF6347, 0 0 10px #FF4500; }
+    button {
+      margin: 10px;
+      padding: 12px 25px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: linear-gradient(45deg, #ff7f50, #1e90ff);
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+    button::after {
+      content: "";
+      position: absolute;
+      left: 50%; top: 50%;
+      width: 0; height: 0;
+      background: rgba(255,255,255,0.5);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: width 0.5s ease, height 0.5s ease;
+    }
+    button:active::after { width: 200px; height: 200px; }
+    .section { width: 30%; text-align: center; z-index: 2; margin-bottom: 40px; }
+    .result { margin-top: 10px; font-size: 18px; color: #fff; }
+    canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+    
+    
+  html, body, header, .title {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+
+/* Reset */
+html,body {
+height:100%;
+  overflow-x: hidden;   /* 禁止橫向滾動 */
+  overflow-y: auto;     /* ✅ 允許垂直滾動 */
+}
+
+
+/* 📱 小型手機（小於 480px） */
+@media (max-width: 479px) {
+  .toolbar {
+    flex-direction: column;
+    gap: 6px;
+  }
+  .toolbar select,
+  .toolbar input,
+  .toolbar button {
+    width: 100%;
+  }
+  table {
+    font-size: 13px;
+  }
+  #container {
+    grid-template-columns: 1fr;
+  }
+  #sidebar {
+    position: absolute;
+    top: 42px;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: #fff;
+    z-index: 1000;
+    border-right: none;
+    border-top: 1px solid #ddd;
+  }
+  #map {
+    height: calc(100vh - 42px);
+  }
+  header > * {
+    flex: 1 1 100%;
+  }
+}
+/* 📱 中型手機（480px 到 767px） */
+@media (min-width: 480px) and (max-width: 767px) {
+  .toolbar {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .toolbar select,
+  .toolbar input,
+  .toolbar button {
+    width: 100%;
+  }
+  table {
+    font-size: 14px;
+  }
+  #container {
+    grid-template-columns: 1fr;
+  }
+  #sidebar {
+    position: absolute;
+    top: 42px;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: #fff;
+    z-index: 1000;
+    border-right: none;
+    border-top: 1px solid #ddd;
+  }
+  #map {
+    height: calc(100vh - 42px);
+  }
+  header > * {
+    flex: 1 1 100%;
+  }
+}
+/* 📱 大型手機／小平板（768px 到 1023px） */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .toolbar {
+    flex-direction: row;
+    gap: 12px;
+  }
+  .toolbar select,
+  .toolbar input,
+  .toolbar button {
+    width: auto;
+  }
+  table {
+    font-size: 15px;
+  }
+  #container {
+    grid-template-columns: 1fr;
+  }
+  #sidebar {
+    position: absolute;
+    top: 42px;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: #fff;
+    z-index: 1000;
+    border-right: none;
+    border-top: 1px solid #ddd;
+  }
+  #map {
+    height: calc(100vh - 42px);
+  }
+  header > * {
+    flex: 1 1 100%;
+  }
+}
+</style>
+</head>
+<body>
+  <h1 id="title">🃏 全方位塔羅命理幸運盤 ✨</h1>
+  <!-- <canvas id="stars"></canvas> -->
+  <canvas id="particles"></canvas>
+  <div id="tarot" class="section">
+    <h2>塔羅翻牌</h2>
+    <button onclick="drawCard()">翻一張牌</button>
+    <div id="tarotResult" class="result"></div>
+  </div>
+
+  <div id="wheel" class="section">
+    <h2>命理轉盤</h2>
+    <button onclick="spin()">開始旋轉</button>
+    <div id="wheelResult" class="result"></div>
+  </div>
+
+  <div id="fortune" class="section">
+    <h2>幸運籤詩</h2>
+    <button onclick="drawFortune()">抽籤詩</button>
+    <div id="fortuneResult" class="result"></div>
+  </div>
+
+  <div id="zodiac" class="section">
+    <h2>星座運勢</h2>
+    <select id="zodiacSelect">
+      <option>牡羊座</option><option>金牛座</option><option>雙子座</option>
+      <option>巨蟹座</option><option>獅子座</option><option>處女座</option>
+      <option>天秤座</option><option>天蠍座</option><option>射手座</option>
+      <option>摩羯座</option><option>水瓶座</option><option>雙魚座</option>
+    </select>
+    <button onclick="showZodiac()">查看運勢</button>
+    <div id="zodiacResult" class="result"></div>
+  </div>
+
+  <div id="numerology" class="section">
+    <h2>數字占卜</h2>
+    <input type="number" id="numInput" min="1" max="9" placeholder="輸入 1-9">
+    <button onclick="showNumber()">解釋</button>
+    <div id="numResult" class="result"></div>
+  </div>
+
+  <div id="energy" class="section">
+    <h2>每日能量指數</h2>
+    <button onclick="showEnergy()">測試能量</button>
+    <div id="energyResult" class="result"></div>
+  </div>
+<script>
+    // 🌌 星空背景
+ /*   const canvas = document.getElementById("stars");
+    const ctx = canvas.getContext("2d");
+    let stars = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      stars = [];
+      for (let i = 0; i < 100; i++) {
+        stars.push({
+          x: Math.random()*canvas.width,
+          y: Math.random()*canvas.height,
+          r: Math.random()*12+8, // 粒子更大
+          dx: (Math.random()-0.5)*0.5,
+          dy: (Math.random()-0.5)*0.5,
+          color: `hsl(${Math.random()*360}, 100%, 80%)`
+        });
+      }
+    }
+    window.onresize = resizeCanvas;
+    resizeCanvas();
+
+    function animateStars() {
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      stars.forEach(s=>{
+        ctx.beginPath();
+        ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+        ctx.shadowBlur = 30; // 光暈加強
+        ctx.shadowColor = s.color;
+        ctx.fillStyle = s.color;
+        ctx.fill();
+        s.x += s.dx; s.y += s.dy;
+        if(s.x<0||s.x>canvas.width) s.dx*=-1;
+        if(s.y<0||s.y>canvas.height) s.dy*=-1;
+      });
+      requestAnimationFrame(animateStars);
+    }
+    animateStars();  */
+    
+    
+    // 🌈 粒子效果
+    const canvas = document.getElementById("particles");
+    const ctx = canvas.getContext("2d");
+    let particles = [];
+    let particleCount = 70;
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      particles = [];
+      for (let i = 0; i < particleCount; i++) {
+        particles.push({
+          x: Math.random()*canvas.width,
+          y: Math.random()*canvas.height,
+          r: Math.random()*15+15,
+          dx: (Math.random()-0.5)*2,
+          dy: (Math.random()-0.5)*2,
+          color: `hsl(${Math.random()*360}, 100%, 50%)`
+        });
+      }
+    }
+    window.onresize = resizeCanvas;
+    resizeCanvas();
+
+    function animate() {
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      particles.forEach(p=>{
+        ctx.beginPath();
+        ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+        ctx.shadowBlur = 30;
+        ctx.shadowColor = p.color;
+        ctx.fillStyle = p.color;
+        ctx.fill();
+        p.x += p.dx; p.y += p.dy;
+        if(p.x<0||p.x>canvas.width) p.dx*=-1;
+        if(p.y<0||p.y>canvas.height) p.dy*=-1;
+      });
+      requestAnimationFrame(animate);
+    }
+    animate();
+
+// ✨ 標題自動變色 + 光暈
+    const title = document.getElementById("title");
+    function changeTitleColor() {
+      const hue = Math.floor(Math.random()*360);
+      title.style.color = `hsl(${hue}, 100%, 50%)`;
+      title.style.textShadow = `
+        0 0 10px hsl(${hue}, 100%, 70%),
+        0 0 20px hsl(${(hue+60)%360}, 100%, 70%),
+        0 0 30px hsl(${(hue+120)%360}, 100%, 70%)
+      `;
+    }
+    setInterval(changeTitleColor, 3000);
+
+    // 🃏 塔羅牌庫（完整 22 張大牌）
+    const tarotDeck = [
+      { name: "愚者", upright: "新的開始，自由，冒險", reversed: "缺乏方向，魯莽",
+    plain: "愚者象徵純真與無畏，正位時代表勇敢踏出舒適圈，追求未知旅程；逆位則提醒你過度衝動或缺乏規劃，可能導致失敗。" },
+  { name: "魔術師", upright: "創造力，掌握資源，行動", reversed: "欺騙，浪費才能",
+    plain: "魔術師代表意志力與技巧，正位時你能整合資源、化想法為現實；逆位則警告你可能被幻象困住或浪費才能。" },
+  { name: "女祭司", upright: "直覺，智慧，潛意識", reversed: "隱藏，秘密，誤導",
+    plain: "女祭司象徵直覺與內在智慧，正位提醒你信任內心的聲音；逆位則暗示秘密或誤導，需謹慎分辨真相。" },
+  { name: "女皇", upright: "豐饒，母性，創造", reversed: "依賴，停滯，過度保護",
+    plain: "女皇代表滋養與創造力，正位時象徵豐饒與愛；逆位則提醒你可能過度依賴或停滯，需要重新找回自我力量。" },
+  { name: "皇帝", upright: "秩序，權威，結構", reversed: "專制，僵化，失控",
+    plain: "皇帝象徵秩序與權威，正位代表穩定與掌控；逆位則警告你可能過度僵化或失去掌控，需要重新建立平衡。" },
+  { name: "教皇", upright: "信仰，傳統，指導", reversed: "盲從，反叛，誤導",
+    plain: "教皇代表信仰與傳統，正位時象徵指導與智慧；逆位則提醒你可能盲目跟隨或被誤導，需要獨立思考。" },
+  { name: "戀人", upright: "愛情，選擇，和諧", reversed: "不和，錯誤的選擇",
+    plain: "戀人牌正位代表愛情與心靈契合，也象徵重要選擇；逆位則提醒你可能面臨不和或錯誤決定，需誠實面對內心。" },
+  { name: "戰車", upright: "勝利，意志，掌控", reversed: "失敗，混亂，失控",
+    plain: "戰車象徵意志與掌控，正位代表你能克服障礙取得勝利；逆位則暗示失控或方向不明，需要重新集中意志。" },
+  { name: "力量", upright: "勇氣，耐心，內在力量", reversed: "恐懼，軟弱，失衡",
+    plain: "力量牌正位代表勇氣與耐心，能以柔克剛；逆位則提醒你可能陷入恐懼或失衡，需要重新找回內在力量。" },
+  { name: "隱者", upright: "尋求真理，內省，智慧", reversed: "孤立，迷失，閉塞",
+    plain: "隱者象徵內省與智慧，正位代表你在尋求真理；逆位則暗示孤立或迷失，需要打開心門與外界交流。" },
+  { name: "命運之輪", upright: "循環，機遇，轉折", reversed: "停滯，厄運，抗拒",
+    plain: "命運之輪正位代表機遇與轉折，提醒你接受人生循環；逆位則暗示停滯或厄運，需要耐心等待時機。" },
+  { name: "正義", upright: "公平，真理，平衡", reversed: "不公，偏見，失衡",
+    plain: "正義牌正位代表公平與真理，提醒你誠實面對；逆位則暗示不公或偏見，需要重新找回平衡。" },
+  { name: "吊人", upright: "犧牲，等待，轉化", reversed: "逃避，停滯，無意義",
+    plain: "吊人象徵犧牲與轉化，正位代表耐心等待與新視角；逆位則提醒你可能逃避或停滯，需要重新找回意義。" },
+  { name: "死神", upright: "結束，轉變，重生", reversed: "抗拒改變，停滯",
+    plain: "死神正位代表結束與新生，提醒你放下過去迎接轉變；逆位則暗示抗拒改變，停滯不前。" },
+  { name: "節制", upright: "平衡，和諧，耐心", reversed: "失衡，過度，衝突",
+    plain: "節制牌正位代表平衡與和諧，提醒你耐心等待；逆位則暗示失衡或過度，需要重新調整。" },
+  { name: "惡魔", upright: "束縛，誘惑，物質", reversed: "解放，覺醒，擺脫",
+    plain: "惡魔牌正位代表束縛與誘惑，提醒你警惕物質的陷阱；逆位則象徵解放與覺醒，擺脫不良影響。" },
+  { name: "高塔", upright: "突變，崩壞，覺醒", reversed: "延遲，恐懼，抗拒",
+    plain: "高塔牌正位代表突如其來的變化與覺醒；逆位則暗示延遲或抗拒，提醒你接受無常。" },
+  { name: "星星", upright: "希望，靈感，療癒", reversed: "失望，幻滅，迷失",
+    plain: "星星牌正位代表希望與靈感，提醒你保持信心；逆位則暗示失望或迷失，需要重新找回方向。" },
+  { name: "月亮", upright: "直覺，幻象，潛意識", reversed: "欺騙，混亂，恐懼",
+    plain: "月亮牌正位代表直覺與潛意識，提醒你信任內心；逆位則暗示欺騙或恐懼，需要謹慎分辨。" },
+  { name: "太陽", upright: "快樂，成功，活力", reversed: "失落，延遲，陰影",
+    plain: "太陽牌正位代表快樂與成功，提醒你享受生命；逆位則暗示失落或延遲，需要重新找回活力。" },
+  { name: "審判", upright: "覺醒，重生，審視", reversed: "逃避，否認，停滯",
+    plain: "審判牌正位代表覺醒與重生，提醒你審視過去並迎接新生；逆位則暗示逃避或否認，需要勇敢面對。" },
+  { name: "世界", upright: "完成，圓滿，成就", reversed: "未完成，延遲",
+    plain: "世界牌正位代表圓滿與成就，提醒你享受成功；逆位則暗示未完成或延遲，需要耐心等待。" }
+];
+    function drawCard() {
+      const card = tarotDeck[Math.floor(Math.random()*tarotDeck.length)];
+      const reversed = Math.random()<0.5;
+      document.getElementById("tarotResult").innerHTML =
+        `你翻到的是：<b>${card.name}</b><br>` +
+        (reversed ? `逆位：${card.reversed}` : `正位：${card.upright}`) +
+        `<br><b>白話解釋：</b>${card.plain}`;
+    }
+
+    // ☯️ 命理轉盤資料庫（十二宮位）
+    const wheelTexts = [
+     { explain:"命宮逢七殺，挑戰與突破並存。",
+    oldPoem:"孤星獨行，風起雲湧。",
+    newPoem:"會議連線不斷，壓力如雲卻能成長。",
+    plain:"近期你可能遇到壓力，但這些挑戰會讓你更成熟，七殺象徵突破與挑戰，提醒你要勇敢面對困境。" },
+  { explain:"財帛宮旺，正是積累資源的好時機。",
+    oldPoem:"金風送暖，富貴盈門。",
+    newPoem:"投資理財如APP，數字跳動映未來。",
+    plain:"財帛宮旺代表財運亨通，正是累積資源的好時機。你可能會遇到投資或收入的機會，要善用理財工具並保持謹慎。" },
+  { explain:"夫妻宮逢太陰，情感細膩。",
+    oldPoem:"月華如水，情深似海。",
+    newPoem:"訊息往返，心意流動。",
+    plain:"夫妻宮有太陰星，象徵情感細膩、柔和，正位代表伴侶間的理解與支持，逆位則提醒你可能過度敏感，需要更多溝通。" },
+  { explain:"事業宮逢武曲，堅毅果敢。",
+    oldPoem:"鐵石心腸，志在千里。",
+    newPoem:"加班熬夜，拼搏不止。",
+    plain:"武曲星在事業宮，象徵堅毅與果敢，代表你在工作上有強大的執行力。提醒你要保持耐心，避免過度剛硬。" },
+  { explain:"子女宮逢天同，溫柔仁厚。",
+    oldPoem:"慈雲覆地，春風化雨。",
+    newPoem:"親子互動如社群，溫暖交流。",
+    plain:"子女宮有天同星，象徵仁厚與溫柔，代表你與子女或後輩的關係和諧，提醒你要以耐心與包容來引導。" },
+  { explain:"兄弟宮逢廉貞，直率剛烈。",
+    oldPoem:"義氣千秋，烈火真心。",
+    newPoem:"群組爭論，直言不諱。",
+    plain:"兄弟宮有廉貞星，象徵直率與剛烈，代表你與兄弟姊妹或朋友之間可能有爭執，但也有真誠的支持。" },
+  { explain:"田宅宮逢天府，富足安穩。",
+    oldPoem:"庭院深深，福澤綿延。",
+    newPoem:"房產投資，安居樂業。",
+    plain:"田宅宮有天府星，象徵富足與安穩，代表你在居住或房產方面有好機會，提醒你要珍惜家庭的安定。" },
+  { explain:"福德宮逢紫微，尊貴吉祥。",
+    oldPoem:"紫氣東來，福祿無疆。",
+    newPoem:"心靈成長課程，內在提升。",
+    plain:"福德宮有紫微星，象徵尊貴與吉祥，代表你在精神或心靈層面有提升，提醒你要注重內在修養。" },
+  { explain:"遷移宮逢天馬，奔波勞碌。",
+    oldPoem:"長風萬里，行者無疆。",
+    newPoem:"出差旅行，奔波不止。",
+    plain:"遷移宮有天馬星，象徵奔波與移動，代表你近期可能有旅行或搬遷，提醒你要適應環境的變化。" },
+  { explain:"疾厄宮逢天梁，守護庇佑。",
+    oldPoem:"慈航普渡，化險為夷。",
+    newPoem:"健康檢查，醫療守護。",
+    plain:"疾厄宮有天梁星，象徵守護與庇佑，代表你在健康方面雖有挑戰，但能得到貴人或醫療的幫助。" },
+  { explain:"官祿宮逢太陽，光明磊落。",
+    oldPoem:"旭日東昇，萬象更新。",
+    newPoem:"職場表現亮眼，領導力提升。",
+    plain:"官祿宮有太陽星，象徵光明與磊落，代表你在職場上有良好表現，提醒你要保持正直，才能獲得長遠的成功。" },
+  { explain:"僕役宮逢天相，協調合作。",
+    oldPoem:"和風細雨，眾志成城。",
+    newPoem:"團隊協作，互助共贏。",
+    plain:"僕役宮有天相星，象徵協調與合作，代表你在與同事或下屬的互動中能夠得到支持，提醒你要善用人際關係。" }
+    ];
+    function spin() {
+      const result = wheelTexts[Math.floor(Math.random()*wheelTexts.length)];
+      document.getElementById("wheelResult").innerHTML =
+        `<b>命理解釋：</b>${result.explain}<br>
+         <b>古典詩句：</b>${result.oldPoem}<br>
+         <b>現代詩句：</b>${result.newPoem}<br>
+         <b>白話解釋：</b>${result.plain}`;
+    }
+
+    // 🎴 幸運籤詩
+const fortunes = [
+  {poem:"雲開月明，前途光亮", explain:"困境將解，迎來新機會，勇敢前行。"},
+  {poem:"風雨過後，彩虹初現", explain:"經歷挑戰後會有收穫，耐心等待成果。"},
+  {poem:"山重水複疑無路，柳暗花明又一村", explain:"不要放棄，轉角有希望，奇蹟就在眼前。"},
+  {poem:"春風得意馬蹄疾，一日看盡長安花", explain:"好運將至，事業與人際皆有突破。"},
+  {poem:"江山如畫，人生如詩", explain:"生活充滿美好，保持樂觀心境。"},
+  {poem:"一葉知秋，未雨綢繆", explain:"提前準備，能避免未來的困境。"},
+  {poem:"桃李爭春，百花齊放", explain:"人際和諧，事業蓬勃發展。"},
+  {poem:"長風破浪會有時，直掛雲帆濟滄海", explain:"勇敢追夢，終能達成目標。"},
+  {poem:"滴水穿石，繩鋸木斷", explain:"堅持不懈，困難終能克服。"},
+  {poem:"青山不改，綠水長流", explain:"友情長存，貴人相助。"},
+  {poem:"花開富貴，吉祥如意", explain:"財運亨通，生活安穩。"},
+  {poem:"月到中秋分外明，人到歡時特別親", explain:"家庭和樂，感情甜蜜。"},
+  {poem:"行到水窮處，坐看雲起時", explain:"放下焦慮，靜心才能看清方向。"},
+  {poem:"千里之行，始於足下", explain:"踏實努力，成功從小步開始。"},
+  {poem:"心靜自然涼，淡泊明志", explain:"保持平和心境，才能長久安穩。"},
+  {poem:"金玉滿堂，福壽安康", explain:"財富與健康兼得，生活幸福。"},
+  {poem:"旭日東昇，光明未來", explain:"新計畫將展開，前途光明。"},
+  {poem:"流水不息，生生不滅", explain:"持續努力，成果不斷。"},
+  {poem:"梅花香自苦寒來", explain:"艱難之後必有收穫。"},
+  {poem:"天道酬勤，厚積薄發", explain:"努力不懈，終將成功。"},
+  {poem:"春雨潤物細無聲", explain:"默默耕耘，成果自然到來。"},
+  {poem:"星光不問趕路人", explain:"努力的人終會被看見。"},
+  {poem:"海納百川，有容乃大", explain:"心胸寬廣，能容納更多機會。"},
+  {poem:"竹報平安，喜氣盈門", explain:"平安吉祥，家庭幸福。"},
+  {poem:"鴻運當頭，福星高照", explain:"好運降臨，事事順心。"},
+  {poem:"福如東海，壽比南山", explain:"健康長壽，福氣滿滿。"},
+  {poem:"春華秋實，四季安康", explain:"努力耕耘，必有收穫。"},
+  {poem:"彩雲追月，前途似錦", explain:"事業蒸蒸日上，光明未來。"},
+  {poem:"龍騰虎躍，精神煥發", explain:"充滿活力，適合挑戰新事物。"},
+  {poem:"瑞雪兆豐年", explain:"好兆頭，未來充滿希望。"},
+   {poem:"日出東方，萬象更新", explain:"新開始帶來新希望。"},
+  {poem:"春風拂面，心情愉快", explain:"心境平和，適合交流。"},
+  {poem:"秋高氣爽，事業順利", explain:"工作進展順利，成果顯著。"},
+  {poem:"冬雪潔白，心靈純淨", explain:"保持初心，才能走得更遠。"},
+  {poem:"花好月圓，人團圓", explain:"家庭幸福，感情甜蜜。"},
+  {poem:"柳綠花紅，生機盎然", explain:"充滿活力，適合展開新計畫。"},
+  {poem:"鯉魚躍龍門", explain:"努力拼搏，將迎來突破。"},
+  {poem:"鳳凰展翅，飛黃騰達", explain:"事業有成，名利雙收。"},
+  {poem:"吉星高照，福運連連", explain:"好運不斷，事事順心。"},
+  {poem:"喜氣洋洋，福滿人間", explain:"生活充滿喜悅與幸福。"},
+  {poem:"和氣致祥，家和萬事興", explain:"家庭和諧，萬事順利。"},
+  {poem:"勤能補拙，努力不懈", explain:"持之以恆，必有成果。"},
+  {poem:"厚德載物，仁者無敵", explain:"善良待人，福報自來。"},
+  {poem:"天高地闊，心胸開朗", explain:"心境寬廣，能容納更多機會。"},
+  {poem:"春色滿園，欣欣向榮", explain:"事業與生活皆有好發展。"},
+  {poem:"夏日炎炎，熱情似火", explain:"充滿幹勁，適合挑戰。"},
+  {poem:"秋收冬藏，穩健前行", explain:"懂得規劃，生活安穩。"},
+  {poem:"星河燦爛，夢想成真", explain:"夢想即將實現，保持信心。"},
+  {poem:"彩蝶翩翩，心情愉悅", explain:"心境輕鬆，適合享受生活。"},
+  {poem:"青雲直上，步步高升", explain:"事業蒸蒸日上，前途光明。"},
+  {poem:"金榜題名，功成名就", explain:"努力學習，終將成功。"},
+  {poem:"福星高照，喜事臨門", explain:"好事將近，值得期待。"},
+  {poem:"祥光普照，吉慶有餘", explain:"生活充滿吉祥與喜悅。"},
+  {poem:"瑞氣盈門，福壽安康", explain:"家庭幸福，健康長壽。"},
+  {poem:"龍馬精神，活力四射", explain:"充滿幹勁，適合挑戰新事物。"},
+  {poem:"鴻運滾滾，財源廣進", explain:"財運亨通，收入增加。"},
+  {poem:"福祿雙全，喜樂安康", explain:"生活幸福，福氣滿滿。"},
+  {poem:"春暖花開，心情舒暢", explain:"心境愉快，適合交流。"},
+  {poem:"秋月皎潔，心靈明亮", explain:"保持清明心境，方向明確。"},
+  {poem:"冬日暖陽，溫馨安穩", explain:"生活安穩，心靈溫暖。"}
+];
+function drawFortune(){
+  const f = fortunes[Math.floor(Math.random()*fortunes.length)];
+  document.getElementById("fortuneResult").innerHTML =
+    `<b>籤詩：</b>${f.poem}<br><b>解釋：</b>${f.explain}`;
+}
+
+    // ♈ 星座運勢
+const zodiacFortune = {
+  "牡羊座":"今日充滿活力，適合展開新計畫，勇敢嘗試新挑戰。",
+  "金牛座":"財務穩定，適合規劃長期投資，耐心會帶來收穫。",
+  "雙子座":"人際交流旺盛，容易結識新朋友，適合拓展人脈。",
+  "巨蟹座":"家庭和諧，適合與親人共度時光，心靈獲得安慰。",
+  "獅子座":"事業表現亮眼，領導力提升，容易獲得他人肯定。",
+  "處女座":"細心謹慎，適合整理與規劃，效率提升。",
+  "天秤座":"感情和諧，適合增進伴侶關係，浪漫氛圍濃厚。",
+  "天蠍座":"直覺敏銳，適合探索新知，洞察力強。",
+  "射手座":"冒險精神旺盛，適合旅行或嘗試新活動。",
+  "摩羯座":"事業穩定，努力會有成果，適合專注於目標。",
+  "水瓶座":"創意十足，適合發揮想像力，靈感源源不絕。",
+  "雙魚座":"情感豐富，適合藝術創作，心靈感受強烈。"
+};
+function showZodiac(){
+  const z = document.getElementById("zodiacSelect").value;
+  document.getElementById("zodiacResult").innerHTML =
+    `<b>${z}：</b>${zodiacFortune[z]}`;
+}
+
+    // 🔢 數字占卜
+const numMeanings = {
+  1:"代表領導力與開創精神，勇敢邁出第一步。",
+  2:"象徵合作與平衡，適合建立夥伴關係。",
+  3:"創意、表達與藝術，靈感湧現。",
+  4:"穩定、秩序與責任，打好基礎。",
+  5:"自由、冒險與變化，勇於突破框架。",
+  6:"愛心、家庭與責任，重視人際與親情。",
+  7:"靈性、探索與智慧，適合學習與冥想。",
+  8:"權力、財富與成就，努力會帶來成功。",
+  9:"慈悲、理想與完成，適合幫助他人。"
+};
+function showNumber(){
+  const n = document.getElementById("numInput").value;
+  document.getElementById("numResult").innerHTML =
+    n ? `<b>${n}：</b>${numMeanings[n]}` : "請輸入 1-9";
+}
+
+    // ⚡ 每日能量指數
+function showEnergy(){
+  const val = Math.floor(Math.random()*101);
+  const energyMessages = [
+    "充滿活力，適合挑戰新事物！今天是你的高能量日。",
+    "狀態不錯，保持穩定前進，努力會有成果。",
+    "需要休息，調整心情再出發，給自己一些空間。",
+    "靈感湧現，適合創作或規劃新計畫。",
+    "心情愉快，人際互動順利。",
+    "專注力提升，適合處理複雜工作。",
+    "精神飽滿，適合運動或旅行。",
+    "稍感疲憊，建議放慢腳步。",
+    "情緒穩定，適合與家人共度時光。",
+    "充滿自信，適合展現領導力。",
+    "心境平和，適合冥想或閱讀。",
+    "活力四射，適合社交活動。",
+    "需要補充睡眠，避免過勞。",
+    "創意十足，適合腦力激盪。",
+    "能量偏低，適合靜態活動。",
+    "心情輕鬆，適合享受生活。",
+    "精神旺盛，適合挑戰困難任務。",
+    "稍感焦躁，建議深呼吸放鬆。",
+    "狀態佳，適合學習新技能。",
+    "心靈充實，適合藝術創作。",
+    "活力滿滿，適合戶外活動。",
+    "需要安靜，避免過度刺激。",
+    "情緒高昂，適合與朋友聚會。",
+    "專注力不足，建議短暫休息。",
+    "能量穩定，適合日常工作。",
+    "心境愉悅，適合音樂或舞蹈。",
+    "精神集中，適合考試或挑戰。",
+    "稍感低落，建議自我鼓勵。",
+    "活力充沛，適合嘗試新事物。",
+    "需要放鬆，適合泡茶或散步。",
+    "精神抖擻，適合展開新計畫。",
+    "心情平穩，適合處理日常瑣事。",
+    "稍感疲倦，建議多喝水休息。",
+    "活力滿滿，適合挑戰體能活動。",
+    "情緒穩定，適合與伴侶交流。",
+    "創意爆棚，適合腦力激盪。",
+    "能量偏低，適合靜心冥想。",
+    "心境愉快，適合外出散心。",
+    "精神旺盛，適合完成積壓工作。",
+    "稍感緊張，建議深呼吸放鬆。",
+    "狀態良好，適合學習新知識。",
+    "心靈平和，適合靜坐或閱讀。",
+    "活力四射，適合參加聚會。",
+    "需要補眠，避免精神不濟。",
+    "創意十足，適合藝術創作。",
+    "能量穩定，適合規劃未來。",
+    "心情愉快，適合與朋友交流。",
+    "精神集中，適合挑戰難題。",
+    "稍感低落，建議聽音樂舒緩。",
+    "活力充沛，適合嘗試新挑戰。",
+    "需要放鬆，適合泡澡或休閒。",
+    "情緒高昂，適合表達自我。",
+    "專注力不足，建議短暫休息。",
+    "能量平穩，適合日常工作。",
+    "心境愉悅，適合欣賞美景。",
+    "精神集中，適合考試或專案。",
+    "稍感疲憊，建議早睡早起。",
+    "活力滿滿，適合運動健身。",
+    "需要安靜，適合獨處或冥想。"
+  ];
+  // 隨機抽取一個訊息
+  const msg = energyMessages[Math.floor(Math.random()*energyMessages.length)];
+  document.getElementById("energyResult").innerHTML =
+    `今日能量：<b>${val}</b><br>${msg}`;
+}
+
+
+// 定義字型清單
+const fonts = [
+  '"Noto Sans TC"',       // 思源黑體
+  '"Noto Serif TC"',      // 思源宋體
+  '"Microsoft JhengHei"', // 微軟正黑體
+  '"PingFang TC"',        // 蘋方字體
+  'sans-serif'            // 保底
+];
+// 隨機挑一個字型
+const randomFont = fonts[Math.floor(Math.random() * fonts.length)];
+// 套用到 h1，並加上完整 fallback 順序
+document.querySelector("h1").style.fontFamily =
+`${randomFont}, "Noto Sans TC", "Noto Serif TC", "Microsoft JhengHei", "PingFang TC", sans-serif`;
+// 綁定 Enter 事件
+document.getElementById("searchBox").addEventListener("keydown", function(event) {
+  if (event.key === "Enter") {
+    event.preventDefault(); // 防止表單預設提交
+    search(); // 呼叫搜尋函式
+  }
+});
+</script>
+</body>
+</html>
