@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&display=swap" rel="stylesheet">
 <title>🃏 全方位塔羅命理幸運盤 ✨</title>
 <style>
     body {
@@ -18,14 +20,17 @@
       padding-top: 140px; /* 主標題與內容距離加大 */
     }
     h1 {
+      filter: blur(1.2px);
+      margin-top: 0; 
+      margin-bottom: 0;
       position: relative;   /* 讓 h1 可以控制層級 */
       z-index: 1;           /* h1 在上層 */
-      top: 20px;
       width: 100%;
       text-align: center;
       font-size: 58px;
-      font-weight: bold;
-      transition: color 1s ease;
+      font-weight: 900;
+      font-family: "Noto Sans TC", "Noto Serif TC", "Microsoft JhengHei", "PingFang TC", sans-serif;
+      transition: color 5s ease;
       /* 光暈效果 */
       color: #fff;
       text-shadow:
@@ -38,12 +43,34 @@
         0 0 70px violet;
     }
     @keyframes glow {
-      0% { text-shadow: 0 0 20px #ff69b4, 0 0 40px #ff1493; }
-      50% { text-shadow: 0 0 20px #ffa500, 0 0 40px #ffd700; }
-      100% { text-shadow: 0 0 20px #ff69b4, 0 0 40px #ff1493; }
-    }
-    
-    
+  /* 粉紅系起始 */
+  0%   { color: #FF00CC; text-shadow: 0 0 50px #FF00CC; }
+  5%   { color: #FF3399; text-shadow: 0 0 50px #FF3399; }
+  10%  { color: #FF66CC; text-shadow: 0 0 50px #FF66CC; }
+  15%  { color: #FF3366; text-shadow: 0 0 50px #FF3366; }
+  /* 暖色段 */
+  20%  { color: #FF6600; text-shadow: 0 0 50px #FF6600; }
+  25%  { color: #FF9933; text-shadow: 0 0 50px #FF9933; }
+  30%  { color: #FFCC66; text-shadow: 0 0 50px #FFCC66; }
+  35%  { color: #FFFF66; text-shadow: 0 0 50px #FFFF66; }
+  /* 紅色爆發 */
+  42%  { color: #FF0000; text-shadow: 0 0 50px #FF0000; }
+  48%  { color: #FF3333; text-shadow: 0 0 50px #FF3333; }
+  54%  { color: #FF6666; text-shadow: 0 0 50px #FF6666; }
+  /* 青藍過渡（你原本的 #00FFFF 放這裡） */
+  60%  { color: #00FFFF; text-shadow: 0 0 50px #00FFFF; }
+  66%  { color: #3399FF; text-shadow: 0 0 50px #3399FF; }
+  72%  { color: #66CCFF; text-shadow: 0 0 50px #66CCFF; }
+  78%  { color: #99CCFF; text-shadow: 0 0 50px #99CCFF; }
+  /* 紫色收束（補你想要的 #9966FF / #FF00FF） */
+  84%  { color: #9966FF; text-shadow: 0 0 50px #9966FF; }
+  90%  { color: #FF00FF; text-shadow: 0 0 50px #FF00FF; }
+  96%  { color: #FF99FF; text-shadow: 0 0 50px #FF99FF; }
+  /* 回到起點 */
+  100% { color: #FF00CC; text-shadow: 0 0 50px #FF00CC; }
+  }
+
+
   canvas#particles {
   position: fixed;   /* 固定在背景 */
   top: 0;
@@ -645,6 +672,28 @@ function showEnergy(){
   document.getElementById("energyResult").innerHTML =
     `今日能量：<b>${val}</b><br>${msg}`;
 }
+
+
+// 定義字型清單
+const fonts = [
+  '"Noto Sans TC"',       // 思源黑體
+  '"Noto Serif TC"',      // 思源宋體
+  '"Microsoft JhengHei"', // 微軟正黑體
+  '"PingFang TC"',        // 蘋方字體
+  'sans-serif'            // 保底
+];
+// 隨機挑一個字型
+const randomFont = fonts[Math.floor(Math.random() * fonts.length)];
+// 套用到 h1，並加上完整 fallback 順序
+document.querySelector("h1").style.fontFamily =
+`${randomFont}, "Noto Sans TC", "Noto Serif TC", "Microsoft JhengHei", "PingFang TC", sans-serif`;
+// 綁定 Enter 事件
+document.getElementById("searchBox").addEventListener("keydown", function(event) {
+  if (event.key === "Enter") {
+    event.preventDefault(); // 防止表單預設提交
+    search(); // 呼叫搜尋函式
+  }
+});
 </script>
 </body>
 </html>
