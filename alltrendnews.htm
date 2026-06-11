@@ -243,7 +243,7 @@ function displayLinks(){
     li.innerHTML = `
       <a href="${link.url}" target="_blank">${link.title}</a>
       <span class="badge ${type}">${type}</span>
-      <div class="stats">點擊次數: ${link.clicks||0}</div>
+      <div class="stats">來源: ${link.source || "未知"} | 點擊次數: ${link.clicks||0}</div>
     `;
     list.appendChild(li);
   });
@@ -256,17 +256,44 @@ async function fetchAll(){
     try{
       const res = await fetch(API(rss));
       const data = await res.json();
+
+      // 三層判斷：feed.title → it.source → DOMParser fallback
+      let feedTitle = "";
+      if(data.feed && data.feed.title){
+        feedTitle = data.feed.title;
+      }
+
       if(data.items){
         items.push(...data.items
           .filter(it => it.title && it.link) // 過濾掉沒有標題或連結的項目
           .map(it => ({
             url: it.link,
             title: it.title,
+            source: feedTitle || it.source || "", // 第二優先 it.source
             date: new Date(),
             clicks: 0
           }))
         );
       }
+
+      // 如果 feedTitle 還是空，就自己解析 RSS XML
+      if(!feedTitle){
+        try{
+          const xmlRes = await fetch(rss);
+          const xmlText = await xmlRes.text();
+          const parser = new DOMParser();
+          const xmlDoc = parser.parseFromString(xmlText, "application/xml");
+          feedTitle = xmlDoc.querySelector("channel > title")?.textContent || "";
+          // 把剛剛 items 裡沒有來源的補上
+          items = items.map(it => ({
+            ...it,
+            source: it.source || feedTitle
+          }));
+        }catch(err){
+          console.warn("DOMParser fallback 失敗:", rss, err);
+        }
+      }
+
     }catch(e){
       console.error("RSS 抓取失敗:", rss, e);
     }
@@ -328,7 +355,6 @@ function addLink(){
 // 初始化 + 定時刷新
 fetchAll();
 setInterval(fetchAll,600000); // 每10分鐘刷新一次RSS
-
 
 // 字型隨機套用
 const fonts = [
