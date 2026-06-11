@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&display=swap" rel="stylesheet">
+<title>📰全方位網路新聞連結網🔗</title>
+<style>
+  body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 0; }
+  header { background: #005FAF; color: #fff; padding: 20px; text-align: center; }
+  header h1 {
+  margin-top: 0 !important;   /* 強制把上方間距設為 0 */
+  margin-bottom: 0.1em !important; /* 視需要調整下方間距 */
+  filter: blur(1.2px); /* 模糊化 */
+  font-size: 3.7vw;
+  font-weight: 900;
+  text-shadow: 0 0 30px currentColor, 0 0 50px currentColor;
+  font-family: "Noto Sans TC", "Noto Serif TC", "Microsoft JhengHei", "PingFang TC", sans-serif;
+  animation: colorchange 20s infinite;
+  }
+  @keyframes colorchange {
+  0%   { color: #ff6666; }   /* 淺紅 */
+  5%   { color: #ff9966; }   /* 橘粉 */
+  10%  { color: #ffcc66; }   /* 金黃 */
+  15%  { color: #ffee66; }   /* 淺黃 */
+  20%  { color: #ff66aa; }   /* 桃紅 */
+  25%  { color: #ff99cc; }   /* 粉紅 */
+  30%  { color: #ffccff; }   /* 淡粉紫 */
+  35%  { color: #cc99ff; }   /* 淺紫 */
+  40%  { color: #b3c6ff; }   /* 淡藍紫 (比9999ff更亮) */
+  45%  { color: #99ccff; }   /* 淺亮藍 */
+  50%  { color: #aaddff; }   /* 天空藍 (取代偏暗6699ff) */
+  55%  { color: #cceeff; }   /* 淡冰藍 (取代偏綠66ffff) */
+  60%  { color: #99ffff; }   /* 冰藍 */
+  65%  { color: #ccffff; }   /* 淺水藍 */
+  70%  { color: #e6ffff; }   /* 幾乎白的藍 */
+  75%  { color: #ffccdd; }   /* 淡粉白 */
+  80%  { color: #ffddee; }   /* 淡紫粉 */
+  85%  { color: #ffeeff; }   /* 淡紫白 */
+  90%  { color: #fff0f5; }   /* 淺玫瑰白 */
+  95%  { color: #ffe6f2; }   /* 淡粉白亮色 */
+  100% { color: #ff6666; }   /* 回到淺紅 */
+  }
+  header p { margin: 0px 0 0; font-size: 15px; }
+  nav { background: #005FAF; color: #fff; padding: 12px; text-align: center; }
+  nav a { color: #fff; margin: 0 15px; text-decoration: none; font-weight: bold; }
+  section { padding: 20px; }
+  .link-list { list-style: none; padding: 0; }
+  .link-list li { background: #fff; margin: 10px 0; padding: 15px; border-radius: 10px; box-shadow: 0 3px 8px rgba(0,0,0,0.15); transition: transform 0.2s ease, box-shadow 0.2s ease; }
+  .link-list li:hover { transform: translateY(-3px); box-shadow: 0 5px 12px rgba(0,0,0,0.2); }
+  .badge { font-size: 11px; padding: 2px 6px; border-radius: 4px; margin-left: 6px; color: #fff; }
+  .ufo { background:#1d4ed8; }
+  .ghost { background:#7c3aed; }
+  .ruin { background:#b45309; }
+  .news { background:#374151; }
+  .stats { font-size: 12px; color: #666; margin-top: 5px; }
+  button { padding: 10px 15px; margin: 5px; border: none; border-radius: 5px; background: #2563eb; color: #fff; cursor: pointer; }
+  button:hover { background: #1e40af; }
+  input { padding: 8px; margin: 5px; border-radius: 5px; border: 1px solid #ccc; }
+
+
+html, body, header, .title {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+
+/* Reset */
+html,body {
+height:100%;
+  overflow-x: hidden;   /* 禁止橫向滾動 */
+  overflow-y: auto;     /* ✅ 允許垂直滾動 */
+}
+
+
+/* 📱 小型手機（小於 480px） */
+@media (max-width: 479px) {
+  .toolbar {
+    flex-direction: column;
+    gap: 6px;
+  }
+  .toolbar select,
+  .toolbar input,
+  .toolbar button {
+    width: 100%;
+  }
+  table {
+    font-size: 13px;
+  }
+  #container {
+    grid-template-columns: 1fr;
+  }
+  #sidebar {
+    position: absolute;
+    top: 42px;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: #fff;
+    z-index: 1000;
+    border-right: none;
+    border-top: 1px solid #ddd;
+  }
+  #map {
+    height: calc(100vh - 42px);
+  }
+  header > * {
+    flex: 1 1 100%;
+  }
+}
+/* 📱 中型手機（480px 到 767px） */
+@media (min-width: 480px) and (max-width: 767px) {
+  .toolbar {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .toolbar select,
+  .toolbar input,
+  .toolbar button {
+    width: 100%;
+  }
+  table {
+    font-size: 14px;
+  }
+  #container {
+    grid-template-columns: 1fr;
+  }
+  #sidebar {
+    position: absolute;
+    top: 42px;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: #fff;
+    z-index: 1000;
+    border-right: none;
+    border-top: 1px solid #ddd;
+  }
+  #map {
+    height: calc(100vh - 42px);
+  }
+  header > * {
+    flex: 1 1 100%;
+  }
+}
+/* 📱 大型手機／小平板（768px 到 1023px） */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .toolbar {
+    flex-direction: row;
+    gap: 12px;
+  }
+  .toolbar select,
+  .toolbar input,
+  .toolbar button {
+    width: auto;
+  }
+  table {
+    font-size: 15px;
+  }
+  #container {
+    grid-template-columns: 1fr;
+  }
+  #sidebar {
+    position: absolute;
+    top: 42px;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: #fff;
+    z-index: 1000;
+    border-right: none;
+    border-top: 1px solid #ddd;
+  }
+  #map {
+    height: calc(100vh - 42px);
+  }
+  header > * {
+    flex: 1 1 100%;
+  }
+}
+</style>
+</head>
+<body>
+<header>
+<h1>📰全方位網路新聞連結網🔗</h1>
+<p>新聞連結 & 新增連結</p>
+</header>
+<nav>
+<a href="#">熱門</a><a href="#">最新</a><a href="#">新奇</a><a href="#">娛樂</a>
+</nav>
+<section>
+<h2>最新連結</h2>
+<ul id="linkList" class="link-list"></ul>
+<button onclick="randomLink()">隨機傳送門 🚀</button>
+<button onclick="clearUserLinks()">清除本機投稿 🗑</button>
+<button onclick="downloadJSON()">匯出 JSON 📤</button>
+<input type="file" id="jsonFile" onchange="uploadJSON(event)">
+</section>
+<section>
+<h2>新增連結</h2>
+<input type="text" id="newTitle" placeholder="連結標題">
+<input type="url" id="newUrl" placeholder="連結網址">
+<button onclick="addLink()">提交</button>
+</section>
+<script>
+// ===== RSS 設定 =====
+const rssList = [
+  "https://news.google.com/rss?hl=zh-TW&gl=TW&ceid=TW:zh-Hant",
+  "https://www.cna.com.tw/rss/All.aspx",        // 中央社 (綜合)
+  "https://news.ltn.com.tw/rss/all.xml",        // 自由時報 (即時)
+  "https://udn.com/rssfeed/news/2",             // 聯合新聞網 (即時)
+  "https://www.ettoday.net/rss/rss_news.xml",   // ETtoday (即時)
+  "https://tw.news.yahoo.com/rss",              // Yahoo 台灣新聞
+  "https://www.chinatimes.com/rss/realtimenews",// 中時新聞網 (即時)
+  "https://news.tvbs.com.tw/rss/news.xml",      // TVBS 新聞
+  "https://www.storm.mg/rss",                   // 風傳媒
+  "https://newtalk.tw/rss",                     // 新頭殼
+  "https://www.nownews.com/rss"                 // NOWnews
+];
+const API = rss => "https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent(rss);
+
+function classify(t){
+  t = (t||"").toLowerCase();
+  if(t.includes("ufo")||t.includes("alien")) return "ufo";
+  if(t.includes("ghost")) return "ghost";
+  if(t.includes("abandoned")) return "ruin";
+  return "news";
+}
+
+// ===== 資料 =====
+let rssLinks = [];
+let userLinks = JSON.parse(localStorage.getItem("userLinks") || "[]"); // 從 localStorage 讀取
+
+// ===== 顯示 =====
+function displayLinks(){
+  const list = document.getElementById("linkList");
+  list.innerHTML = "";
+  [...rssLinks, ...userLinks].forEach(link=>{
+    if(!link.title || !link.url) return; // 過濾空白
+    const type = classify(link.title);
+    const li = document.createElement("li");
+    li.innerHTML = `
+      <a href="${link.url}" target="_blank">${link.title}</a>
+      <span class="badge ${type}">${type}</span>
+      <div class="stats">點擊次數: ${link.clicks||0}</div>
+    `;
+    list.appendChild(li);
+  });
+}
+
+// ===== RSS 抓取 =====
+async function fetchAll(){
+  let items = [];
+  for(const rss of rssList){
+    try{
+      const res = await fetch(API(rss));
+      const data = await res.json();
+      if(data.items){
+        items.push(...data.items
+          .filter(it => it.title && it.link) // 過濾掉沒有標題或連結的項目
+          .map(it => ({
+            url: it.link,
+            title: it.title,
+            date: new Date(),
+            clicks: 0
+          }))
+        );
+      }
+    }catch(e){
+      console.error("RSS 抓取失敗:", rss, e);
+    }
+  }
+  rssLinks = items;
+  displayLinks();
+}
+
+// ===== 功能 =====
+function randomLink(){
+  const all=[...rssLinks,...userLinks];
+  if(all.length===0){alert("目前沒有奇怪連結！");return;}
+  const random=all[Math.floor(Math.random()*all.length)];
+  window.open(random.url,"_blank");
+  random.clicks++;
+  localStorage.setItem("userLinks", JSON.stringify(userLinks)); // 更新點擊次數
+  displayLinks();
+}
+
+function clearUserLinks(){ 
+  userLinks=[]; 
+  localStorage.removeItem("userLinks"); // 清除 localStorage
+  displayLinks(); 
+}
+
+function downloadJSON(){
+  const dataStr="data:text/json;charset=utf-8,"+encodeURIComponent(JSON.stringify(userLinks));
+  const dlAnchor=document.createElement('a');
+  dlAnchor.setAttribute("href",dataStr);
+  dlAnchor.setAttribute("download","userLinks.json");
+  dlAnchor.click();
+}
+
+function uploadJSON(event){
+  const file=event.target.files[0];
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{ 
+      userLinks=JSON.parse(e.target.result); 
+      localStorage.setItem("userLinks", JSON.stringify(userLinks)); // 匯入後存起來
+      displayLinks(); 
+    }
+    catch(err){ alert("JSON 格式錯誤！"); }
+  };
+  reader.readAsText(file);
+}
+
+function addLink(){
+  const title=document.getElementById("newTitle").value;
+  const url=document.getElementById("newUrl").value;
+  if(!title||!url){alert("請輸入完整標題與網址！");return;}
+  userLinks.push({url,title,date:new Date(),clicks:0});
+  localStorage.setItem("userLinks", JSON.stringify(userLinks)); // 存到 localStorage
+  document.getElementById("newTitle").value="";
+  document.getElementById("newUrl").value="";
+  displayLinks();
+}
+
+// 初始化 + 定時刷新
+fetchAll();
+setInterval(fetchAll,600000); // 每10分鐘刷新一次RSS
+
+
+// 字型隨機套用
+const fonts = [
+  '"Noto Sans TC"',       // 思源黑體
+  '"Noto Serif TC"',      // 思源宋體
+  '"Microsoft JhengHei"', // 微軟正黑體
+  '"PingFang TC"',        // 蘋方字體
+  'sans-serif'            // 保底
+];
+const randomFont = fonts[Math.floor(Math.random() * fonts.length)];
+document.querySelector("h1").style.fontFamily =
+`${randomFont}, "Noto Sans TC", "Noto Serif TC", "Microsoft JhengHei", "PingFang TC", sans-serif`;
+</script>
+</body>
+</html>
