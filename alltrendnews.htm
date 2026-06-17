@@ -58,11 +58,23 @@
   button { padding: 10px 15px; margin: 5px; border: none; border-radius: 5px; background: #2563eb; color: #fff; cursor: pointer; }
   button:hover { background: #1e40af; }
   input { padding: 8px; margin: 5px; border-radius: 5px; border: 1px solid #ccc; }
+  
+li {
+  margin: 20px 0;          /* 上下間距 */
+  padding-bottom: 15px;    /* 內距 */
+  border-bottom: 1px solid #ccc; /* 分隔線 */
+}
 
-#jsonFile {
-  border: none;       /* 移除邊框 */
-  outline: none;      /* 移除點選時的外框 */
-  background: none;   /* 移除背景 */
+
+h2 {
+margin-top: 0px;
+margin-bottom: 0px;   /* 原本可能是 20px，縮小成 0px */
+color: #005FAF;
+}
+
+#searchBar {
+margin-top: 0px;
+margin-bottom: 0px;  /* 搜尋框和新聞列表之間留一點空間 */
 }
 
 
@@ -196,8 +208,14 @@ height:100%;
 <a href="#">熱門</a><a href="#">最新</a><a href="#">新奇</a><a href="#">娛樂</a>
 </nav>
 <section>
-<h2>最新連結</h2>
-<ul id="linkList" class="link-list"></ul>
+<h2>最新新聞</h2>
+<div id="searchBar">
+<input type="text" id="searchInput" placeholder="輸入關鍵字搜尋新聞">
+<button onclick="searchNews()">搜尋</button>
+<button onclick="clearSearch()">返回</button>
+</div>
+<ul id="rssList"></ul>
+<div id="pagination"></div>
 <button onclick="randomLink()">隨機傳送門 🚀</button>
 <button onclick="clearUserLinks()">清除本機投稿 🗑</button>
 <button onclick="downloadJSON()">匯出 JSON 📤</button>
@@ -210,157 +228,219 @@ height:100%;
 <button onclick="addLink()">提交</button>
 </section>
 <script>
-// ===== RSS 設定 =====
-const rssList = [
-  "https://news.google.com/rss?hl=zh-TW&gl=TW&ceid=TW:zh-Hant",
-  "https://www.cna.com.tw/rss/All.aspx",        // 中央社 (綜合)
-  "https://news.ltn.com.tw/rss/all.xml",        // 自由時報 (即時)
-  "https://udn.com/rssfeed/news/2",             // 聯合新聞網 (即時)
-  "https://www.ettoday.net/rss/rss_news.xml",   // ETtoday (即時)
-  "https://tw.news.yahoo.com/rss",              // Yahoo 台灣新聞
-  "https://www.chinatimes.com/rss/realtimenews",// 中時新聞網 (即時)
-  "https://news.tvbs.com.tw/rss/news.xml",      // TVBS 新聞
-  "https://www.storm.mg/rss",                   // 風傳媒
-  "https://newtalk.tw/rss",                     // 新頭殼
-  "https://www.nownews.com/rss"                 // NOWnews
-];
-const API = rss => "https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent(rss);
+let rssList = [
+  // 台灣新聞
+  "https://www.cna.com.tw/rss.aspx",
+  "https://news.ltn.com.tw/rss/all.xml",
+  "https://udn.com/rssfeed/news/1/2/0?ch=news",
+  "https://www.ettoday.net/rss/news.xml",
+  "https://tw.news.yahoo.com/rss",
+  "https://news.tvbs.com.tw/rss/news.xml",
+  "https://www.storm.mg/rss/latest",
+  "https://newtalk.tw/rss",
+  "https://www.nownews.com/rss",
 
-function classify(t){
-  t = (t||"").toLowerCase();
-  if(t.includes("ufo")||t.includes("alien")) return "ufo";
-  if(t.includes("ghost")) return "ghost";
-  if(t.includes("abandoned")) return "ruin";
-  return "news";
+  // 國外新聞
+  "https://feeds.bbci.co.uk/news/world/rss.xml",
+  "https://rss.cnn.com/rss/edition.rss",
+  "https://www.reuters.com/rssFeed/worldNews",
+  "https://www.nhk.or.jp/rss/news/cat0.xml",
+  "https://rss.nytimes.com/services/xml/rss/nyt/World.xml",
+  "https://www.aljazeera.com/xml/rss/all.xml"
+];
+
+let rssLinks = [];
+let currentPage = 1;
+const itemsPerPage = 15; // 每頁顯示 15 則
+let searchKeyword = "";  // 搜尋關鍵字
+
+// 多引擎抓取 RSS
+async function fetchRSS(rssUrl){
+  try {
+    const res = await fetch("https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent(rssUrl));
+    const data = await res.json();
+    if(data.items && data.items.length > 0){
+      return data.items.map(it => ({
+        title: it.title,
+        url: it.link,
+        source: data.feed?.title || rssUrl,
+        date: it.pubDate || new Date(),
+        clicks: 0
+      }));
+    }
+  } catch(e){ console.warn("rss2json 抓取失敗:", rssUrl, e); }
+
+  try {
+    const res = await fetch("https://thingproxy.freeboard.io/fetch/" + rssUrl);
+    const text = await res.text();
+    const parser = new DOMParser();
+    const xml = parser.parseFromString(text, "application/xml");
+    const items = xml.querySelectorAll("item");
+    return Array.from(items).map(item => ({
+      title: item.querySelector("title")?.textContent || "",
+      url: item.querySelector("link")?.textContent || "",
+      source: rssUrl,
+      date: item.querySelector("pubDate")?.textContent || new Date(),
+      clicks: 0
+    }));
+  } catch(e){ console.warn("thingproxy 抓取失敗:", rssUrl, e); }
+
+  try {
+    const res = await fetch("https://cors-anywhere.herokuapp.com/" + rssUrl);
+    const text = await res.text();
+    const parser = new DOMParser();
+    const xml = parser.parseFromString(text, "application/xml");
+    const items = xml.querySelectorAll("item");
+    return Array.from(items).map(item => ({
+      title: item.querySelector("title")?.textContent || "",
+      url: item.querySelector("link")?.textContent || "",
+      source: rssUrl,
+      date: item.querySelector("pubDate")?.textContent || new Date(),
+      clicks: 0
+    }));
+  } catch(e){ console.warn("cors-anywhere 抓取失敗:", rssUrl, e); }
+
+  try {
+    const res = await fetch("https://jsonp.afeld.me/?url=" + encodeURIComponent(rssUrl));
+    const text = await res.text();
+    const parser = new DOMParser();
+    const xml = parser.parseFromString(text, "application/xml");
+    const items = xml.querySelectorAll("item");
+    return Array.from(items).map(item => ({
+      title: item.querySelector("title")?.textContent || "",
+      url: item.querySelector("link")?.textContent || "",
+      source: rssUrl,
+      date: item.querySelector("pubDate")?.textContent || new Date(),
+      clicks: 0
+    }));
+  } catch(e){ console.error("jsonp.afeld.me 抓取失敗:", rssUrl, e); }
+
+  return [];
 }
 
-// ===== 資料 =====
-let rssLinks = [];
-let userLinks = JSON.parse(localStorage.getItem("userLinks") || "[]"); // 從 localStorage 讀取
+// 自動評分系統
+function autoScore(title, source, date){
+  let score = 0;
+  score += Math.min(title.length, 50);
+  const keywords = ["快訊","重大","獨家","速報","最新","Breaking","Exclusive"];
+  keywords.forEach(kw=>{ if(title.includes(kw)) score += 20; });
+  const pubDate = new Date(date);
+  const now = new Date();
+  const diffHours = (now - pubDate) / (1000*60*60);
+  if(diffHours <= 24) score += 30;
+  else if(diffHours <= 168) score += 15;
+  return score;
+}
 
-// ===== 顯示 =====
-function displayLinks(){
-  const list = document.getElementById("linkList");
+// 抓取所有 RSS
+async function fetchAll(){
+  let items = [];
+  const results = await Promise.all(rssList.map(rss => fetchRSS(rss)));
+  results.forEach(feedItems => items.push(...feedItems));
+
+  // 去掉重複
+  const seen = new Set();
+  rssLinks = items.filter(link=>{
+    if(seen.has(link.url)) return false;
+    seen.add(link.url);
+    return true;
+  });
+
+  renderPage();
+}
+
+// 分頁顯示
+function renderPage(){
+  const list = document.getElementById("rssList");
   list.innerHTML = "";
-  [...rssLinks, ...userLinks].forEach(link=>{
-    if(!link.title || !link.url) return; // 過濾空白
-    const type = classify(link.title);
+
+  // 搜尋過濾
+  let filteredLinks = rssLinks;
+  if(searchKeyword.trim() !== ""){
+    filteredLinks = rssLinks.filter(link => 
+      link.title.toLowerCase().includes(searchKeyword.toLowerCase())
+    );
+  }
+
+  const start = (currentPage - 1) * itemsPerPage;
+  const end = start + itemsPerPage;
+  const pageItems = filteredLinks.slice(start, end);
+
+  pageItems.forEach(link=>{
     const li = document.createElement("li");
+    const type = link.source.includes("cna") ? "domestic" : "international";
+    const pubDate = new Date(link.date).toLocaleString("zh-TW");
     li.innerHTML = `
       <a href="${link.url}" target="_blank">${link.title}</a>
       <span class="badge ${type}">${type}</span>
-      <div class="stats">來源: ${link.source || "未知"} | 點擊次數: ${link.clicks||0}</div>
+      <div class="stats">
+        來源: ${link.source || "未知"} 
+        | 日期: ${pubDate} 
+        | 點擊次數: ${link.clicks||0} 
+        | 自動評分: ${autoScore(link.title, link.source, link.date)} 
+        | <a href="https://translate.google.com/translate?hl=zh-TW&sl=auto&u=${encodeURIComponent(link.url)}" target="_blank">🌐 Google翻譯</a>
+      </div>
     `;
     list.appendChild(li);
   });
-}
 
-// ===== RSS 抓取 =====
-async function fetchAll(){
-  let items = [];
-  for(const rss of rssList){
-    try{
-      const res = await fetch(API(rss));
-      const data = await res.json();
+  // 分頁按鈕
+  const pagination = document.getElementById("pagination");
+  pagination.innerHTML = "";
+  const totalPages = Math.ceil(filteredLinks.length / itemsPerPage);
 
-      // 三層判斷：feed.title → it.source → DOMParser fallback
-      let feedTitle = "";
-      if(data.feed && data.feed.title){
-        feedTitle = data.feed.title;
-      }
-
-      if(data.items){
-        items.push(...data.items
-          .filter(it => it.title && it.link) // 過濾掉沒有標題或連結的項目
-          .map(it => ({
-            url: it.link,
-            title: it.title,
-            source: feedTitle || it.source || "", // 第二優先 it.source
-            date: new Date(),
-            clicks: 0
-          }))
-        );
-      }
-
-      // 如果 feedTitle 還是空，就自己解析 RSS XML
-      if(!feedTitle){
-        try{
-          const xmlRes = await fetch(rss);
-          const xmlText = await xmlRes.text();
-          const parser = new DOMParser();
-          const xmlDoc = parser.parseFromString(xmlText, "application/xml");
-          feedTitle = xmlDoc.querySelector("channel > title")?.textContent || "";
-          // 把剛剛 items 裡沒有來源的補上
-          items = items.map(it => ({
-            ...it,
-            source: it.source || feedTitle
-          }));
-        }catch(err){
-          console.warn("DOMParser fallback 失敗:", rss, err);
-        }
-      }
-
-    }catch(e){
-      console.error("RSS 抓取失敗:", rss, e);
-    }
+  if(currentPage > 1){
+    const prevBtn = document.createElement("button");
+    prevBtn.textContent = "上一頁";
+    prevBtn.onclick = ()=>{ currentPage--; renderPage(); };
+    pagination.appendChild(prevBtn);
   }
-  rssLinks = items;
-  displayLinks();
-}
 
-// ===== 功能 =====
-function randomLink(){
-  const all=[...rssLinks,...userLinks];
-  if(all.length===0){alert("目前沒有奇怪連結！");return;}
-  const random=all[Math.floor(Math.random()*all.length)];
-  window.open(random.url,"_blank");
-  random.clicks++;
-  localStorage.setItem("userLinks", JSON.stringify(userLinks)); // 更新點擊次數
-  displayLinks();
-}
+  for(let i=1; i<=totalPages; i++){
+    const btn = document.createElement("button");
+    btn.textContent = i;
+    btn.onclick = ()=>{ currentPage = i; renderPage(); };
+    if(i === currentPage) btn.style.fontWeight = "bold";
+    pagination.appendChild(btn);
+  }
 
-function clearUserLinks(){ 
-  userLinks=[]; 
-  localStorage.removeItem("userLinks"); // 清除 localStorage
-  displayLinks(); 
+  if(currentPage < totalPages){
+    const nextBtn = document.createElement("button");
+    nextBtn.textContent = "下一頁";
+    nextBtn.onclick = ()=>{ currentPage++; renderPage(); };
+    pagination.appendChild(nextBtn);
+  }
 }
-
-function downloadJSON(){
-  const dataStr="data:text/json;charset=utf-8,"+encodeURIComponent(JSON.stringify(userLinks));
-  const dlAnchor=document.createElement('a');
-  dlAnchor.setAttribute("href",dataStr);
-  dlAnchor.setAttribute("download","userLinks.json");
-  dlAnchor.click();
-}
-
-function uploadJSON(event){
-  const file=event.target.files[0];
-  const reader=new FileReader();
-  reader.onload=e=>{
-    try{ 
-      userLinks=JSON.parse(e.target.result); 
-      localStorage.setItem("userLinks", JSON.stringify(userLinks)); // 匯入後存起來
-      displayLinks(); 
-    }
-    catch(err){ alert("JSON 格式錯誤！"); }
-  };
-  reader.readAsText(file);
-}
-
-function addLink(){
-  const title=document.getElementById("newTitle").value;
-  const url=document.getElementById("newUrl").value;
-  if(!title||!url){alert("請輸入完整標題與網址！");return;}
-  userLinks.push({url,title,date:new Date(),clicks:0});
-  localStorage.setItem("userLinks", JSON.stringify(userLinks)); // 存到 localStorage
-  document.getElementById("newTitle").value="";
-  document.getElementById("newUrl").value="";
-  displayLinks();
-}
-
-// 初始化 + 定時刷新
+// 初始化
 fetchAll();
-setInterval(fetchAll,600000); // 每10分鐘刷新一次RSS
+setInterval(fetchAll, 600000); // 每 10 分鐘刷新
+
+
+// 搜尋功能
+function searchNews(){
+  const input = document.getElementById("searchInput");
+  searchKeyword = input.value;
+  currentPage = 1;
+  renderPage();
+}
+// 清除搜尋
+function clearSearch(){
+  document.getElementById("searchInput").value = "";
+  searchKeyword = "";
+  currentPage = 1;
+  renderPage();
+}
+// 讓輸入框按 Enter 也能觸發搜尋
+document.addEventListener("DOMContentLoaded", ()=>{
+  const input = document.getElementById("searchInput");
+  input.addEventListener("keypress", function(event){
+    if(event.key === "Enter"){
+      event.preventDefault(); // 防止表單提交
+      searchNews();
+    }
+  });
+});
+
 
 // 字型隨機套用
 const fonts = [
