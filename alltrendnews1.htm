@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&display=swap" rel="stylesheet">
+<title>📰全方位網路新聞連結網🔗</title>
+<style>
+  body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 0; }
+  header { background: #005FAF; color: #fff; padding: 20px; text-align: center; }
+  header h1 {
+  margin-top: 0 !important;   /* 強制把上方間距設為 0 */
+  margin-bottom: 0.1em !important; /* 視需要調整下方間距 */
+  filter: blur(1.2px); /* 模糊化 */
+  font-size: 3.7vw;
+  font-weight: 900;
+  text-shadow: 0 0 30px currentColor, 0 0 50px currentColor;
+  font-family: "Noto Sans TC", "Noto Serif TC", "Microsoft JhengHei", "PingFang TC", sans-serif;
+  animation: colorchange 20s infinite;
+  }
+  @keyframes colorchange {
+  0%   { color: #ff6666; }   /* 淺紅 */
+  5%   { color: #ff9966; }   /* 橘粉 */
+  10%  { color: #ffcc66; }   /* 金黃 */
+  15%  { color: #ffee66; }   /* 淺黃 */
+  20%  { color: #ff66aa; }   /* 桃紅 */
+  25%  { color: #ff99cc; }   /* 粉紅 */
+  30%  { color: #ffccff; }   /* 淡粉紫 */
+  35%  { color: #cc99ff; }   /* 淺紫 */
+  40%  { color: #b3c6ff; }   /* 淡藍紫 (比9999ff更亮) */
+  45%  { color: #99ccff; }   /* 淺亮藍 */
+  50%  { color: #aaddff; }   /* 天空藍 (取代偏暗6699ff) */
+  55%  { color: #cceeff; }   /* 淡冰藍 (取代偏綠66ffff) */
+  60%  { color: #99ffff; }   /* 冰藍 */
+  65%  { color: #ccffff; }   /* 淺水藍 */
+  70%  { color: #e6ffff; }   /* 幾乎白的藍 */
+  75%  { color: #ffccdd; }   /* 淡粉白 */
+  80%  { color: #ffddee; }   /* 淡紫粉 */
+  85%  { color: #ffeeff; }   /* 淡紫白 */
+  90%  { color: #fff0f5; }   /* 淺玫瑰白 */
+  95%  { color: #ffe6f2; }   /* 淡粉白亮色 */
+  100% { color: #ff6666; }   /* 回到淺紅 */
+  }
+  header p { margin: 0px 0 0; font-size: 15px; }
+  nav { background: #005FAF; color: #fff; padding: 12px; text-align: center; }
+  nav a { color: #fff; margin: 0 15px; text-decoration: none; font-weight: bold; }
+  section { padding: 20px; }
+  .link-list { list-style: none; padding: 0; }
+  .link-list li { background: #fff; margin: 10px 0; padding: 15px; border-radius: 10px; box-shadow: 0 3px 8px rgba(0,0,0,0.15); transition: transform 0.2s ease, box-shadow 0.2s ease; }
+  .link-list li:hover { transform: translateY(-3px); box-shadow: 0 5px 12px rgba(0,0,0,0.2); }
+  .badge { font-size: 11px; padding: 2px 6px; border-radius: 4px; margin-left: 6px; color: #fff; }
+  .ufo { background:#1d4ed8; }
+  .ghost { background:#7c3aed; }
+  .ruin { background:#b45309; }
+  .news { background:#374151; }
+  .stats { font-size: 12px; color: #666; margin-top: 5px; }
+  button { padding: 10px 15px; margin: 5px; border: none; border-radius: 5px; background: #2563eb; color: #fff; cursor: pointer; }
+  button:hover { background: #1e40af; }
+  input { padding: 8px; margin: 5px; border-radius: 5px; border: 1px solid #ccc; }
+  
+li {
+  margin: 20px 0;          /* 上下間距 */
+  padding-bottom: 15px;    /* 內距 */
+  border-bottom: 1px solid #ccc; /* 分隔線 */
+}
+
+
+h2 {
+margin-top: 0px;
+margin-bottom: 0px;   /* 原本可能是 20px，縮小成 0px */
+color: #005FAF;
+}
+
+#searchBar {
+margin-top: 0px;
+margin-bottom: 0px;  /* 搜尋框和新聞列表之間留一點空間 */
+}
+
+
+html, body, header, .title {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+
+/* Reset */
+html,body {
+height:100%;
+  overflow-x: hidden;   /* 禁止橫向滾動 */
+  overflow-y: auto;     /* ✅ 允許垂直滾動 */
+}
+
+
+/* 📱 小型手機（小於 480px） */
+@media (max-width: 479px) {
+  .toolbar {
+    flex-direction: column;
+    gap: 6px;
+  }
+  .toolbar select,
+  .toolbar input,
+  .toolbar button {
+    width: 100%;
+  }
+  table {
+    font-size: 13px;
+  }
+  #container {
+    grid-template-columns: 1fr;
+  }
+  #sidebar {
+    position: absolute;
+    top: 42px;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: #fff;
+    z-index: 1000;
+    border-right: none;
+    border-top: 1px solid #ddd;
+  }
+  #map {
+    height: calc(100vh - 42px);
+  }
+  header > * {
+    flex: 1 1 100%;
+  }
+}
+/* 📱 中型手機（480px 到 767px） */
+@media (min-width: 480px) and (max-width: 767px) {
+  .toolbar {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .toolbar select,
+  .toolbar input,
+  .toolbar button {
+    width: 100%;
+  }
+  table {
+    font-size: 14px;
+  }
+  #container {
+    grid-template-columns: 1fr;
+  }
+  #sidebar {
+    position: absolute;
+    top: 42px;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: #fff;
+    z-index: 1000;
+    border-right: none;
+    border-top: 1px solid #ddd;
+  }
+  #map {
+    height: calc(100vh - 42px);
+  }
+  header > * {
+    flex: 1 1 100%;
+  }
+}
+/* 📱 大型手機／小平板（768px 到 1023px） */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .toolbar {
+    flex-direction: row;
+    gap: 12px;
+  }
+  .toolbar select,
+  .toolbar input,
+  .toolbar button {
+    width: auto;
+  }
+  table {
+    font-size: 15px;
+  }
+  #container {
+    grid-template-columns: 1fr;
+  }
+  #sidebar {
+    position: absolute;
+    top: 42px;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: #fff;
+    z-index: 1000;
+    border-right: none;
+    border-top: 1px solid #ddd;
+  }
+  #map {
+    height: calc(100vh - 42px);
+  }
+  header > * {
+    flex: 1 1 100%;
+  }
+}
+</style>
+</head>
+<body>
+<header>
+<h1>📰全方位網路新聞連結網🔗</h1>
+<p>新聞連結 & 新增連結</p>
+</header>
+<nav>
+<a href="#">熱門</a><a href="#">最新</a><a href="#">新奇</a><a href="#">娛樂</a>
+</nav>
+<section>
+<h2>最新新聞</h2>
+<div id="searchBar">
+<input type="text" id="searchInput" placeholder="輸入關鍵字搜尋新聞">
+<button onclick="searchNews()">搜尋</button>
+<button onclick="clearSearch()">返回</button>
+</div>
+<ul id="rssList"></ul>
+<div id="pagination"></div>
+<button onclick="randomLink()">隨機傳送門 🚀</button>
+<button onclick="clearUserLinks()">清除本機投稿 🗑</button>
+<button onclick="downloadJSON()">匯出 JSON 📤</button>
+<input type="file" id="jsonFile" onchange="uploadJSON(event)">
+</section>
+<section>
+<h2>新增連結</h2>
+<input type="text" id="newTitle" placeholder="連結標題">
+<input type="url" id="newUrl" placeholder="連結網址">
+<button onclick="addLink()">提交</button>
+</section>
+<script>
+let rssList = [
+  // 台灣新聞
+  "https://www.cna.com.tw/rss.aspx",
+  "https://news.ltn.com.tw/rss/all.xml",
+  "https://udn.com/rssfeed/news/1/2/0?ch=news",
+  "https://www.ettoday.net/rss/news.xml",
+  "https://tw.news.yahoo.com/rss",
+  "https://news.tvbs.com.tw/rss/news.xml",
+  "https://www.storm.mg/rss/latest",
+  "https://newtalk.tw/rss",
+  "https://www.nownews.com/rss",
+  // 國外新聞
+  "https://feeds.bbci.co.uk/news/world/rss.xml",
+  "https://rss.cnn.com/rss/edition.rss",
+  "https://www.reuters.com/rssFeed/worldNews",
+  "https://www.nhk.or.jp/rss/news/cat0.xml",
+  "https://rss.nytimes.com/services/xml/rss/nyt/World.xml",
+  "https://www.aljazeera.com/xml/rss/all.xml",
+  "https://www.nasa.gov/rss/dyn/breaking_news.rss"
+];
+
+let rssLinks = [];
+let currentPage = 1;
+const itemsPerPage = 15; // 每頁顯示 15 則
+let searchKeyword = "";  // 搜尋關鍵字
+
+// 多引擎抓取 RSS
+async function fetchRSS(rssUrl){
+  try {
+    const res = await fetch("https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent(rssUrl));
+    const data = await res.json();
+    if(data.items && data.items.length > 0){
+      return data.items.map(it => ({
+        title: it.title,
+        url: it.link,
+        source: data.feed?.title || rssUrl,
+        date: it.pubDate || new Date(),
+        clicks: 0
+      }));
+    }
+  } catch(e){ console.warn("rss2json 抓取失敗:", rssUrl, e); }
+
+  try {
+    const res = await fetch("https://thingproxy.freeboard.io/fetch/" + rssUrl);
+    const text = await res.text();
+    const parser = new DOMParser();
+    const xml = parser.parseFromString(text, "application/xml");
+    const items = xml.querySelectorAll("item");
+    return Array.from(items).map(item => ({
+      title: item.querySelector("title")?.textContent || "",
+      url: item.querySelector("link")?.textContent || "",
+      source: rssUrl,
+      date: item.querySelector("pubDate")?.textContent || new Date(),
+      clicks: 0
+    }));
+  } catch(e){ console.warn("thingproxy 抓取失敗:", rssUrl, e); }
+
+  try {
+    const res = await fetch("https://cors-anywhere.herokuapp.com/" + rssUrl);
+    const text = await res.text();
+    const parser = new DOMParser();
+    const xml = parser.parseFromString(text, "application/xml");
+    const items = xml.querySelectorAll("item");
+    return Array.from(items).map(item => ({
+      title: item.querySelector("title")?.textContent || "",
+      url: item.querySelector("link")?.textContent || "",
+      source: rssUrl,
+      date: item.querySelector("pubDate")?.textContent || new Date(),
+      clicks: 0
+    }));
+  } catch(e){ console.warn("cors-anywhere 抓取失敗:", rssUrl, e); }
+
+  try {
+    const res = await fetch("https://jsonp.afeld.me/?url=" + encodeURIComponent(rssUrl));
+    const text = await res.text();
+    const parser = new DOMParser();
+    const xml = parser.parseFromString(text, "application/xml");
+    const items = xml.querySelectorAll("item");
+    return Array.from(items).map(item => ({
+      title: item.querySelector("title")?.textContent || "",
+      url: item.querySelector("link")?.textContent || "",
+      source: rssUrl,
+      date: item.querySelector("pubDate")?.textContent || new Date(),
+      clicks: 0
+    }));
+  } catch(e){ console.error("jsonp.afeld.me 抓取失敗:", rssUrl, e); }
+
+  return [];
+}
+
+// 自動評分系統
+function autoScore(title, source, date){
+  let score = 0;
+  score += Math.min(title.length, 50);
+  const keywords = ["快訊","重大","獨家","速報","最新","Breaking","Exclusive"];
+  keywords.forEach(kw=>{ if(title.includes(kw)) score += 20; });
+  const pubDate = new Date(date);
+  const now = new Date();
+  const diffHours = (now - pubDate) / (1000*60*60);
+  if(diffHours <= 24) score += 30;
+  else if(diffHours <= 168) score += 15;
+  return score;
+}
+
+// 抓取所有 RSS
+async function fetchAll(){
+  let items = [];
+  const results = await Promise.all(rssList.map(rss => fetchRSS(rss)));
+  results.forEach(feedItems => items.push(...feedItems));
+
+  // 去掉重複
+  const seen = new Set();
+  rssLinks = items.filter(link=>{
+    if(seen.has(link.url)) return false;
+    seen.add(link.url);
+    return true;
+  });
+
+  renderPage();
+}
+
+// 分頁顯示
+function renderPage(){
+  const list = document.getElementById("rssList");
+  list.innerHTML = "";
+
+  // 搜尋過濾
+  let filteredLinks = rssLinks;
+  if(searchKeyword.trim() !== ""){
+    filteredLinks = rssLinks.filter(link => 
+      link.title.toLowerCase().includes(searchKeyword.toLowerCase())
+    );
+  }
+
+  const start = (currentPage - 1) * itemsPerPage;
+  const end = start + itemsPerPage;
+  const pageItems = filteredLinks.slice(start, end);
+
+  pageItems.forEach(link=>{
+    const li = document.createElement("li");
+    const type = link.source.includes("cna") ? "domestic" : "international";
+    const pubDate = new Date(link.date).toLocaleString("zh-TW");
+    li.innerHTML = `
+      <a href="${link.url}" target="_blank">${link.title}</a>
+      <span class="badge ${type}">${type}</span>
+      <div class="stats">
+        來源: ${link.source || "未知"} 
+        | 日期: ${pubDate} 
+        | 點擊次數: ${link.clicks||0} 
+        | 自動評分: ${autoScore(link.title, link.source, link.date)} 
+        | <a href="https://translate.google.com/translate?hl=zh-TW&sl=auto&u=${encodeURIComponent(link.url)}" target="_blank">🌐 Google翻譯</a>
+      </div>
+    `;
+    list.appendChild(li);
+  });
+
+  // 分頁按鈕
+  const pagination = document.getElementById("pagination");
+  pagination.innerHTML = "";
+  const totalPages = Math.ceil(filteredLinks.length / itemsPerPage);
+
+  if(currentPage > 1){
+    const prevBtn = document.createElement("button");
+    prevBtn.textContent = "上一頁";
+    prevBtn.onclick = ()=>{ currentPage--; renderPage(); };
+    pagination.appendChild(prevBtn);
+  }
+
+  for(let i=1; i<=totalPages; i++){
+    const btn = document.createElement("button");
+    btn.textContent = i;
+    btn.onclick = ()=>{ currentPage = i; renderPage(); };
+    if(i === currentPage) btn.style.fontWeight = "bold";
+    pagination.appendChild(btn);
+  }
+
+  if(currentPage < totalPages){
+    const nextBtn = document.createElement("button");
+    nextBtn.textContent = "下一頁";
+    nextBtn.onclick = ()=>{ currentPage++; renderPage(); };
+    pagination.appendChild(nextBtn);
+  }
+}
+// 初始化
+fetchAll();
+setInterval(fetchAll, 600000); // 每 10 分鐘刷新
+
+
+// 搜尋功能
+function searchNews(){
+  const input = document.getElementById("searchInput");
+  searchKeyword = input.value;
+  currentPage = 1;
+  renderPage();
+}
+// 清除搜尋
+function clearSearch(){
+  document.getElementById("searchInput").value = "";
+  searchKeyword = "";
+  currentPage = 1;
+  renderPage();
+}
+// 讓輸入框按 Enter 也能觸發搜尋
+document.addEventListener("DOMContentLoaded", ()=>{
+  const input = document.getElementById("searchInput");
+  input.addEventListener("keypress", function(event){
+    if(event.key === "Enter"){
+      event.preventDefault(); // 防止表單提交
+      searchNews();
+    }
+  });
+});
+
+
+// 字型隨機套用
+const fonts = [
+  '"Noto Sans TC"',       // 思源黑體
+  '"Noto Serif TC"',      // 思源宋體
+  '"Microsoft JhengHei"', // 微軟正黑體
+  '"PingFang TC"',        // 蘋方字體
+  'sans-serif'            // 保底
+];
+const randomFont = fonts[Math.floor(Math.random() * fonts.length)];
+document.querySelector("h1").style.fontFamily =
+`${randomFont}, "Noto Sans TC", "Noto Serif TC", "Microsoft JhengHei", "PingFang TC", sans-serif`;
+</script>
+</body>
+</html>

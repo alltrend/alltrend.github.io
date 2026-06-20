@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>📰全方位網路新聞中心🔎</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  body { font-family: 'Noto Sans TC', sans-serif; background: #f9f9f9; color: #333; margin: 0; padding: 0; }
+  header { background: linear-gradient(90deg, #005AB5); padding: 20px; text-align: center; color: #fff; }
+  nav { background: #0096c7; padding: 10px; text-align: center; }
+  nav a { color: #fff; margin: 0 12px; text-decoration: none; font-weight: bold; }
+  nav a:hover { color: #ffd166; }
+  header h1 { 
+  margin-top: 0px !important;   /* 強制把上方間距設為 0 */
+  margin-bottom: 0px !important; /* 視需要調整下方間距 */
+  filter: blur(1.2px); /* 模糊化 */
+  font-size: 3.8vw;
+  font-weight: 900;
+  text-shadow: 0 0 30px currentColor, 0 0 50px currentColor;
+  font-family: "Noto Sans TC", "Noto Serif TC", "Microsoft JhengHei", "PingFang TC", sans-serif;
+  animation: colorchange 20s infinite;
+  }
+  @keyframes colorchange {
+  0%   { color: #ff6666; }   /* 淺紅 */
+  5%   { color: #ff9966; }   /* 橘粉 */
+  10%  { color: #ffcc66; }   /* 金黃 */
+  15%  { color: #ffee66; }   /* 淺黃 */
+  20%  { color: #ff66aa; }   /* 桃紅 */
+  25%  { color: #ff99cc; }   /* 粉紅 */
+  30%  { color: #ffccff; }   /* 淡粉紫 */
+  35%  { color: #cc99ff; }   /* 淺紫 */
+  40%  { color: #b3c6ff; }   /* 淡藍紫 (比9999ff更亮) */
+  45%  { color: #99ccff; }   /* 淺亮藍 */
+  50%  { color: #aaddff; }   /* 天空藍 (取代偏暗6699ff) */
+  55%  { color: #cceeff; }   /* 淡冰藍 (取代偏綠66ffff) */
+  60%  { color: #99ffff; }   /* 冰藍 */
+  65%  { color: #ccffff; }   /* 淺水藍 */
+  70%  { color: #e6ffff; }   /* 幾乎白的藍 */
+  75%  { color: #ffccdd; }   /* 淡粉白 */
+  80%  { color: #ffddee; }   /* 淡紫粉 */
+  85%  { color: #ffeeff; }   /* 淡紫白 */
+  90%  { color: #fff0f5; }   /* 淺玫瑰白 */
+  95%  { color: #ffe6f2; }   /* 淡粉白亮色 */
+  100% { color: #ff6666; }   /* 回到淺紅 */
+  }
+  nav { background: #0096c7; padding: 10px; text-align: center; }
+  nav a { color: #fff; margin: 0 12px; text-decoration: none; font-weight: bold; }
+  nav a:hover { color: #ffd166; }
+  main { display: flex; gap: 20px; padding: 20px; max-width: 1200px; margin: auto; }
+  .content { flex: 2; order: 2; }
+  .sidebar { flex: 1; background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+             position: fixed; left: -320px; top: 100px; width: 300px; height: 80%; overflow-y: auto; transition: left 0.3s ease; }
+  .sidebar.show { left: 20px; }
+  h2 { color: #0077b6; border-bottom: 2px solid #00b4d8; padding-bottom: 5px; }
+  .link-list { list-style: none; padding: 0; }
+  .link-list li { background: #fff; margin: 10px 0; padding: 15px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+  .stats { font-size: 12px; color: #555; margin-top: 5px; }
+  button { padding: 8px 14px; margin: 5px; border: none; border-radius: 5px; background: #0077b6; color: #fff; cursor: pointer; }
+  button:hover { background: #023e8a; }
+  input, select { width: 100%; padding: 8px; margin: 5px 0; border-radius: 5px; border: 1px solid #ccc; }
+  .center-controls { text-align: center; margin-top: 15px; }
+  .center-controls button { display: inline-block; margin: 5px; }
+  #pagination button { margin: 0 3px; }
+  .carousel-container {
+  display: flex;
+  align-items: center;   /* 垂直置中，確保箭頭和內容在同一行 */
+  width: 315px;          /* 你需要的寬度 */
+  overflow: hidden;
+  border: 0px solid #ccc; }
+  .carousel { display: flex; overflow-x: auto; scroll-behavior: smooth; gap: 10px; flex: 1; }
+  .carousel::-webkit-scrollbar { display: none; }
+  .carousel a { flex: 0 0 auto; min-width: 120px; text-align: center; padding: 10px; background: #f1f1f1; border-radius: 6px; text-decoration: none; color: #0077b6; font-weight: bold; }
+  .carousel a:hover { background: #0077b6; color: #fff; }
+  .carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  background: #0077b6;
+  color: #fff;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+}
+  .badge.domestic { background: #ff6f61; padding: 2px 6px; border-radius: 4px; font-size: 11px; color:#fff; }
+  .badge.international { background: #5dade2; padding: 2px 6px; border-radius: 4px; font-size: 11px; color:#fff; }
+  .carousel-btn:first-of-type { left: 0; }   /* 左邊按鈕 */
+  .carousel-btn:last-of-type { right: 0; }  /* 右邊按鈕 */
+  
+  
+  html, body, header, .title {
+  margin: 0 !important;
+  padding: 1px !important;
+}
+
+
+/* Reset */
+html,body {
+height:100%;
+  overflow-x: hidden;   /* 禁止橫向滾動 */
+  overflow-y: auto;     /* ✅ 允許垂直滾動 */
+}
+
+
+/* 📱 小型手機（小於 480px） */
+@media (max-width: 479px) {
+  .toolbar {
+    flex-direction: column;
+    gap: 6px;
+  }
+  .toolbar select,
+  .toolbar input,
+  .toolbar button {
+    width: 100%;
+  }
+  table {
+    font-size: 13px;
+  }
+  #container {
+    grid-template-columns: 1fr;
+  }
+  #sidebar {
+    position: absolute;
+    top: 42px;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: #fff;
+    z-index: 1000;
+    border-right: none;
+    border-top: 1px solid #ddd;
+  }
+  #map {
+    height: calc(100vh - 42px);
+  }
+  header > * {
+    flex: 1 1 100%;
+  }
+}
+/* 📱 中型手機（480px 到 767px） */
+@media (min-width: 480px) and (max-width: 767px) {
+  .toolbar {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .toolbar select,
+  .toolbar input,
+  .toolbar button {
+    width: 100%;
+  }
+  table {
+    font-size: 14px;
+  }
+  #container {
+    grid-template-columns: 1fr;
+  }
+  #sidebar {
+    position: absolute;
+    top: 42px;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: #fff;
+    z-index: 1000;
+    border-right: none;
+    border-top: 1px solid #ddd;
+  }
+  #map {
+    height: calc(100vh - 42px);
+  }
+  header > * {
+    flex: 1 1 100%;
+  }
+}
+/* 📱 大型手機／小平板（768px 到 1023px） */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .toolbar {
+    flex-direction: row;
+    gap: 12px;
+  }
+  .toolbar select,
+  .toolbar input,
+  .toolbar button {
+    width: auto;
+  }
+  table {
+    font-size: 15px;
+  }
+  #container {
+    grid-template-columns: 1fr;
+  }
+  #sidebar {
+    position: absolute;
+    top: 42px;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: #fff;
+    z-index: 1000;
+    border-right: none;
+    border-top: 1px solid #ddd;
+  }
+  #map {
+    height: calc(100vh - 42px);
+  }
+  header > * {
+    flex: 1 1 100%;
+  }
+}
+</style>
+</head>
+<body>
+<header>
+<h1>📰全方位網路新聞中心🔎</h1>
+<p>最新新聞、熱門網站、投稿連結</p>
+</header>
+<nav>
+<a href="#">熱門</a><a href="#">最新</a><a href="#">國際</a><a href="#">娛樂</a>
+</nav>
+<main>
+<div class="content">
+<h2>最新新聞</h2>
+<ul id="rssList" class="link-list"></ul>
+<ul id="userList" class="link-list"></ul>
+<!-- 分頁 + 顯示/隱藏按鈕置中 -->
+<div class="center-controls">
+<div id="pagination"></div>
+<p><button onclick="toggleSidebar()">顯示/隱藏側欄 ⚙</button>
+</div>
+
+<!-- 新增連結放在新聞下面 -->
+<h2>使用者投稿</h2>
+<input type="text" id="newTitle" placeholder="連結標題">
+<input type="url" id="newUrl" placeholder="連結網址">
+<button onclick="addLink()">提交</button>
+<button onclick="clearLinks()">清理本地儲存</button>
+<button onclick="exportLinks()">匯出 JSON</button>
+<button onclick="exportLinksTxt()">匯出 TXT</button>
+<input type="file" id="importFile" accept=".json,.txt" onchange="importLinks(event)">
+</div>
+
+<div class="sidebar" id="sidebar">
+<h2>搜尋與設定</h2>
+<input type="text" id="searchInput" placeholder="輸入關鍵字搜尋新聞">
+<button onclick="searchNews()">搜尋</button>
+<button onclick="clearSearch()">返回</button>
+<select id="colorSelect"><option value="">選擇背景顏色</option></select>
+
+<h2>熱門網站入口</h2>
+<div class="carousel-container">
+<button onclick="scrollCarouselLeft()">⬅</button>
+<div class="carousel" id="siteCarousel">
+<a href="https://www.google.com" target="_blank">Google</a>
+<a href="https://www.facebook.com" target="_blank">Facebook</a>
+<a href="https://www.youtube.com" target="_blank">YouTube</a>
+<a href="https://www.yahoo.com" target="_blank">Yahoo</a>
+<a href="https://www.wikipedia.org" target="_blank">Wikipedia</a>
+<a href="https://www.instagram.com" target="_blank">Instagram</a>
+<a href="https://twitter.com" target="_blank">Twitter</a>
+<a href="https://www.linkedin.com" target="_blank">LinkedIn</a>
+<a href="https://www.reddit.com" target="_blank">Reddit</a>
+<a href="https://www.amazon.com" target="_blank">Amazon</a>
+<a href="https://shopee.tw" target="_blank">Shopee</a>
+<a href="https://www.pchome.com.tw" target="_blank">PChome</a>
+<a href="https://www.ruten.com.tw" target="_blank">露天拍賣</a>
+<a href="https://www.bbc.com" target="_blank">BBC</a>
+<a href="https://edition.cnn.com" target="_blank">CNN</a>
+<a href="https://www.nytimes.com" target="_blank">NYTimes</a>
+<a href="https://www.aljazeera.com" target="_blank">Al Jazeera</a>
+<a href="https://www.nhk.or.jp" target="_blank">NHK</a>
+<a href="https://www.netflix.com" target="_blank">Netflix</a>
+<a href="https://open.spotify.com" target="_blank">Spotify</a>
+</div>
+<button onclick="scrollCarouselRight()">➡</button>
+</div>
+<p><center><button onclick="toggleSidebar()">顯示/隱藏側欄 ⚙</button><center>
+</div>
+<script>
+function toggleSidebar(){ document.getElementById("sidebar").classList.toggle("show"); }
+function scrollCarouselLeft(){
+document.getElementById("siteCarousel").scrollBy({left:-200, behavior:'smooth'}); }
+function scrollCarouselRight(){
+document.getElementById("siteCarousel").scrollBy({left:200, behavior:'smooth'}); }
+
+// 使用者投稿：新增連結接在新聞列表下方
+function addLink(){
+  const title = document.getElementById("newTitle").value.trim();
+  const url = document.getElementById("newUrl").value.trim();
+  if(title && url){
+    let saved = JSON.parse(localStorage.getItem("userLinks") || "[]");
+    saved.push({title, url, date:new Date().toLocaleString("zh-TW")});
+    localStorage.setItem("userLinks", JSON.stringify(saved));
+    document.getElementById("newTitle").value = "";
+    document.getElementById("newUrl").value = "";
+    renderUserLinks();
+  } else {
+    alert("請輸入完整的標題與網址！");
+  }
+}
+function clearLinks(){
+  localStorage.removeItem("userLinks");
+  renderUserLinks();
+  alert("已清理本地儲存！");
+}
+function exportLinks(){
+  const data = localStorage.getItem("userLinks") || "[]";
+  const blob = new Blob([data], {type:"application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "links.json";
+  a.click();
+}
+function exportLinksTxt(){
+  const data = JSON.parse(localStorage.getItem("userLinks") || "[]");
+  const txt = data.map(l=>`${l.title} - ${l.url} (${l.date})`).join("\n");
+  const blob = new Blob([txt], {type:"text/plain"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "links.txt";
+  a.click();
+}
+function importLinks(event){
+  const file = event.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e){
+    try {
+      let content = e.target.result;
+      let data;
+      if(file.name.endsWith(".json")){
+        data = JSON.parse(content);
+      } else {
+        data = content.split("\n").map(line=>{
+          const parts = line.split(" - ");
+          return {title:parts[0], url:parts[1], date:"匯入"};
+        });
+      }
+      localStorage.setItem("userLinks", JSON.stringify(data));
+      renderUserLinks();
+      alert("匯入成功！");
+    } catch(err){
+      alert("匯入失敗：" + err);
+    }
+  };
+  reader.readAsText(file);
+}
+function deleteLink(index){
+  let data = JSON.parse(localStorage.getItem("userLinks") || "[]");
+  data.splice(index, 1);
+  localStorage.setItem("userLinks", JSON.stringify(data));
+  renderUserLinks();
+}
+function renderUserLinks(){
+  const userList = document.getElementById("userList");
+  userList.innerHTML = ""; // 只清空投稿，不動新聞
+  const data = JSON.parse(localStorage.getItem("userLinks") || "[]");
+  data.forEach((l, index)=>{
+    const li = document.createElement("li");
+    li.innerHTML = `
+      <a href="${l.url}" target="_blank">${l.title}</a>
+      <div class="stats">來源: 使用者投稿 | 日期: ${l.date}</div>
+      <button onclick="deleteLink(${index})">刪除</button>
+    `;
+    userList.appendChild(li);
+  });
+}
+// 頁面載入時自動渲染
+document.addEventListener("DOMContentLoaded", renderUserLinks);
+
+
+// RSS來源
+let rssList = [
+  // 台灣新聞
+  "https://www.cna.com.tw/rss.aspx",
+  "https://news.ltn.com.tw/rss/all.xml",
+  "https://udn.com/rssfeed/news/1/2/0?ch=news",
+  "https://www.ettoday.net/rss/news.xml",
+  "https://tw.news.yahoo.com/rss",
+  "https://news.tvbs.com.tw/rss/news.xml",
+  "https://www.storm.mg/rss/latest",
+  "https://newtalk.tw/rss",
+  "https://www.nownews.com/rss",
+  // 國外新聞
+  "https://feeds.bbci.co.uk/news/world/rss.xml",
+  "https://rss.cnn.com/rss/edition.rss",
+  "https://www.reuters.com/rssFeed/worldNews",
+  "https://www.nhk.or.jp/rss/news/cat0.xml",
+  "https://rss.nytimes.com/services/xml/rss/nyt/World.xml",
+  "https://www.aljazeera.com/xml/rss/all.xml",
+  "https://www.nasa.gov/rss/dyn/breaking_news.rss"
+];
+
+let rssLinks = [];
+let currentPage = 1;
+const itemsPerPage = 15;
+let searchKeyword = "";
+
+// 自動評分系統
+function autoScore(title, source, date){
+  let score = 0;
+  score += Math.min(title.length, 50);
+  const keywords = ["快訊","重大","獨家","速報","最新","Breaking","Exclusive"];
+  keywords.forEach(kw=>{ if(title.includes(kw)) score += 20; });
+  const pubDate = new Date(date);
+  const now = new Date();
+  const diffHours = (now - pubDate) / (1000*60*60);
+  if(diffHours <= 24) score += 30;
+  else if(diffHours <= 168) score += 15;
+  return score;
+}
+
+// 抓取 RSS
+async function fetchRSS(rssUrl){
+  try {
+    const res = await fetch("https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent(rssUrl));
+    const data = await res.json();
+    if(data.items && data.items.length > 0){
+      return data.items.map(it => ({
+        title: it.title,
+        url: it.link,
+        source: data.feed?.title || rssUrl,
+        date: it.pubDate || new Date(),
+        clicks: 0
+      }));
+    }
+  } catch(e){ console.warn("rss2json 抓取失敗:", rssUrl, e); }
+  return [];
+}
+
+// 抓取所有 RSS
+async function fetchAll(){
+  let items = [];
+  const results = await Promise.all(rssList.map(rss => fetchRSS(rss)));
+  results.forEach(feedItems => items.push(...feedItems));
+  const seen = new Set();
+  rssLinks = items.filter(link=>{
+    if(seen.has(link.url)) return false;
+    seen.add(link.url);
+    return true;
+  });
+  renderPage();
+}
+
+// 分頁顯示
+function renderPage(){
+  const list = document.getElementById("rssList");
+  list.innerHTML = "";
+
+  let filteredLinks = rssLinks;
+  if(searchKeyword.trim() !== ""){
+    filteredLinks = rssLinks.filter(link => 
+      link.title.toLowerCase().includes(searchKeyword.toLowerCase())
+    );
+  }
+
+  const start = (currentPage - 1) * itemsPerPage;
+  const end = start + itemsPerPage;
+  const pageItems = filteredLinks.slice(start, end);
+
+  pageItems.forEach(link=>{
+    const li = document.createElement("li");
+    const type = link.source.includes("cna") ? "domestic" : "international";
+    const pubDate = new Date(link.date).toLocaleString("zh-TW");
+    li.innerHTML = `
+      <a href="${link.url}" target="_blank">${link.title}</a>
+      <span class="badge ${type}">${type}</span>
+      <div class="stats">
+        來源: ${link.source || "未知"} 
+        | 日期: ${pubDate} 
+        | 點擊次數: ${link.clicks||0} 
+        | 自動評分: ${autoScore(link.title, link.source, link.date)} 
+        | <a href="https://translate.google.com/translate?hl=zh-TW&sl=auto&u=${encodeURIComponent(link.url)}" target="_blank">🌐 Google翻譯</a>
+      </div>
+    `;
+    list.appendChild(li);
+  });
+
+  const pagination = document.getElementById("pagination");
+  pagination.innerHTML = "";
+  const totalPages = Math.ceil(filteredLinks.length / itemsPerPage);
+
+  if(currentPage > 1){
+    const prevBtn = document.createElement("button");
+    prevBtn.textContent = "上一頁";
+    prevBtn.onclick = ()=>{ currentPage--; renderPage(); };
+    pagination.appendChild(prevBtn);
+  }
+
+  for(let i=1; i<=totalPages; i++){
+    const btn = document.createElement("button");
+    btn.textContent = i;
+    btn.onclick = ()=>{ currentPage = i; renderPage(); };
+    if(i === currentPage) btn.style.fontWeight = "bold";
+    pagination.appendChild(btn);
+  }
+
+  if(currentPage < totalPages){
+    const nextBtn = document.createElement("button");
+    nextBtn.textContent = "下一頁";
+    nextBtn.onclick = ()=>{ currentPage++; renderPage(); };
+    pagination.appendChild(nextBtn);
+  }
+}
+
+// 初始化
+fetchAll();
+setInterval(fetchAll, 600000);
+
+// 搜尋功能
+function searchNews(){
+  const input = document.getElementById("searchInput");
+  searchKeyword = input.value;
+  currentPage = 1;
+  renderPage();
+}
+
+// 清除搜尋
+function clearSearch(){
+  document.getElementById("searchInput").value = "";
+  searchKeyword = "";
+  currentPage = 1;
+  renderPage();
+}
+
+// 讓輸入框按 Enter 也能觸發搜尋
+document.addEventListener("DOMContentLoaded", ()=>{
+  const input = document.getElementById("searchInput");
+  input.addEventListener("keypress", function(event){
+    if(event.key === "Enter"){
+      event.preventDefault();
+      searchNews();
+    }
+  });
+});
+
+
+// 顏色清單：36 個好看的顏色，顯示名稱
+const colors = [
+  {code:"#FF6F61", name:"紅色"},
+  {code:"#DC143C", name:"深紅"},
+  {code:"#FF4500", name:"橘紅"},
+  {code:"#FF6347", name:"番茄紅"},
+  {code:"#FFB347", name:"橘色"},
+  {code:"#FFA500", name:"亮橘"},
+  {code:"#FFD700", name:"金色"},
+  {code:"#F0E68C", name:"卡其"},
+  {code:"#ADFF2F", name:"淺綠"},
+  {code:"#32CD32", name:"亮綠"},
+  {code:"#228B22", name:"森林綠"},
+  {code:"#20B2AA", name:"藍綠"},
+  {code:"#40E0D0", name:"青綠"},
+  {code:"#00CED1", name:"深青綠"},
+  {code:"#1E90FF", name:"亮藍"},
+  {code:"#87CEEB", name:"淡藍"},
+  {code:"#4682B4", name:"鋼藍"},
+  {code:"#4169E1", name:"皇家藍"},
+  {code:"#0000CD", name:"深藍"},
+  {code:"#6A5ACD", name:"靛藍"},
+  {code:"#9370DB", name:"紫色"},
+  {code:"#8A2BE2", name:"藍紫"},
+  {code:"#C71585", name:"洋紅"},
+  {code:"#FF69B4", name:"粉紅"},
+  {code:"#FF1493", name:"深粉紅"},
+  {code:"#D2691E", name:"巧克力"},
+  {code:"#A0522D", name:"棕色"},
+  {code:"#708090", name:"灰藍"},
+  {code:"#808080", name:"灰色"},
+  {code:"#2F4F4F", name:"深灰"},
+  {code:"#000000", name:"黑色"},
+  {code:"#FFFFFF", name:"白色"},
+  {code:"#B0C4DE", name:"淺鋼藍"},
+  {code:"#98FB98", name:"淡綠"},
+  {code:"#EE82EE", name:"紫羅蘭"},
+  {code:"#DA70D6", name:"淡紫"}
+];
+
+const colorSelect = document.getElementById("colorSelect");
+colors.forEach(c=>{
+  const opt = document.createElement("option");
+  opt.value = c.code;       // 套用背景顏色用代碼
+  opt.textContent = c.name; // 顯示文字只寫顏色名稱
+  colorSelect.appendChild(opt);
+});
+colorSelect.addEventListener("change", ()=>setColor(colorSelect.value));
+function setColor(c){
+  if(!c) return;
+  document.body.style.background = c;
+  const rgb = parseInt(c.slice(1),16);
+  const r=(rgb>>16)&255,g=(rgb>>8)&255,b=rgb&255;
+  const brightness=(r*299+g*587+b*114)/1000;
+  document.body.style.color=brightness<128?"#fff":"#000";
+}
+
+
+// 字型隨機套用
+const fonts = [
+  '"Noto Sans TC"',       // 思源黑體
+  '"Noto Serif TC"',      // 思源宋體
+  '"Microsoft JhengHei"', // 微軟正黑體
+  '"PingFang TC"',        // 蘋方字體
+  'sans-serif'            // 保底
+];
+const randomFont = fonts[Math.floor(Math.random() * fonts.length)];
+document.querySelector("h1").style.fontFamily =
+`${randomFont}, "Noto Sans TC", "Noto Serif TC", "Microsoft JhengHei", "PingFang TC", sans-serif`;
+</script>
+</body>
+</html>
